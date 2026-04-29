@@ -22,7 +22,7 @@ type KairosExtraction = {
   reviewState: string;
 };
 
-type KairosSession = {
+export type KairosSession = {
   id: string;
   subjectId: string;
   parentSessionId?: string;
@@ -30,16 +30,45 @@ type KairosSession = {
   date?: string;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function getKairosSnapshot(db: SupabaseClient, userId: string): Promise<any | null> {
+export type KairosSubject = {
+  id: string;
+  name: string;
+  emoji?: string;
+  color?: string;
+  professor?: string;
+  term?: string;
+  archived?: boolean;
+  demo?: boolean;
+};
+
+export type KairosSnapshot = {
+  subjects?: KairosSubject[];
+  sessions?: KairosSession[];
+  blocks?: KairosBlock[];
+  extractions?: KairosExtraction[];
+};
+
+export async function getKairosSnapshot(
+  db: SupabaseClient,
+  userId: string,
+): Promise<KairosSnapshot | null> {
   const { data, error } = await db
     .from("kairos_snapshots")
     .select("data")
     .eq("user_id", userId)
     .single();
 
-  if (error || !data) return null;
-  return data.data;
+  if (error || !data?.data) return null;
+
+  // Kairos sube el envelope crudo de zustand-persist `{ state, version }`,
+  // así que el state real puede estar en `.state` o (legacy) en la raíz.
+  const envelope = data.data as { state?: unknown } | KairosSnapshot;
+  const inner =
+    envelope && typeof envelope === "object" && "state" in envelope && envelope.state
+      ? (envelope.state as KairosSnapshot)
+      : (envelope as KairosSnapshot);
+
+  return inner ?? null;
 }
 
 const USEFUL_BLOCK_TYPES = new Set([

@@ -1,6 +1,10 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
-import { getKairosSnapshot } from "@/lib/spark/kairos-bridge";
+import {
+  getKairosSnapshot,
+  type KairosSession,
+  type KairosSubject,
+} from "@/lib/spark/kairos-bridge";
 
 export async function GET(_req: NextRequest) {
   const db = await getSupabaseServerClient();
@@ -14,7 +18,7 @@ export async function GET(_req: NextRequest) {
     .filter((s: KairosSubject) => !s.archived && !s.demo)
     .map((s: KairosSubject) => {
       const sessions = (snapshot.sessions ?? []).filter(
-        (sess: KairosSession) => sess.subjectId === s.id && !sess.parentSessionId
+        (sess: KairosSession) => sess.subjectId === s.id && !sess.parentSessionId,
       );
       return {
         id: s.id,
@@ -30,21 +34,3 @@ export async function GET(_req: NextRequest) {
 
   return NextResponse.json({ subjects });
 }
-
-type KairosSubject = {
-  id: string;
-  name: string;
-  professor?: string;
-  emoji?: string;
-  color?: string;
-  term?: string;
-  archived?: boolean;
-  demo?: boolean;
-};
-
-type KairosSession = {
-  id: string;
-  subjectId: string;
-  parentSessionId?: string;
-  title: string;
-};

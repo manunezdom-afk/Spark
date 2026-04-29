@@ -40,7 +40,7 @@ export default async function ErrorsPage() {
           <AlertCircle className="w-8 h-8 text-muted-foreground/50" strokeWidth={1.5} />
           <h2 className="text-2xl font-semibold">Sin patrones detectados</h2>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Cuando Spark detecte errores recurrentes, aparecerán acá agrupados por
+            Cuando Spark detecte errores recurrentes, aparecerán aquí agrupados por
             tipo y frecuencia.
           </p>
         </div>

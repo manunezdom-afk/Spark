@@ -6,7 +6,7 @@ const baseUser: SparkUserContext = {
   id: "x",
   user_id: "u",
   career: null,
-  current_role: null,
+  user_role: null,
   active_projects: [],
   personal_goals: [],
   learning_style: null,

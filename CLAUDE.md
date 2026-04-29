@@ -12,7 +12,8 @@ Spark es la app de aprendizaje activo del ecosistema FOCUS OS. Vive junto a Focu
 ## Boundaries con Focus y Kairos
 
 - Focus dueño del calendario (`focus_calendar_events`). Spark sólo lee `is_critical=true` para `getDaysToNearestDeadline()` (señal de urgencia).
-- Kairos dueño de las notas. Spark **no escribe** ahí. Cuando Kairos exponga blocks tipados, importaremos topics desde notas — hoy es manual + extract-from-text.
+- Kairos dueño de las notas. Spark **no escribe** ahí. Spark lee `kairos_snapshots.data` (pull-only) para inyectar contexto de notas en prompts cuando una topic tiene `source_note_ids`.
+- **Contrato del snapshot de Kairos:** Kairos sube el envelope crudo de zustand-persist `{ state: { subjects, sessions, blocks, extractions, ... }, version }`. `getKairosSnapshot()` en `lib/spark/kairos-bridge.ts` desempaca `.state` antes de devolverlo. Si tocas el bridge, respetá ese envelope o todo se rompe sin error visible (la query devuelve null y los prompts pierden el contexto).
 - Mismo `auth.users` y `auth.uid()` para los tres. Las RLS policies de Spark filtran por `user_id = auth.uid()`.
 
 ## Arquitectura crítica
@@ -40,7 +41,7 @@ Spark es la app de aprendizaje activo del ecosistema FOCUS OS. Vive junto a Focu
 
 - Push real / cron de daily-reviews → reemplazado por banner en `/dashboard`
 - Command palette ⌘K
-- Bridge real con Kairos (notes → topics)
+- Push activo Kairos → Spark (hoy es pull-only desde el snapshot; Kairos no notifica cuando hay topics nuevos)
 - Force-directed graph para Bridge Builder (lista jerárquica en su lugar)
 - Capacitor / iOS nativo
 
