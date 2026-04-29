@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import { getTopics, createTopic } from "@/lib/spark/queries";
+import { clearDemoData } from "@/lib/spark/seed-demo";
 
 export async function GET() {
   const db = await getSupabaseServerClient();
@@ -30,6 +31,8 @@ export async function POST(request: NextRequest) {
   }
 
   try {
+    // Clear demo content on first real topic creation
+    await clearDemoData(db, user.id).catch(() => {});
     const topic = await createTopic(db, user.id, {
       title: body.title.trim(),
       summary: body.summary ?? null,

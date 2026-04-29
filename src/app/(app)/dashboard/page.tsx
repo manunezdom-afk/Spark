@@ -12,6 +12,7 @@ import {
 import { recommendEngines } from "@/modules/spark/scheduler/sm2";
 import { ENGINE_LABELS, ENGINE_DESCRIPTIONS } from "@/modules/spark/engines";
 import { Button } from "@/components/ui/button";
+import { WelcomeTour } from "@/components/onboarding/WelcomeTour";
 import type { LearningEngine } from "@/modules/spark/types";
 
 export const dynamic = "force-dynamic";
@@ -42,6 +43,8 @@ export default async function DashboardPage() {
   const greeting = greet();
 
   return (
+    <>
+    <WelcomeTour />
     <div className="p-6 md:p-10 max-w-5xl">
       <header className="flex flex-col gap-2 mb-10">
         <span className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
@@ -158,6 +161,7 @@ export default async function DashboardPage() {
         </section>
       )}
     </div>
+    </>
   );
 }
 

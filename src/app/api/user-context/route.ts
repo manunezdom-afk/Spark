@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
-import { getUserContext, upsertUserContext } from "@/lib/spark/queries";
+import { getUserContext, upsertUserContext, getTopics } from "@/lib/spark/queries";
+import { seedDemoData } from "@/lib/spark/seed-demo";
 import type { LearningStyle, ActiveProject, PersonalGoal } from "@/modules/spark/types";
 
 export async function GET() {
@@ -27,6 +28,11 @@ export async function PUT(request: NextRequest) {
   const body = (await request.json()) as PutBody;
   try {
     const updated = await upsertUserContext(db, user.id, body);
+    // Seed demo data only on first onboarding (no topics yet)
+    const existing = await getTopics(db, user.id);
+    if (existing.length === 0) {
+      await seedDemoData(db, user.id).catch(() => {});
+    }
     return NextResponse.json({ context: updated });
   } catch (err) {
     return NextResponse.json(

@@ -57,6 +57,7 @@ export interface SparkTopic {
   tags: string[];
   category: string | null;
   is_archived: boolean;
+  is_demo: boolean;
   kairos_subject_id: string | null;
   created_at: string;
   updated_at: string;
