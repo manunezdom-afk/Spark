@@ -18,6 +18,7 @@ type PostBody = {
   tags?: string[];
   source_note_ids?: string[];
   kairos_subject_id?: string | null;
+  kairos_color?: string | null;
 };
 
 export async function POST(request: NextRequest) {
@@ -40,6 +41,7 @@ export async function POST(request: NextRequest) {
       tags: body.tags ?? [],
       source_note_ids: body.source_note_ids ?? [],
       kairos_subject_id: body.kairos_subject_id ?? null,
+      kairos_color: body.kairos_color ?? null,
     });
     return NextResponse.json({ topic }, { status: 201 });
   } catch (err) {

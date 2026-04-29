@@ -39,6 +39,7 @@ export default async function DashboardPage() {
   const totalDue = flashcardsDue + masteryDue;
   const recommended = recommendEngines(daysToDeadline).slice(0, 3) as LearningEngine[];
   const hasTopics = topics.length > 0;
+  const kairosTopics = topics.filter((t) => t.kairos_subject_id);
 
   const greeting = greet();
 
@@ -46,6 +47,13 @@ export default async function DashboardPage() {
     <>
     <WelcomeTour />
     <div className="p-6 md:p-10 max-w-5xl">
+      {kairosTopics.length > 0 && (
+        <div className="mb-6 flex items-center gap-2 text-[10px] uppercase tracking-[0.16em] text-nova-mid/60 font-mono">
+          <div className="w-1.5 h-1.5 rounded-full bg-nova-mid/60" />
+          Conectado con Kairos · {kairosTopics.length} {kairosTopics.length === 1 ? "materia" : "materias"}
+        </div>
+      )}
+
       <header className="flex flex-col gap-2 mb-10">
         <span className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
           {new Date().toLocaleDateString("es", {

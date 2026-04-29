@@ -11,15 +11,24 @@ export function TopicCard({
 }) {
   const score = mastery?.mastery_score ?? 0;
   const sessions = mastery?.total_sessions ?? 0;
+  const kairosColor = topic.kairos_color ?? null;
 
   return (
     <Link
       href={`/topics/${topic.id}`}
-      className="group flex flex-col gap-3 p-5 rounded-lg border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/[0.10] transition-colors backdrop-blur-xl"
+      className="group flex flex-col gap-3 p-5 rounded-lg border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/[0.12] transition-all duration-200 backdrop-blur-xl hover:-translate-y-px hover:shadow-[0_6px_24px_rgba(201,123,63,0.08)]"
     >
+      {/* Kairos color accent bar */}
+      {kairosColor && (
+        <div
+          className="absolute left-0 top-3 bottom-3 w-[2px] rounded-full opacity-60"
+          style={{ backgroundColor: kairosColor }}
+        />
+      )}
+
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
+          <div className="flex items-center gap-2 mb-1.5 flex-wrap">
             {topic.category && (
               <span className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
                 {topic.category}
@@ -32,18 +41,18 @@ export function TopicCard({
               </span>
             )}
             {topic.is_demo && (
-              <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-[0.14em] text-muted-foreground border border-white/10 bg-white/[0.03] px-1.5 py-0.5 rounded-full">
+              <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-[0.14em] text-muted-foreground/60 border border-white/[0.08] bg-white/[0.03] px-1.5 py-0.5 rounded-full">
                 <FlaskConical className="w-2.5 h-2.5" strokeWidth={1.5} />
                 Ejemplo
               </span>
             )}
           </div>
-          <h3 className="font-medium text-foreground group-hover:text-spark transition-colors line-clamp-2">
+          <h3 className="font-medium text-foreground group-hover:text-spark transition-colors line-clamp-2 leading-snug">
             {topic.title}
           </h3>
         </div>
         <ArrowUpRight
-          className="w-4 h-4 text-muted-foreground/50 group-hover:text-spark transition-colors shrink-0 mt-1"
+          className="w-4 h-4 text-muted-foreground/40 group-hover:text-spark transition-colors shrink-0 mt-0.5"
           strokeWidth={1.5}
         />
       </div>
@@ -58,13 +67,13 @@ export function TopicCard({
         <div className="flex items-center gap-1.5">
           <div className="w-16 h-1 rounded-full bg-white/[0.06] overflow-hidden">
             <div
-              className="h-full bg-spark transition-all"
+              className="h-full bg-gradient-to-r from-spark to-spark/70 transition-all"
               style={{ width: `${Math.max(score, 4)}%` }}
             />
           </div>
           <span className="font-mono">{score}%</span>
         </div>
-        <span>·</span>
+        <span className="text-muted-foreground/30">·</span>
         <span>
           {sessions} {sessions === 1 ? "sesión" : "sesiones"}
         </span>

@@ -159,6 +159,7 @@ export function NewTopicDialog() {
               tags: [s.name.toLowerCase().replace(/\s+/g, "-")],
               source_note_ids: s.session_ids,
               kairos_subject_id: s.id,
+              kairos_color: s.color ?? null,
             }),
           })
         )

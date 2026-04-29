@@ -53,8 +53,9 @@
 @layer utilities {
   .bg-spark-radial {
     background:
-      radial-gradient(circle at 0% 0%, rgba(168, 176, 255, 0.08), transparent 45%),
-      radial-gradient(circle at 100% 100%, rgba(201, 123, 63, 0.06), transparent 50%),
+      radial-gradient(ellipse at 20% 0%, rgba(168, 176, 255, 0.07), transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(201, 123, 63, 0.06), transparent 45%),
+      radial-gradient(ellipse at 50% 50%, rgba(168, 176, 255, 0.02), transparent 70%),
       hsl(var(--background));
   }
   .glass-card {
@@ -66,8 +67,41 @@
     background: rgba(255, 255, 255, 0.05);
     border-color: rgba(255, 255, 255, 0.10);
   }
+  /* Lift card on hover — same pattern as Kairos */
+  .card-hover {
+    transition: transform 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
+  }
+  .card-hover:hover {
+    transform: translateY(-1px);
+  }
   .scrollbar-thin {
     scrollbar-width: thin;
-    scrollbar-color: rgba(255,255,255,0.1) transparent;
+    scrollbar-color: rgba(255,255,255,0.08) transparent;
   }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: rgba(255,255,255,0.08);
+    border-radius: 999px;
+  }
+}
+
+@keyframes spark-pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+@keyframes spark-cursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.animate-spark-pulse {
+  animation: spark-pulse 2s ease-in-out infinite;
+}
+
+.animate-spark-cursor {
+  animation: spark-cursor 0.9s step-end infinite;
 }
