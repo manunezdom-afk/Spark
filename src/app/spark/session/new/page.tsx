@@ -36,6 +36,18 @@ const CONTENT_PLACEHOLDERS = [
   'Psicología del desarrollo, Piaget, etapas cognitivas, Vygotsky, zona de desarrollo próximo…',
 ];
 
+// ── Nova "thinking" sequence ──────────────────────────────────
+// Multi-step animation shown while we mock generation. Each phase
+// appears for ~700ms, total ~3s — enough to feel like real work
+// without being slow.
+
+const NOVA_STEPS = [
+  'Analizando tus apuntes…',
+  'Detectando conceptos clave…',
+  'Generando preguntas…',
+  'Calibrando dificultad…',
+];
+
 function NewSessionForm() {
   const router = useRouter();
   const params = useSearchParams();
@@ -50,6 +62,7 @@ function NewSessionForm() {
   const [name,        setName]        = useState('');
   const [content,     setContent]     = useState('');
   const [busy,        setBusy]        = useState(false);
+  const [busyStep,    setBusyStep]    = useState(0);
   const [phIdx,       setPhIdx]       = useState(0);
   const [phVisible,   setPhVisible]   = useState(true);
 
@@ -77,11 +90,23 @@ function NewSessionForm() {
   function handleSubmit() {
     if (!canSubmit) return;
     setBusy(true);
-    // Mock: simulate Nova generating the session, then route to practice screen.
-    setTimeout(() => {
-      const qs = new URLSearchParams({ name, method: method!, mock: '1' });
-      router.push(`/spark/practice/active?${qs.toString()}`);
-    }, 600);
+    setBusyStep(0);
+
+    // Step through Nova's thinking phases, then route to practice.
+    const stepDuration = 720; // ms per phase
+    let i = 0;
+    const tick = setInterval(() => {
+      i += 1;
+      if (i >= NOVA_STEPS.length) {
+        clearInterval(tick);
+        setTimeout(() => {
+          const qs = new URLSearchParams({ name, method: method!, mock: '1' });
+          router.push(`/spark/practice/active?${qs.toString()}`);
+        }, 350);
+      } else {
+        setBusyStep(i);
+      }
+    }, stepDuration);
   }
 
   return (
@@ -242,10 +267,77 @@ function NewSessionForm() {
                    transition-all duration-300
                    disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none"
       >
-        {busy ? 'Preparando con Nova…' : 'Generar práctica con Nova'}
+        {busy ? 'Nova está pensando…' : 'Generar práctica con Nova'}
         {!busy && <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />}
       </button>
+
+      {/* ── Nova thinking overlay ────────────────────────────── */}
+      {busy && <NovaThinking step={busyStep} />}
     </main>
+  );
+}
+
+// ── Nova thinking overlay ─────────────────────────────────────
+// Full-screen takeover that gives weight to "Nova is generating".
+// Pulsing brain + orbital dots + cycling phase text.
+
+function NovaThinking({ step }: { step: number }) {
+  return (
+    <div className="fixed inset-0 z-50 bg-[#07080B]/90 backdrop-blur-md
+                    flex items-center justify-center
+                    animate-in fade-in duration-300">
+      <div className="flex flex-col items-center gap-8 max-w-sm mx-auto px-6 text-center">
+
+        {/* Pulsing brain with orbital dot */}
+        <div className="relative">
+          <div className="absolute inset-[-30px] rounded-full bg-violet-500/20 blur-3xl animate-pulse" />
+          <div className="relative w-24 h-24 rounded-3xl
+                          bg-gradient-to-br from-violet-500/25 to-violet-700/15
+                          border border-violet-400/30
+                          flex items-center justify-center
+                          shadow-[0_0_60px_-8px_rgba(139,92,246,0.6)]">
+            <Brain className="w-11 h-11 text-violet-200 animate-pulse" />
+          </div>
+          {/* Orbital dot */}
+          <div className="absolute inset-[-16px] animate-spin"
+               style={{ animationDuration: '3s' }}>
+            <span className="absolute top-0 left-1/2 -translate-x-1/2
+                             w-2 h-2 rounded-full bg-violet-300
+                             shadow-[0_0_12px_rgba(196,181,253,0.9)]" />
+          </div>
+          <div className="absolute inset-[-16px] animate-spin"
+               style={{ animationDuration: '4.5s', animationDirection: 'reverse' }}>
+            <span className="absolute bottom-0 left-1/2 -translate-x-1/2
+                             w-1.5 h-1.5 rounded-full bg-orange-300
+                             shadow-[0_0_10px_rgba(253,186,116,0.8)]" />
+          </div>
+        </div>
+
+        {/* Phase text */}
+        <div className="flex flex-col items-center gap-2 min-h-[60px]">
+          <span className="text-[10px] uppercase tracking-[0.2em] text-violet-400/70">
+            Nova
+          </span>
+          <p key={step} className="text-base text-white font-medium
+                                   animate-in fade-in slide-in-from-bottom-1 duration-300">
+            {NOVA_STEPS[step] ?? NOVA_STEPS[NOVA_STEPS.length - 1]}
+          </p>
+        </div>
+
+        {/* Phase progress dots */}
+        <div className="flex gap-2">
+          {NOVA_STEPS.map((_, i) => (
+            <span
+              key={i}
+              className={`h-1.5 rounded-full transition-all duration-500
+                          ${i < step ? 'w-6 bg-violet-400'
+                          : i === step ? 'w-8 bg-violet-300 shadow-[0_0_8px_rgba(196,181,253,0.8)]'
+                          :              'w-3 bg-zinc-800'}`}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }
 

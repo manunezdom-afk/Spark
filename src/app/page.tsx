@@ -6,12 +6,11 @@ import {
   ArrowRight,
   BookOpenCheck,
   Brain,
-  TrendingDown,
-  History,
 } from 'lucide-react';
 import { SparkIcon } from '@/components/SparkIcon';
 import { HowItWorks } from '@/components/HowItWorks';
 import { MethodCards } from '@/components/MethodCards';
+import { RecentDataPanels } from '@/components/RecentSessions';
 
 export default function SparkDashboard() {
   return (
@@ -112,32 +111,8 @@ export default function SparkDashboard() {
         {/* ── Methods grid (with hover mini-tutorials) ─────── */}
         <MethodCards />
 
-        {/* ── Recent + Weaknesses ─────────────────────────────── */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <section className="flex flex-col gap-3 p-5 rounded-2xl
-                             bg-white/[0.02] border border-white/[0.06]">
-            <div className="flex items-center gap-2">
-              <History className="w-4 h-4 text-orange-400/70" />
-              <h2 className="text-sm font-medium text-zinc-200">Sesiones recientes</h2>
-            </div>
-            <EmptyBlock
-              title="Aún no hay sesiones"
-              hint="Tu primera práctica aparecerá aquí con dominio y errores."
-            />
-          </section>
-
-          <section className="flex flex-col gap-3 p-5 rounded-2xl
-                             bg-white/[0.02] border border-white/[0.06]">
-            <div className="flex items-center gap-2">
-              <TrendingDown className="w-4 h-4 text-orange-400/70" />
-              <h2 className="text-sm font-medium text-zinc-200">Debilidades detectadas</h2>
-            </div>
-            <EmptyBlock
-              title="Sin datos todavía"
-              hint="Tras tu primera sesión, Spark detectará los temas a reforzar."
-            />
-          </section>
-        </div>
+        {/* ── Recent + Weaknesses (hydrated from localStorage) ── */}
+        <RecentDataPanels />
 
         {/* ── Footer ──────────────────────────────────────────── */}
         <footer className="flex items-center gap-2 text-xs text-zinc-700
@@ -156,11 +131,3 @@ export default function SparkDashboard() {
   );
 }
 
-function EmptyBlock({ title, hint }: { title: string; hint: string }) {
-  return (
-    <div className="flex flex-col items-start gap-1 py-2">
-      <p className="text-sm text-zinc-400">{title}</p>
-      <p className="text-xs text-zinc-600 leading-relaxed">{hint}</p>
-    </div>
-  );
-}
