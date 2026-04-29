@@ -26,10 +26,11 @@ export default function SparkHomePage() {
   return (
     <main className="max-w-5xl mx-auto px-6 py-12 md:py-20 flex flex-col gap-12">
       <header className="flex items-center gap-3">
-        <Zap className="w-8 h-8 text-purple-400" fill="currentColor" />
+        <Zap className="w-8 h-8 text-[#C97B3F]" fill="currentColor" />
         <div>
           <h1 className="text-4xl font-semibold tracking-tight">
-            Spark <span className="text-purple-400">Engine</span>
+            <span className="text-[#C97B3F]">Spark</span>{" "}
+            <span className="text-purple-400">Engine</span>
           </h1>
           <p className="text-zinc-400 mt-1">Selecciona un motor de aprendizaje activo.</p>
         </div>
