@@ -9,8 +9,19 @@
 import { Suspense, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { ArrowLeft, ArrowRight, Sparkles, FileText, Tag } from 'lucide-react';
+import {
+  ArrowLeft, ArrowRight, Sparkles, FileText, Tag,
+  Layers, ListChecks, Timer, MessageCircle, Brain,
+} from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { METHOD_ORDER, METHODS, methodFromEngineParam, type StudyMethod } from '@/lib/spark/methods';
+
+const METHOD_ICONS: Record<StudyMethod, LucideIcon> = {
+  flashcards: Layers,
+  quiz:       ListChecks,
+  simulation: Timer,
+  socratic:   MessageCircle,
+};
 
 function NewSessionForm() {
   const router = useRouter();
@@ -52,12 +63,25 @@ function NewSessionForm() {
       </Link>
 
       {/* ── Title ───────────────────────────────────────────── */}
-      <header>
-        <p className="text-xs font-medium uppercase tracking-widest text-orange-400/80">Paso a paso</p>
-        <h1 className="text-3xl font-semibold tracking-tight mt-1">Nueva sesión de práctica</h1>
-        <p className="text-sm text-zinc-400 mt-2">
-          Nombra tu prueba, elige un método y pega tus apuntes. Nova arma la práctica.
-        </p>
+      <header className="flex flex-col gap-4">
+        <div>
+          <p className="text-xs font-medium uppercase tracking-widest text-orange-400/80">Paso a paso</p>
+          <h1 className="text-3xl font-semibold tracking-tight mt-1">Nueva sesión de práctica</h1>
+          <p className="text-sm text-zinc-400 mt-2">
+            Nombra tu prueba, elige un método y pega tus apuntes. Nova arma la práctica.
+          </p>
+        </div>
+        {/* Nova context strip */}
+        <div className="flex items-center gap-3 px-4 py-3 rounded-xl
+                        bg-violet-500/5 border border-violet-500/20">
+          <div className="w-7 h-7 rounded-lg bg-violet-500/20 flex items-center justify-center shrink-0">
+            <Brain className="w-3.5 h-3.5 text-violet-400" />
+          </div>
+          <p className="text-xs text-violet-300/80 leading-relaxed">
+            <span className="font-medium text-violet-300">Nova</span> tomará tus apuntes
+            y generará la práctica en segundos según el método que elijas.
+          </p>
+        </div>
       </header>
 
       {/* ── 1. Name ─────────────────────────────────────────── */}
@@ -88,20 +112,26 @@ function NewSessionForm() {
         <div className="grid grid-cols-2 gap-2.5">
           {METHOD_ORDER.map((id) => {
             const m        = METHODS[id];
+            const Icon     = METHOD_ICONS[id];
             const selected = method === id;
             return (
               <button
                 key={id}
                 type="button"
                 onClick={() => setMethod(id)}
-                className={`group relative flex flex-col items-start gap-2 p-4 rounded-xl text-left
+                className={`group relative flex flex-col items-start gap-3 p-4 rounded-xl text-left
                             border transition-all duration-150
                             ${selected
                               ? 'bg-orange-500/10 border-orange-500/50 shadow-[0_0_18px_-6px_rgba(251,146,60,0.4)]'
                               : 'bg-white/[0.02] border-white/[0.07] hover:bg-white/[0.05] hover:border-white/[0.12]'}`}
               >
                 <div className="flex items-center justify-between w-full">
-                  <span className="text-2xl leading-none">{m.emoji}</span>
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors
+                                   ${selected
+                                     ? 'bg-orange-500/20 border border-orange-500/30'
+                                     : 'bg-white/[0.05] border border-white/10'}`}>
+                    <Icon className={`w-4 h-4 transition-colors ${selected ? 'text-orange-300' : 'text-zinc-400'}`} />
+                  </div>
                   {!m.ready && (
                     <span className="text-[10px] uppercase tracking-wider text-zinc-600 border border-white/10 rounded-full px-1.5 py-0.5">
                       beta
