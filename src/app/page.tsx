@@ -1,96 +1,115 @@
-import { Play, Activity, Clock, CheckCircle2 } from "lucide-react";
+import Link from 'next/link';
+import { ArrowRight, Brain, Flame, Trophy } from 'lucide-react';
+import { SparkIcon } from '@/components/SparkIcon';
+import { ENGINE_LABELS, ENGINE_DESCRIPTIONS } from '@/modules/spark/engines';
+import type { LearningEngine } from '@/modules/spark/types';
 
-export default function SparkDashboard() {
+const ENGINES: { id: LearningEngine; emoji: string }[] = [
+  { id: 'debugger',        emoji: '🐛' },
+  { id: 'devils_advocate', emoji: '⚔️' },
+  { id: 'roleplay',        emoji: '🎭' },
+  { id: 'bridge_builder',  emoji: '🌉' },
+  { id: 'socratic',        emoji: '🔍' },
+];
+
+const STATS = [
+  { label: 'Sesiones completadas', value: '0',  icon: Brain  },
+  { label: 'Dominio promedio',     value: '—',  icon: Trophy },
+  { label: 'Racha actual',         value: '0d', icon: Flame  },
+];
+
+export default function SparkHome() {
   return (
-    <div className="min-h-screen bg-[#07080B] text-white overflow-hidden relative selection:bg-purple-500/30">
-      {/* Background gradients */}
+    <div className="min-h-screen bg-[#07080B] text-white overflow-hidden relative selection:bg-orange-500/30">
+      {/* Ambient gradients */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-purple-900/20 blur-[120px]" />
-        <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-[#A78BFA]/10 blur-[120px]" />
+        <div className="absolute top-[-20%] left-[-10%] w-[55%] h-[55%] rounded-full bg-orange-900/20 blur-[140px]" />
+        <div className="absolute bottom-[-20%] right-[-10%] w-[45%] h-[45%] rounded-full bg-[#FB923C]/10 blur-[120px]" />
       </div>
 
-      <main className="relative z-10 max-w-5xl mx-auto px-6 py-12 md:py-20 flex flex-col gap-12">
-        <header>
-          <h1 className="text-4xl md:text-5xl font-semibold tracking-tight">
-            Spark <span className="text-purple-400">Dashboard</span>
-          </h1>
-          <p className="text-zinc-400 mt-2 text-lg">
-            Centro de control de automatizaciones.
-          </p>
+      <main className="relative z-10 max-w-4xl mx-auto px-6 py-12 md:py-20 flex flex-col gap-14">
+
+        {/* ── Header ─────────────────────────────────────────── */}
+        <header className="flex items-center gap-4">
+          <SparkIcon size={52} />
+          <div>
+            <h1 className="text-3xl md:text-4xl font-semibold tracking-tight leading-none">
+              Spark
+            </h1>
+            <p className="text-zinc-400 text-sm mt-1">
+              Coach de Aprendizaje de Alto Rendimiento
+            </p>
+          </div>
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Main Action Button */}
-          <div className="md:col-span-1">
-            <button className="w-full group relative flex flex-col items-center justify-center gap-4 p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-xl transition-all duration-300 hover:bg-white/10 hover:border-purple-500/50 hover:shadow-[0_0_30px_-5px_rgba(167,139,250,0.3)] text-left">
-              <div className="h-16 w-16 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 group-hover:scale-110 group-hover:bg-purple-500 group-hover:text-white transition-all duration-300">
-                <Play className="w-8 h-8 ml-1" fill="currentColor" />
-              </div>
-              <div className="text-center">
-                <h3 className="text-xl font-medium text-white">Lanzar nueva automatización</h3>
-                <p className="text-sm text-zinc-400 mt-1">Configurar y ejecutar</p>
-              </div>
-            </button>
-          </div>
-
-          {/* Active Tasks Section */}
-          <div className="md:col-span-2 flex flex-col">
-            <div className="flex items-center gap-2 mb-4">
-              <Activity className="w-5 h-5 text-purple-400" />
-              <h2 className="text-xl font-medium text-white">Tareas Activas</h2>
-            </div>
-            
-            <div className="flex-1 flex flex-col gap-3">
-              {/* Task Item 1 */}
-              <div className="flex items-center justify-between p-4 rounded-2xl bg-white/[0.02] border border-white/5 backdrop-blur-md hover:bg-white/[0.04] transition-colors">
-                <div className="flex items-center gap-4">
-                  <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-                  <div>
-                    <h4 className="font-medium text-zinc-200">Sincronización de Base de Datos</h4>
-                    <p className="text-xs text-zinc-500 flex items-center gap-1 mt-1">
-                      <Clock className="w-3 h-3" /> Hace 2 min
-                    </p>
-                  </div>
-                </div>
-                <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-green-400/10 text-green-400 border border-green-400/20">
-                  Ejecutando
-                </span>
-              </div>
-
-              {/* Task Item 2 */}
-              <div className="flex items-center justify-between p-4 rounded-2xl bg-white/[0.02] border border-white/5 backdrop-blur-md hover:bg-white/[0.04] transition-colors">
-                <div className="flex items-center gap-4">
-                  <div className="w-2 h-2 rounded-full bg-purple-400 animate-pulse" />
-                  <div>
-                    <h4 className="font-medium text-zinc-200">Análisis de Feedback (Nova)</h4>
-                    <p className="text-xs text-zinc-500 flex items-center gap-1 mt-1">
-                      <Clock className="w-3 h-3" /> Hace 15 min
-                    </p>
-                  </div>
-                </div>
-                <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-purple-400/10 text-purple-400 border border-purple-400/20">
-                  Procesando
-                </span>
-              </div>
-              
-              {/* Task Item 3 */}
-              <div className="flex items-center justify-between p-4 rounded-2xl bg-white/[0.02] border border-white/5 backdrop-blur-md hover:bg-white/[0.04] transition-colors opacity-60">
-                <div className="flex items-center gap-4">
-                  <CheckCircle2 className="w-5 h-5 text-zinc-500" />
-                  <div>
-                    <h4 className="font-medium text-zinc-400">Extracción de fechas Kairos</h4>
-                    <p className="text-xs text-zinc-500 flex items-center gap-1 mt-1">
-                      <Clock className="w-3 h-3" /> Hace 1 hora
-                    </p>
-                  </div>
-                </div>
-                <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-white/5 text-zinc-400 border border-white/10">
-                  Completado
-                </span>
+        {/* ── Stats ──────────────────────────────────────────── */}
+        <div className="grid grid-cols-3 gap-3 md:gap-4">
+          {STATS.map(({ label, value, icon: Icon }) => (
+            <div
+              key={label}
+              className="flex flex-col gap-3 p-4 md:p-5 rounded-2xl bg-white/[0.03] border border-white/[0.06]"
+            >
+              <Icon className="w-4 h-4 text-orange-400/70" />
+              <div>
+                <p className="text-2xl font-semibold text-white">{value}</p>
+                <p className="text-xs text-zinc-500 mt-0.5 leading-snug">{label}</p>
               </div>
             </div>
-          </div>
+          ))}
         </div>
+
+        {/* ── Primary CTA ────────────────────────────────────── */}
+        <Link
+          href="/spark"
+          className="group flex items-center justify-center gap-3 w-full py-5 rounded-2xl
+                     bg-gradient-to-r from-orange-600 to-orange-500
+                     hover:from-orange-500 hover:to-orange-400
+                     font-semibold text-lg text-white shadow-[0_0_40px_-8px_rgba(251,146,60,0.5)]
+                     transition-all duration-300"
+        >
+          Nueva sesión
+          <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+        </Link>
+
+        {/* ── Engines grid ───────────────────────────────────── */}
+        <section className="flex flex-col gap-5">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-medium text-zinc-200">5 Motores de Aprendizaje Activo</h2>
+            <span className="text-xs text-zinc-600 uppercase tracking-widest">vs memorización pasiva</span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            {ENGINES.map(({ id, emoji }) => (
+              <Link
+                key={id}
+                href={`/spark/session/new?engine=${id}`}
+                className="group flex items-start gap-4 p-5 rounded-2xl
+                           bg-white/[0.02] border border-white/[0.06]
+                           hover:bg-white/[0.05] hover:border-orange-500/30
+                           hover:shadow-[0_0_20px_-6px_rgba(251,146,60,0.2)]
+                           transition-all duration-200"
+              >
+                <span className="text-2xl mt-0.5 shrink-0">{emoji}</span>
+                <div className="min-w-0">
+                  <h3 className="font-medium text-white group-hover:text-orange-300 transition-colors truncate">
+                    {ENGINE_LABELS[id]}
+                  </h3>
+                  <p className="text-xs text-zinc-500 mt-1 leading-relaxed">
+                    {ENGINE_DESCRIPTIONS[id]}
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {/* ── Mission note ───────────────────────────────────── */}
+        <p className="text-center text-xs text-zinc-600 leading-relaxed max-w-lg mx-auto">
+          Spark usa repetición espaciada <span className="text-zinc-500">(SM-2)</span> y recall
+          activo para construir dominio real — no memorización superficial.
+          Integrado con Kairos y Focus.
+        </p>
+
       </main>
     </div>
   );
