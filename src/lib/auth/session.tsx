@@ -48,11 +48,16 @@ export function useSparkAuth(): AuthContextValue {
   return ctx;
 }
 
-export async function sendOtp(email: string): Promise<void> {
+export async function sendOtp(email: string, mode: "signin" | "signup"): Promise<void> {
   const supabase = getSupabaseBrowserClient();
   const { error } = await supabase.auth.signInWithOtp({
     email,
-    options: { shouldCreateUser: true },
+    options: {
+      // En "signin" exigimos que el usuario ya exista — evita la creación
+      // silenciosa de cuentas. En "signup" sí permitimos crear, pero la UX
+      // lo deja explícito en el copy del botón.
+      shouldCreateUser: mode === "signup",
+    },
   });
   if (error) throw error;
 }
@@ -65,4 +70,16 @@ export async function verifyOtp(email: string, token: string): Promise<void> {
     type: "email",
   });
   if (error) throw error;
+}
+
+export async function signInWithGoogle(): Promise<{ ok: true } | { ok: false; error: string }> {
+  const supabase = getSupabaseBrowserClient();
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: `${window.location.origin}/auth/callback?next=/dashboard`,
+    },
+  });
+  if (error) return { ok: false, error: error.message };
+  return { ok: true };
 }
