@@ -11,7 +11,7 @@ const SLIDES = [
     icon: Zap,
     tag: "Bienvenido a Spark",
     title: "No memorices. Entrena.",
-    body: "Spark no es un lugar para guardar notas. Es un coach que te hace preguntas difíciles, detecta lo que no sabes y te lleva al borde de tu propio entendimiento.",
+    body: "Spark no es un lugar para guardar notas. Nova te hace preguntas difíciles, detecta lo que no sabes y te lleva al borde de tu propio entendimiento.",
     hint: "Abajo tienes temas de ejemplo para que veas cómo funciona.",
     accentColor: "text-spark",
     borderColor: "border-spark/20",
@@ -43,7 +43,7 @@ const SLIDES = [
   {
     icon: Trophy,
     tag: "Maestría con SM-2",
-    title: "El coach recuerda lo que fallaste.",
+    title: "Nova recuerda lo que fallaste.",
     body: "Cada sesión actualiza tu nivel de maestría por tema usando el algoritmo SM-2 de repetición espaciada. Los temas que más fallas vuelven antes. Los que dominas esperan más.",
     hint: "Después de tu primera sesión real, verás la barra de maestría moverse.",
     accentColor: "text-nova-mid",

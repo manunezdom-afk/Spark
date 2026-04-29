@@ -14,7 +14,7 @@ export function ChallengeCard({
       <div className="flex items-center gap-2">
         <Zap className="w-3.5 h-3.5 text-spark" strokeWidth={1.5} fill="currentColor" />
         <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-spark">
-          Spark
+          Nova
         </span>
       </div>
       {text && (
@@ -37,7 +37,7 @@ export function StreamingChallengeCard({ text }: { text: string }) {
       <div className="flex items-center gap-2">
         <Zap className="w-3.5 h-3.5 text-spark animate-pulse" strokeWidth={1.5} fill="currentColor" />
         <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-spark">
-          Spark · pensando
+          Nova · pensando
         </span>
       </div>
       <div className="text-base leading-relaxed whitespace-pre-wrap text-foreground/80">

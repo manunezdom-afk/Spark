@@ -85,7 +85,7 @@ export default function OnboardingPage() {
           Antes de empezar, <span className="italic text-nova-mid">cuéntame quién eres.</span>
         </h1>
         <p className="text-muted-foreground leading-relaxed">
-          Spark adapta cada sesión a tu contexto real. Esta es información que el coach
+          Spark adapta cada sesión a tu contexto real. Esta es información que Nova
           tendrá presente sin que la repitas en cada sesión.
         </p>
       </div>
@@ -212,7 +212,7 @@ export default function OnboardingPage() {
           <Label htmlFor="custom">Contexto adicional</Label>
           <Textarea
             id="custom"
-            placeholder="Cualquier cosa que el coach deba saber sobre tu situación actual…"
+            placeholder="Cualquier cosa que Nova deba saber sobre tu situación actual…"
             value={customContext}
             onChange={(e) => setCustomContext(e.target.value)}
             rows={4}
