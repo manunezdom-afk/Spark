@@ -68,6 +68,65 @@ export async function getTopicsByIds(
   return (data ?? []) as SparkTopic[];
 }
 
+export async function getTopic(
+  db: Client,
+  topicId: string
+): Promise<SparkTopic | null> {
+  const { data } = await db
+    .from('spark_topics')
+    .select('*')
+    .eq('id', topicId)
+    .single();
+  return data as SparkTopic | null;
+}
+
+export async function createTopic(
+  db: Client,
+  userId: string,
+  input: {
+    title: string;
+    summary?: string | null;
+    category?: string | null;
+    tags?: string[];
+    source_note_ids?: string[];
+  }
+): Promise<SparkTopic> {
+  const { data, error } = await db
+    .from('spark_topics')
+    .insert({
+      user_id: userId,
+      title: input.title,
+      summary: input.summary ?? null,
+      category: input.category ?? null,
+      tags: input.tags ?? [],
+      source_note_ids: input.source_note_ids ?? [],
+    })
+    .select()
+    .single();
+  if (error) throw new Error(error.message);
+  return data as SparkTopic;
+}
+
+export async function updateTopic(
+  db: Client,
+  topicId: string,
+  patch: Partial<Pick<SparkTopic, 'title' | 'summary' | 'category' | 'tags' | 'is_archived'>>
+): Promise<SparkTopic> {
+  const { data, error } = await db
+    .from('spark_topics')
+    .update(patch)
+    .eq('id', topicId)
+    .select()
+    .single();
+  if (error) throw new Error(error.message);
+  return data as SparkTopic;
+}
+
+export async function deleteTopic(db: Client, topicId: string): Promise<void> {
+  const { error } = await db.from('spark_topics').delete().eq('id', topicId);
+  if (error) throw new Error(error.message);
+}
+
 // ── Mastery States ───────────────────────────────────────────
 
 export async function getMasteryStates(
@@ -253,4 +312,132 @@ export async function getDaysToNearestDeadline(
   if (!data?.length) return null;
   const diffMs = new Date(data[0].start_at).getTime() - Date.now();
   return Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+}
+
+// ── Flashcards ───────────────────────────────────────────────
+
+export async function getDueFlashcards(
+  db: Client,
+  userId: string
+): Promise<import('@/modules/spark/types').SparkFlashcard[]> {
+  const { data } = await db
+    .from('spark_flashcards')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('is_archived', false)
+    .lte('next_review_at', new Date().toISOString())
+    .order('next_review_at', { ascending: true });
+  return (data ?? []) as import('@/modules/spark/types').SparkFlashcard[];
+}
+
+export async function getFlashcard(
+  db: Client,
+  cardId: string
+): Promise<import('@/modules/spark/types').SparkFlashcard | null> {
+  const { data } = await db
+    .from('spark_flashcards')
+    .select('*')
+    .eq('id', cardId)
+    .single();
+  return data as import('@/modules/spark/types').SparkFlashcard | null;
+}
+
+export async function insertFlashcards(
+  db: Client,
+  userId: string,
+  cards: { topic_id: string | null; session_id: string | null; front: string; back: string; hint?: string | null }[]
+): Promise<void> {
+  if (!cards.length) return;
+  const rows = cards.map((c) => ({
+    user_id: userId,
+    topic_id: c.topic_id,
+    session_id: c.session_id,
+    front: c.front,
+    back: c.back,
+    hint: c.hint ?? null,
+  }));
+  const { error } = await db.from('spark_flashcards').insert(rows);
+  if (error) throw new Error(error.message);
+}
+
+export async function updateFlashcardReview(
+  db: Client,
+  cardId: string,
+  patch: {
+    ease_factor: number;
+    interval_days: number;
+    repetitions: number;
+    next_review_at: string;
+    mastery_score: number;
+  }
+): Promise<void> {
+  const { error } = await db
+    .from('spark_flashcards')
+    .update({ ...patch, last_reviewed_at: new Date().toISOString() })
+    .eq('id', cardId);
+  if (error) throw new Error(error.message);
+}
+
+// ── Mastery queries (counts + lists) ─────────────────────────
+
+export async function getAllMastery(
+  db: Client,
+  userId: string
+): Promise<SparkMasteryState[]> {
+  const { data } = await db
+    .from('spark_mastery_states')
+    .select('*')
+    .eq('user_id', userId)
+    .order('mastery_score', { ascending: true });
+  return (data ?? []) as SparkMasteryState[];
+}
+
+export async function getDueMasteryCount(
+  db: Client,
+  userId: string
+): Promise<number> {
+  const { count } = await db
+    .from('spark_mastery_states')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', userId)
+    .lte('next_review_at', new Date().toISOString());
+  return count ?? 0;
+}
+
+export async function getDueFlashcardsCount(
+  db: Client,
+  userId: string
+): Promise<number> {
+  const { count } = await db
+    .from('spark_flashcards')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', userId)
+    .eq('is_archived', false)
+    .lte('next_review_at', new Date().toISOString());
+  return count ?? 0;
+}
+
+// ── Rate limit ───────────────────────────────────────────────
+
+export async function checkAndIncrementRateLimit(
+  db: Client,
+  userId: string,
+  limit = 100
+): Promise<{ allowed: boolean; current: number }> {
+  const today = new Date().toISOString().slice(0, 10);
+  const { data: existing } = await db
+    .from('spark_rate_limits')
+    .select('count')
+    .eq('user_id', userId)
+    .eq('day', today)
+    .maybeSingle();
+  const current = (existing as { count: number } | null)?.count ?? 0;
+  if (current >= limit) return { allowed: false, current };
+  await db
+    .from('spark_rate_limits')
+    .upsert(
+      { user_id: userId, day: today, count: current + 1 },
+      { onConflict: 'user_id,day' }
+    );
+  return { allowed: true, current: current + 1 };
 }

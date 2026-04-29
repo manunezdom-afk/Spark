@@ -1,0 +1,20 @@
+{
+  "name": "Spark — Entrenador cognitivo",
+  "short_name": "Spark",
+  "description": "Motor de aprendizaje activo. Cinco engines para construir memoria duradera.",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#07080B",
+  "theme_color": "#07080B",
+  "lang": "es",
+  "categories": ["education", "productivity"],
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

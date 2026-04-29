@@ -1,27 +1,66 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --spark-orange: #C97B3F;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: 230 25% 5%;
+    --foreground: 220 15% 96%;
+    --card: 225 22% 7%;
+    --card-foreground: 220 15% 96%;
+    --popover: 225 22% 7%;
+    --popover-foreground: 220 15% 96%;
+    --primary: 231 60% 70%;
+    --primary-foreground: 230 25% 5%;
+    --secondary: 220 12% 14%;
+    --secondary-foreground: 220 15% 96%;
+    --muted: 220 12% 12%;
+    --muted-foreground: 220 8% 60%;
+    --accent: 26 56% 52%;
+    --accent-foreground: 230 25% 5%;
+    --destructive: 0 70% 55%;
+    --destructive-foreground: 220 15% 96%;
+    --border: 220 12% 16%;
+    --input: 220 12% 14%;
+    --ring: 26 56% 52%;
+    --radius: 14px;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html, body {
+    @apply h-full;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "ss01", "cv02", "cv11";
+  }
+  ::selection {
+    background-color: rgba(168, 176, 255, 0.25);
+  }
+}
+
+@layer utilities {
+  .bg-spark-radial {
+    background:
+      radial-gradient(circle at 0% 0%, rgba(168, 176, 255, 0.08), transparent 45%),
+      radial-gradient(circle at 100% 100%, rgba(201, 123, 63, 0.06), transparent 50%),
+      hsl(var(--background));
+  }
+  .glass-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(24px) saturate(1.2);
+  }
+  .glass-card-hover:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.10);
+  }
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.1) transparent;
+  }
 }
