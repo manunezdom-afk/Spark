@@ -50,7 +50,7 @@ function buildUserContext(ctx: EngineContext): string {
   return `
 # CONTEXTO DEL USUARIO (no repetir en respuestas, usar internamente)
 
-- **Carrera / Rol**: ${user.career ?? 'No especificado'} — ${user.current_role ?? ''}
+- **Carrera / Rol**: ${user.career ?? 'No especificado'} — ${user.user_role ?? ''}
 - **Estilo de aprendizaje**: ${user.learning_style ?? 'No definido'}
 - **Proyectos activos**:
 ${projects || '  (ninguno registrado)'}

@@ -59,7 +59,7 @@ export default function OnboardingPage() {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           career: career.trim(),
-          current_role: currentRole.trim() || null,
+          user_role: currentRole.trim() || null,
           learning_style: learningStyle || null,
           active_projects: projects.filter((p) => p.name.trim()),
           personal_goals: goals.filter((g) => g.goal.trim()),

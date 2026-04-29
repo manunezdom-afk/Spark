@@ -28,7 +28,7 @@ export interface SparkUserContext {
   id: string;
   user_id: string;
   career: string | null;
-  current_role: string | null;
+  user_role: string | null;
   active_projects: ActiveProject[];
   personal_goals: PersonalGoal[];
   learning_style: LearningStyle | null;

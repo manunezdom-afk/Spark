@@ -27,7 +27,7 @@ function emptyUserContext(userId: string): SparkUserContext {
     id: "",
     user_id: userId,
     career: null,
-    current_role: null,
+    user_role: null,
     active_projects: [],
     personal_goals: [],
     learning_style: null,

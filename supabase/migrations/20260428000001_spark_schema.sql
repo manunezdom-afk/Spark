@@ -17,7 +17,7 @@ create table spark_user_context (
   id            uuid primary key default uuid_generate_v4(),
   user_id       uuid not null references auth.users(id) on delete cascade,
   career        text,                       -- "Diseño de Modas", "Ing. Software"
-  current_role  text,                       -- "Estudiante", "Founder"
+  user_role     text,                       -- "Estudiante", "Founder"
   active_projects jsonb default '[]',       -- [{ name, type, deadline }]
   personal_goals  jsonb default '[]',       -- [{ goal, category }]
   learning_style  text check (learning_style in (
@@ -284,7 +284,4 @@ create policy spark_session_turns_owner_policy
     )
   );
 
-create policy spark_graph_edges_owner_policy
-  on spark_graph_edges for all
-  using (user_id = auth.uid())
-  with check (user_id = auth.uid());
+-- spark_graph_edges policy already created in the loop above

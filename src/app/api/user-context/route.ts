@@ -13,7 +13,7 @@ export async function GET() {
 
 type PutBody = {
   career?: string;
-  current_role?: string;
+  user_role?: string;
   active_projects?: ActiveProject[];
   personal_goals?: PersonalGoal[];
   learning_style?: LearningStyle;

@@ -66,10 +66,10 @@ export default function AccountPage() {
                 {ctx.career}
               </div>
             )}
-            {ctx.current_role && (
+            {ctx.user_role && (
               <div className="text-sm">
                 <span className="text-muted-foreground">Rol: </span>
-                {ctx.current_role}
+                {ctx.user_role}
               </div>
             )}
             {ctx.learning_style && (
