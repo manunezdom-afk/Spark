@@ -36,7 +36,14 @@
   }
   body {
     @apply bg-background text-foreground antialiased;
-    font-feature-settings: "ss01", "cv02", "cv11";
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display",
+      "Segoe UI Variable", "Segoe UI", system-ui, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  input, textarea, button, select {
+    font-family: inherit;
   }
   ::selection {
     background-color: rgba(168, 176, 255, 0.25);

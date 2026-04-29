@@ -102,7 +102,7 @@ function NewSessionForm() {
         <span className="font-mono text-xs uppercase tracking-[0.2em] text-spark">
           Nueva sesión
         </span>
-        <h1 className="font-serif text-3xl tracking-tight">{ENGINE_LABELS[engine]}</h1>
+        <h1 className="text-3xl font-semibold tracking-tight">{ENGINE_LABELS[engine]}</h1>
         <p className="text-muted-foreground leading-relaxed">
           {ENGINE_DESCRIPTIONS[engine]}
         </p>

@@ -13,7 +13,7 @@ export default function LandingPage() {
         </div>
 
         <div className="flex flex-col gap-4">
-          <h1 className="font-serif text-5xl md:text-6xl leading-[1.05] tracking-tight">
+          <h1 className="text-5xl font-semibold md:text-6xl leading-[1.05] tracking-tight">
             No memorices.{" "}
             <span className="italic text-nova-mid">Entrena.</span>
           </h1>

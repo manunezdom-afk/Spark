@@ -30,7 +30,7 @@ export default async function ErrorsPage() {
         <span className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
           Spark · Errores
         </span>
-        <h1 className="font-serif text-4xl tracking-tight">
+        <h1 className="text-4xl font-semibold tracking-tight">
           Patrones <span className="italic text-nova-mid">que se repiten.</span>
         </h1>
       </header>
@@ -38,7 +38,7 @@ export default async function ErrorsPage() {
       {errors.length === 0 ? (
         <div className="flex flex-col items-center text-center py-16 gap-3 max-w-md mx-auto">
           <AlertCircle className="w-8 h-8 text-muted-foreground/50" strokeWidth={1.5} />
-          <h2 className="font-serif text-2xl">Sin patrones detectados</h2>
+          <h2 className="text-2xl font-semibold">Sin patrones detectados</h2>
           <p className="text-sm text-muted-foreground leading-relaxed">
             Cuando Spark detecte errores recurrentes, aparecerán acá agrupados por
             tipo y frecuencia.

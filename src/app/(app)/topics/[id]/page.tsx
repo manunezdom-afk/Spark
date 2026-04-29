@@ -58,7 +58,7 @@ export default async function TopicDetailPage({ params }: RouteParams) {
             {topic.category}
           </span>
         )}
-        <h1 className="font-serif text-4xl tracking-tight leading-tight">{topic.title}</h1>
+        <h1 className="text-4xl font-semibold tracking-tight leading-tight">{topic.title}</h1>
         {topic.summary && (
           <p className="text-muted-foreground leading-relaxed">{topic.summary}</p>
         )}
@@ -75,13 +75,13 @@ export default async function TopicDetailPage({ params }: RouteParams) {
           <div className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground mb-2">
             Sesiones
           </div>
-          <div className="font-serif text-2xl">{m?.total_sessions ?? 0}</div>
+          <div className="text-2xl font-semibold">{m?.total_sessions ?? 0}</div>
         </div>
         <div className="p-4 rounded-lg border border-white/[0.06] bg-white/[0.02]">
           <div className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground mb-2">
             Errores acumulados
           </div>
-          <div className="font-serif text-2xl">{m?.total_errors ?? 0}</div>
+          <div className="text-2xl font-semibold">{m?.total_errors ?? 0}</div>
         </div>
       </section>
 

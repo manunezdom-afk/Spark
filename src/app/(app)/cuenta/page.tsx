@@ -40,7 +40,7 @@ export default function AccountPage() {
         <span className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
           Spark · Cuenta
         </span>
-        <h1 className="font-serif text-4xl tracking-tight">
+        <h1 className="text-4xl font-semibold tracking-tight">
           Tu <span className="italic text-nova-mid">configuración.</span>
         </h1>
       </header>

@@ -12,7 +12,7 @@ export function ScoreSummary({ payload }: { payload: ScorePayload }) {
           <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
             Resultado
           </span>
-          <div className="font-serif text-4xl tracking-tight">
+          <div className="text-4xl font-semibold tracking-tight">
             <span className="text-spark">{payload.score}</span>
             <span className="text-muted-foreground">/100</span>
           </div>

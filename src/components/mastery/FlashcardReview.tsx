@@ -24,7 +24,7 @@ export function FlashcardReview({ initial }: { initial: SparkFlashcard[] }) {
     return (
       <div className="flex flex-col items-center text-center py-20 gap-3 max-w-md mx-auto">
         <RotateCw className="w-8 h-8 text-muted-foreground/50" strokeWidth={1.5} />
-        <h2 className="font-serif text-2xl">No hay tarjetas por repasar</h2>
+        <h2 className="text-2xl font-semibold">No hay tarjetas por repasar</h2>
         <p className="text-sm text-muted-foreground leading-relaxed">
           Vuelve más tarde. Spark programa tarjetas usando memoria espaciada (SM-2).
         </p>

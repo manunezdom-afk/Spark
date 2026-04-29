@@ -81,7 +81,7 @@ export default function OnboardingPage() {
         <span className="font-mono text-xs uppercase tracking-[0.2em] text-spark">
           Spark · Bienvenida
         </span>
-        <h1 className="font-serif text-4xl tracking-tight leading-tight">
+        <h1 className="text-4xl font-semibold tracking-tight leading-tight">
           Antes de empezar, <span className="italic text-nova-mid">cuéntame quién eres.</span>
         </h1>
         <p className="text-muted-foreground leading-relaxed">

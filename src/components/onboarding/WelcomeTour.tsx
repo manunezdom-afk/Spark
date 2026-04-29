@@ -89,7 +89,7 @@ export function WelcomeTour() {
               <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-spark mb-2 block">
                 {current.tag}
               </span>
-              <h2 className="font-serif text-2xl leading-tight mb-3">{current.title}</h2>
+              <h2 className="text-2xl font-semibold leading-tight mb-3">{current.title}</h2>
               <p className="text-sm text-muted-foreground leading-relaxed">{current.body}</p>
             </div>
 

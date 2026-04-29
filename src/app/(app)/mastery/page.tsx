@@ -23,7 +23,7 @@ export default async function MasteryPage() {
         <span className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
           Spark · Maestría
         </span>
-        <h1 className="font-serif text-4xl tracking-tight">
+        <h1 className="text-4xl font-semibold tracking-tight">
           Lo que sabes <span className="italic text-nova-mid">hoy.</span>
         </h1>
       </header>
@@ -31,7 +31,7 @@ export default async function MasteryPage() {
       {mastery.length === 0 ? (
         <div className="flex flex-col items-center text-center py-16 gap-3 max-w-md mx-auto">
           <Activity className="w-8 h-8 text-muted-foreground/50" strokeWidth={1.5} />
-          <h2 className="font-serif text-2xl">Todavía no entrenas nada</h2>
+          <h2 className="text-2xl font-semibold">Todavía no entrenas nada</h2>
           <p className="text-sm text-muted-foreground leading-relaxed">
             Cuando completes tu primera sesión, esta lista mostrará el avance por tema.
           </p>

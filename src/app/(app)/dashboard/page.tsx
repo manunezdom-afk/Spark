@@ -54,7 +54,7 @@ export default async function DashboardPage() {
             month: "long",
           })}
         </span>
-        <h1 className="font-serif text-4xl md:text-5xl tracking-tight leading-tight">
+        <h1 className="text-4xl font-semibold md:text-5xl tracking-tight leading-tight">
           {greeting}{" "}
           <span className="italic text-nova-mid">
             {totalDue > 0 ? "vamos." : "todo en orden."}
@@ -72,7 +72,7 @@ export default async function DashboardPage() {
               <div className="flex items-center gap-3">
                 <Flame className="w-6 h-6 text-spark" strokeWidth={1.5} />
                 <div>
-                  <div className="font-serif text-2xl">
+                  <div className="text-2xl font-semibold">
                     {totalDue} {totalDue === 1 ? "elemento por repasar" : "elementos por repasar"}
                   </div>
                   <div className="text-sm text-muted-foreground mt-1">
@@ -150,7 +150,7 @@ export default async function DashboardPage() {
       ) : (
         <section className="flex flex-col items-center text-center py-16 gap-4 max-w-md mx-auto">
           <Layers className="w-8 h-8 text-muted-foreground/50" strokeWidth={1.5} />
-          <h2 className="font-serif text-2xl">Empieza por crear un tema</h2>
+          <h2 className="text-2xl font-semibold">Empieza por crear un tema</h2>
           <p className="text-sm text-muted-foreground leading-relaxed">
             Pega un texto, una clase o un capítulo. Spark identifica los conceptos
             atómicos y arma sesiones de entrenamiento para ti.

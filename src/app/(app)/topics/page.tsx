@@ -26,7 +26,7 @@ export default async function TopicsPage() {
           <span className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
             Spark · Temas
           </span>
-          <h1 className="font-serif text-4xl tracking-tight mt-2">
+          <h1 className="text-4xl font-semibold tracking-tight mt-2">
             Tu biblioteca <span className="italic text-nova-mid">de combate</span>
           </h1>
         </div>
@@ -37,7 +37,7 @@ export default async function TopicsPage() {
         <div className="flex flex-col items-center justify-center text-center py-20 gap-4 max-w-sm mx-auto">
           <BookMarked className="w-8 h-8 text-muted-foreground/50" strokeWidth={1.5} />
           <div>
-            <h2 className="font-serif text-2xl mb-2">Aún no tienes temas</h2>
+            <h2 className="text-2xl font-semibold mb-2">Aún no tienes temas</h2>
             <p className="text-sm text-muted-foreground leading-relaxed">
               Empieza importando tus materias desde Kairos, o crea un tema manualmente.
             </p>
