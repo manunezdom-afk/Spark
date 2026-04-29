@@ -12,6 +12,7 @@ import {
   checkAndIncrementRateLimit,
 } from "@/lib/spark/queries";
 import { buildMasterSystemPrompt } from "@/modules/spark/prompts/master-system";
+import { buildKairosContext } from "@/lib/spark/kairos-bridge";
 import { sseStream, extractJsonPayload, stripJsonBlock } from "@/lib/streaming/sse";
 import type {
   EngineContext,
@@ -83,7 +84,15 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
     prior_turns: priorTurns,
   };
 
-  const systemPrompt = buildMasterSystemPrompt(session.engine, ctx);
+  // Inject Kairos notes context if any topic is linked to Kairos sessions
+  const allSourceIds = topics.flatMap((t) => t.source_note_ids ?? []);
+  const kairosContext = allSourceIds.length
+    ? await buildKairosContext(db, user.id, allSourceIds)
+    : null;
+
+  const systemPrompt =
+    buildMasterSystemPrompt(session.engine, ctx) +
+    (kairosContext ? `\n\n${kairosContext}` : "");
 
   // Persist user turn upfront
   const userTurn = await appendTurn(db, {

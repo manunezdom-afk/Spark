@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Sparkles, FileText, Check } from "lucide-react";
+import { Plus, Sparkles, FileText, Check, BookOpen } from "lucide-react";
 import {
   Dialog,
   DialogTrigger,
@@ -24,10 +24,21 @@ type ExtractedTopic = {
   tags: string[];
 };
 
+type KairosSubject = {
+  id: string;
+  name: string;
+  professor: string | null;
+  emoji: string | null;
+  color: string | null;
+  term: string | null;
+  session_count: number;
+  session_ids: string[];
+};
+
 export function NewTopicDialog() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [tab, setTab] = useState<"manual" | "extract">("manual");
+  const [tab, setTab] = useState<"manual" | "extract" | "kairos">("manual");
   const [busy, setBusy] = useState(false);
 
   // Manual
@@ -41,16 +52,28 @@ export function NewTopicDialog() {
   const [extracted, setExtracted] = useState<ExtractedTopic[] | null>(null);
   const [selected, setSelected] = useState<Set<number>>(new Set());
 
+  // Kairos
+  const [kairosSubjects, setKairosSubjects] = useState<KairosSubject[] | null>(null);
+  const [loadingKairos, setLoadingKairos] = useState(false);
+  const [selectedSubjects, setSelectedSubjects] = useState<Set<string>>(new Set());
+
   function reset() {
-    setTitle("");
-    setSummary("");
-    setCategory("");
-    setTags("");
-    setText("");
-    setExtracted(null);
-    setSelected(new Set());
-    setBusy(false);
+    setTitle(""); setSummary(""); setCategory(""); setTags("");
+    setText(""); setExtracted(null); setSelected(new Set());
+    setKairosSubjects(null); setSelectedSubjects(new Set());
+    setBusy(false); setLoadingKairos(false);
   }
+
+  useEffect(() => {
+    if (tab === "kairos" && kairosSubjects === null && !loadingKairos) {
+      setLoadingKairos(true);
+      fetch("/api/bridge/kairos")
+        .then((r) => r.json())
+        .then((d) => setKairosSubjects(d.subjects ?? []))
+        .catch(() => setKairosSubjects([]))
+        .finally(() => setLoadingKairos(false));
+    }
+  }, [tab, kairosSubjects, loadingKairos]);
 
   async function onCreateManual() {
     if (!title.trim()) return;
@@ -68,9 +91,7 @@ export function NewTopicDialog() {
       });
       if (!res.ok) throw new Error((await res.json()).error ?? "Error");
       toast.success("Tema creado.");
-      setOpen(false);
-      reset();
-      router.refresh();
+      setOpen(false); reset(); router.refresh();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Error");
     } finally {
@@ -79,10 +100,7 @@ export function NewTopicDialog() {
   }
 
   async function onExtract() {
-    if (text.trim().length < 50) {
-      toast.error("Pega al menos un párrafo.");
-      return;
-    }
+    if (text.trim().length < 50) { toast.error("Pega al menos un párrafo."); return; }
     setBusy(true);
     try {
       const res = await fetch("/api/topics/extract", {
@@ -116,15 +134,51 @@ export function NewTopicDialog() {
         )
       );
       toast.success(`${chosen.length} ${chosen.length === 1 ? "tema creado" : "temas creados"}.`);
-      setOpen(false);
-      reset();
-      router.refresh();
+      setOpen(false); reset(); router.refresh();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Error");
     } finally {
       setBusy(false);
     }
   }
+
+  async function onImportFromKairos() {
+    if (!kairosSubjects || selectedSubjects.size === 0) return;
+    setBusy(true);
+    try {
+      const chosen = kairosSubjects.filter((s) => selectedSubjects.has(s.id));
+      await Promise.all(
+        chosen.map((s) =>
+          fetch("/api/topics", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({
+              title: s.name,
+              summary: s.professor ? `Materia con ${s.professor}` : null,
+              category: s.term ?? null,
+              tags: [s.name.toLowerCase().replace(/\s+/g, "-")],
+              source_note_ids: s.session_ids,
+              kairos_subject_id: s.id,
+            }),
+          })
+        )
+      );
+      toast.success(
+        `${chosen.length} ${chosen.length === 1 ? "materia importada" : "materias importadas"} de Kairos.`
+      );
+      setOpen(false); reset(); router.refresh();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Error");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  const TABS = [
+    { key: "manual" as const, label: "Manual", icon: FileText },
+    { key: "extract" as const, label: "Extraer de texto", icon: Sparkles },
+    { key: "kairos" as const, label: "Desde Kairos", icon: BookOpen },
+  ];
 
   return (
     <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) reset(); }}>
@@ -143,70 +197,44 @@ export function NewTopicDialog() {
         </DialogHeader>
 
         <div className="flex gap-1 border-b border-white/[0.06] -mt-2">
-          <button
-            onClick={() => setTab("manual")}
-            className={`px-4 py-2 text-sm transition-colors ${
-              tab === "manual"
-                ? "text-foreground border-b-2 border-spark"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            <FileText className="w-3.5 h-3.5 inline mr-2" strokeWidth={1.5} />
-            Manual
-          </button>
-          <button
-            onClick={() => setTab("extract")}
-            className={`px-4 py-2 text-sm transition-colors ${
-              tab === "extract"
-                ? "text-foreground border-b-2 border-spark"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            <Sparkles className="w-3.5 h-3.5 inline mr-2" strokeWidth={1.5} />
-            Extraer de texto
-          </button>
+          {TABS.map(({ key, label, icon: Icon }) => (
+            <button
+              key={key}
+              onClick={() => setTab(key)}
+              className={`px-4 py-2 text-sm transition-colors ${
+                tab === key
+                  ? "text-foreground border-b-2 border-spark"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <Icon className="w-3.5 h-3.5 inline mr-2" strokeWidth={1.5} />
+              {label}
+            </button>
+          ))}
         </div>
 
-        {tab === "manual" ? (
+        {tab === "manual" && (
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
               <Label htmlFor="title">Título</Label>
-              <Input
-                id="title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="ej. Algoritmo de Dijkstra"
-                autoFocus
-              />
+              <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)}
+                placeholder="ej. Algoritmo de Dijkstra" autoFocus />
             </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="summary">Resumen</Label>
-              <Textarea
-                id="summary"
-                value={summary}
-                onChange={(e) => setSummary(e.target.value)}
-                placeholder="Una frase que explique de qué trata."
-                rows={2}
-              />
+              <Textarea id="summary" value={summary} onChange={(e) => setSummary(e.target.value)}
+                placeholder="Una frase que explique de qué trata." rows={2} />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="flex flex-col gap-2">
                 <Label htmlFor="category">Categoría</Label>
-                <Input
-                  id="category"
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  placeholder="ej. Algoritmos"
-                />
+                <Input id="category" value={category} onChange={(e) => setCategory(e.target.value)}
+                  placeholder="ej. Algoritmos" />
               </div>
               <div className="flex flex-col gap-2">
                 <Label htmlFor="tags">Etiquetas (separadas por coma)</Label>
-                <Input
-                  id="tags"
-                  value={tags}
-                  onChange={(e) => setTags(e.target.value)}
-                  placeholder="grafos, ruta-corta"
-                />
+                <Input id="tags" value={tags} onChange={(e) => setTags(e.target.value)}
+                  placeholder="grafos, ruta-corta" />
               </div>
             </div>
             <div className="flex justify-end pt-2">
@@ -215,19 +243,16 @@ export function NewTopicDialog() {
               </Button>
             </div>
           </div>
-        ) : (
+        )}
+
+        {tab === "extract" && (
           <div className="flex flex-col gap-4">
             {!extracted ? (
               <>
                 <div className="flex flex-col gap-2">
                   <Label htmlFor="text">Pega el texto fuente</Label>
-                  <Textarea
-                    id="text"
-                    value={text}
-                    onChange={(e) => setText(e.target.value)}
-                    placeholder="Apuntes de clase, capítulo del libro, transcripción…"
-                    rows={10}
-                  />
+                  <Textarea id="text" value={text} onChange={(e) => setText(e.target.value)}
+                    placeholder="Apuntes de clase, capítulo del libro, transcripción…" rows={10} />
                   <p className="text-xs text-muted-foreground">
                     Spark detectará los conceptos atómicos y los preparará para entrenar.
                   </p>
@@ -243,41 +268,26 @@ export function NewTopicDialog() {
                 <div className="text-sm text-muted-foreground">
                   Encontré {extracted.length} {extracted.length === 1 ? "concepto" : "conceptos"}. Marca los que quieres guardar.
                 </div>
-                <div className="flex flex-col gap-2 max-h-[360px] overflow-y-auto scrollbar-thin pr-1">
+                <div className="flex flex-col gap-2 max-h-[360px] overflow-y-auto pr-1">
                   {extracted.map((t, i) => {
                     const isSelected = selected.has(i);
                     return (
-                      <button
-                        key={i}
-                        onClick={() => {
-                          const next = new Set(selected);
-                          if (isSelected) next.delete(i);
-                          else next.add(i);
-                          setSelected(next);
-                        }}
-                        className={`text-left p-3 rounded-md border transition-colors ${
-                          isSelected
-                            ? "border-spark/40 bg-spark/[0.05]"
-                            : "border-white/10 bg-white/[0.02] hover:bg-white/[0.04]"
-                        }`}
-                      >
+                      <button key={i} onClick={() => {
+                        const next = new Set(selected);
+                        if (isSelected) next.delete(i); else next.add(i);
+                        setSelected(next);
+                      }} className={`text-left p-3 rounded-md border transition-colors ${
+                        isSelected ? "border-spark/40 bg-spark/[0.05]" : "border-white/10 bg-white/[0.02] hover:bg-white/[0.04]"
+                      }`}>
                         <div className="flex items-start justify-between gap-3">
                           <div className="flex-1">
-                            <div className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground mb-1">
-                              {t.category}
-                            </div>
+                            <div className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground mb-1">{t.category}</div>
                             <div className="font-medium text-sm">{t.title}</div>
-                            <div className="text-xs text-muted-foreground mt-1 leading-relaxed">
-                              {t.summary}
-                            </div>
+                            <div className="text-xs text-muted-foreground mt-1 leading-relaxed">{t.summary}</div>
                           </div>
-                          <div
-                            className={`w-5 h-5 rounded shrink-0 border flex items-center justify-center transition-colors ${
-                              isSelected
-                                ? "bg-spark border-spark"
-                                : "border-white/20"
-                            }`}
-                          >
+                          <div className={`w-5 h-5 rounded shrink-0 border flex items-center justify-center transition-colors ${
+                            isSelected ? "bg-spark border-spark" : "border-white/20"
+                          }`}>
                             {isSelected && <Check className="w-3 h-3 text-background" strokeWidth={2.5} />}
                           </div>
                         </div>
@@ -286,14 +296,73 @@ export function NewTopicDialog() {
                   })}
                 </div>
                 <div className="flex items-center justify-between pt-2">
-                  <button
-                    onClick={() => { setExtracted(null); setSelected(new Set()); }}
-                    className="text-xs text-muted-foreground hover:text-foreground"
-                  >
+                  <button onClick={() => { setExtracted(null); setSelected(new Set()); }}
+                    className="text-xs text-muted-foreground hover:text-foreground">
                     Volver a editar texto
                   </button>
                   <Button onClick={onConfirmExtracted} disabled={busy || selected.size === 0}>
                     {busy ? "Guardando…" : `Guardar ${selected.size}`}
+                  </Button>
+                </div>
+              </>
+            )}
+          </div>
+        )}
+
+        {tab === "kairos" && (
+          <div className="flex flex-col gap-4">
+            <p className="text-sm text-muted-foreground">
+              Importa tus materias de Kairos como temas. Spark usará tus notas de clase como contexto en cada sesión.
+            </p>
+
+            {loadingKairos && (
+              <div className="text-sm text-muted-foreground italic">Cargando materias…</div>
+            )}
+
+            {kairosSubjects !== null && kairosSubjects.length === 0 && (
+              <div className="text-sm text-muted-foreground p-4 rounded-lg border border-white/[0.06] bg-white/[0.02]">
+                No se encontraron materias en Kairos. Crea algunas desde Kairos primero.
+              </div>
+            )}
+
+            {kairosSubjects !== null && kairosSubjects.length > 0 && (
+              <>
+                <div className="flex flex-col gap-2 max-h-[360px] overflow-y-auto pr-1">
+                  {kairosSubjects.map((s) => {
+                    const isSelected = selectedSubjects.has(s.id);
+                    return (
+                      <button key={s.id} onClick={() => {
+                        const next = new Set(selectedSubjects);
+                        if (isSelected) next.delete(s.id); else next.add(s.id);
+                        setSelectedSubjects(next);
+                      }} className={`text-left p-3 rounded-md border transition-colors ${
+                        isSelected ? "border-spark/40 bg-spark/[0.05]" : "border-white/10 bg-white/[0.02] hover:bg-white/[0.04]"
+                      }`}>
+                        <div className="flex items-center justify-between gap-3">
+                          <div className="flex items-center gap-3 min-w-0">
+                            {s.emoji && <span className="text-lg shrink-0">{s.emoji}</span>}
+                            <div className="min-w-0">
+                              <div className="font-medium text-sm truncate">{s.name}</div>
+                              <div className="text-xs text-muted-foreground mt-0.5">
+                                {s.professor && <span>{s.professor} · </span>}
+                                {s.session_count} {s.session_count === 1 ? "clase" : "clases"}
+                                {s.term && <span> · {s.term}</span>}
+                              </div>
+                            </div>
+                          </div>
+                          <div className={`w-5 h-5 rounded shrink-0 border flex items-center justify-center transition-colors ${
+                            isSelected ? "bg-spark border-spark" : "border-white/20"
+                          }`}>
+                            {isSelected && <Check className="w-3 h-3 text-background" strokeWidth={2.5} />}
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+                <div className="flex justify-end pt-2">
+                  <Button onClick={onImportFromKairos} disabled={busy || selectedSubjects.size === 0}>
+                    {busy ? "Importando…" : `Importar ${selectedSubjects.size > 0 ? selectedSubjects.size : ""} ${selectedSubjects.size === 1 ? "materia" : "materias"}`}
                   </Button>
                 </div>
               </>

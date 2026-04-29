@@ -89,6 +89,7 @@ export async function createTopic(
     category?: string | null;
     tags?: string[];
     source_note_ids?: string[];
+    kairos_subject_id?: string | null;
   }
 ): Promise<SparkTopic> {
   const { data, error } = await db
@@ -100,6 +101,7 @@ export async function createTopic(
       category: input.category ?? null,
       tags: input.tags ?? [],
       source_note_ids: input.source_note_ids ?? [],
+      kairos_subject_id: input.kairos_subject_id ?? null,
     })
     .select()
     .single();
