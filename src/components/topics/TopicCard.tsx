@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, BookOpen } from "lucide-react";
 import type { SparkTopic, SparkMasteryState } from "@/modules/spark/types";
 
 export function TopicCard({
@@ -23,6 +23,12 @@ export function TopicCard({
             {topic.category && (
               <span className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
                 {topic.category}
+              </span>
+            )}
+            {topic.kairos_subject_id && (
+              <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-[0.14em] text-nova-mid border border-nova-mid/20 bg-nova-mid/[0.06] px-1.5 py-0.5 rounded-full">
+                <BookOpen className="w-2.5 h-2.5" strokeWidth={1.5} />
+                Kairos
               </span>
             )}
           </div>

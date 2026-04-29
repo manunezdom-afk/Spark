@@ -34,12 +34,23 @@ export default async function TopicsPage() {
       </header>
 
       {topics.length === 0 ? (
-        <div className="flex flex-col items-center justify-center text-center py-20 gap-3 max-w-md mx-auto">
+        <div className="flex flex-col items-center justify-center text-center py-20 gap-4 max-w-sm mx-auto">
           <BookMarked className="w-8 h-8 text-muted-foreground/50" strokeWidth={1.5} />
-          <h2 className="font-serif text-2xl">Aún no has creado ningún tema</h2>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            Pega un texto y deja que Spark extraiga los conceptos atómicos, o créalos manualmente uno por uno.
-          </p>
+          <div>
+            <h2 className="font-serif text-2xl mb-2">Aún no tienes temas</h2>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Empieza importando tus materias desde Kairos, o crea un tema manualmente.
+            </p>
+          </div>
+          <div className="w-full text-left p-4 rounded-lg border border-white/[0.06] bg-white/[0.02] text-sm text-muted-foreground leading-relaxed">
+            <div className="font-medium text-foreground mb-1">Para conectar con Kairos:</div>
+            <ol className="list-decimal list-inside space-y-1 text-xs">
+              <li>Click en <span className="text-foreground font-medium">Nuevo tema</span> arriba a la derecha</li>
+              <li>Selecciona la pestaña <span className="text-nova-mid font-medium">Desde Kairos</span></li>
+              <li>Elige tus materias y haz click en Importar</li>
+            </ol>
+          </div>
+          <NewTopicDialog />
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
