@@ -9,7 +9,7 @@ export default function SparkLayout({ children }: { children: ReactNode }) {
       {/* Ambient gradients */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-orange-900/20 blur-[120px]" />
-        <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-[#FB923C]/10 blur-[120px]" />
+        <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-[#C97B3F]/8 blur-[120px]" />
       </div>
 
       {/* Nav */}

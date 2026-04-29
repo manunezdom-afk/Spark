@@ -32,7 +32,7 @@ export default function SparkDashboard() {
                 Spark
               </h1>
               <span className="text-[10px] font-medium tracking-widest uppercase
-                               text-orange-400/70 border border-orange-400/20 rounded-full px-2 py-0.5">
+                               text-[#C97B3F]/70 border border-[#C97B3F]/20 rounded-full px-2 py-0.5">
                 Focus OS
               </span>
             </div>
@@ -48,7 +48,7 @@ export default function SparkDashboard() {
         <section className="relative overflow-hidden rounded-3xl
                             bg-gradient-to-br from-violet-950/90 via-violet-900/50 to-purple-900/30
                             border border-violet-500/20
-                            shadow-[0_0_60px_-16px_rgba(139,92,246,0.35)]">
+                            shadow-[0_0_60px_-16px_rgba(139,92,246,0.15)]">
           {/* Background glow */}
           <div className="absolute top-0 right-0 w-[50%] h-[120%] rounded-full
                           bg-violet-500/10 blur-[70px] pointer-events-none" />
@@ -94,9 +94,8 @@ export default function SparkDashboard() {
             <Link
               href="/spark/session/new"
               className="group shrink-0 flex items-center gap-2 px-5 py-3 rounded-xl
-                         bg-violet-500 hover:bg-violet-400
+                         bg-violet-700 hover:bg-violet-600
                          text-white text-sm font-semibold
-                         shadow-[0_0_20px_-4px_rgba(139,92,246,0.5)]
                          transition-all duration-200 whitespace-nowrap"
             >
               Empezar con Nova

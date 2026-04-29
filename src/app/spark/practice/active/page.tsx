@@ -97,12 +97,12 @@ function MethodGuide({ method, onDone }: { method: StudyMethod; onDone: () => vo
           >
             <div className={`flex flex-col items-start gap-0.5 px-3 py-2 rounded-xl border transition-all duration-500
                              ${i === active
-                               ? 'bg-orange-500/10 border-orange-500/30'
+                               ? 'bg-[#C97B3F]/8 border-[#C97B3F]/25'
                                : i < active
                                  ? 'bg-white/[0.02] border-white/[0.05]'
                                  : 'bg-transparent border-white/[0.04]'}`}>
               <span className={`text-[11px] font-semibold transition-colors duration-300
-                                ${i === active ? 'text-orange-300' : i < active ? 'text-zinc-500' : 'text-zinc-700'}`}>
+                                ${i === active ? 'text-[#C97B3F]' : i < active ? 'text-zinc-500' : 'text-zinc-700'}`}>
                 {s.step}
               </span>
               {i === active && (
@@ -147,21 +147,20 @@ function FlashcardView({
             <button
               onClick={onReveal}
               className="mt-auto group flex items-center justify-center gap-2 py-3 rounded-xl
-                         bg-orange-500/10 border border-orange-500/30 text-orange-300 text-sm font-medium
-                         hover:bg-orange-500/15 hover:border-orange-500/50 transition-all"
+                         bg-[#C97B3F]/8 border border-[#C97B3F]/25 text-[#D4894A] text-sm font-medium
+                         hover:bg-[#C97B3F]/12 hover:border-[#C97B3F]/40 transition-all"
             >
               Revelar respuesta
-              <kbd className="text-[10px] text-orange-400/60 px-1.5 py-0.5 rounded
-                              bg-orange-500/10 border border-orange-500/20">Espacio</kbd>
+              <kbd className="text-[10px] text-[#C97B3F]/50 px-1.5 py-0.5 rounded
+                              bg-[#C97B3F]/8 border border-[#C97B3F]/15">Espacio</kbd>
             </button>
           </div>
 
           {/* BACK */}
           <div className="absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)]
                           flex flex-col gap-5 p-6 md:p-8 rounded-3xl
-                          bg-gradient-to-br from-orange-950/30 via-white/[0.03] to-white/[0.03]
-                          border border-orange-500/20">
-            <p className="text-[11px] uppercase tracking-wider text-orange-400/70">Respuesta · {card.topic}</p>
+                          bg-[#C97B3F]/[0.04] border border-[#C97B3F]/15">
+            <p className="text-[11px] uppercase tracking-wider text-[#C97B3F]/60">Respuesta · {card.topic}</p>
             <p className="text-zinc-200 text-base md:text-lg leading-relaxed">{card.back}</p>
             <div className="mt-auto flex flex-col gap-2">
               <p className="text-[10px] uppercase tracking-widest text-zinc-600 text-center">¿Qué tan bien la sabías?</p>
@@ -295,7 +294,7 @@ function SimulationView({
                         font-mono text-sm font-semibold tabular-nums transition-colors
                         ${lowTime
                           ? 'bg-rose-500/10 border border-rose-500/40 text-rose-300 animate-pulse'
-                          : 'bg-white/[0.04] border border-white/[0.08] text-orange-300'}`}>
+                          : 'bg-white/[0.04] border border-white/[0.08] text-[#C97B3F]'}`}>
           <Timer className="w-3.5 h-3.5" />
           {mm}:{ss}
         </div>
@@ -312,14 +311,14 @@ function SimulationView({
             rows={5}
             className="w-full p-4 rounded-xl bg-white/[0.02] border border-white/[0.07] text-white
                        placeholder:text-zinc-700 outline-none text-sm leading-relaxed resize-y min-h-[120px]
-                       focus:border-orange-500/40 focus:bg-white/[0.04] transition-all"
+                       focus:border-[#C97B3F]/35 focus:bg-white/[0.04] transition-all"
           />
           <button
             onClick={() => setPhase('review')}
             disabled={!text.trim()}
             className="flex items-center justify-center gap-2 py-3 rounded-xl
-                       bg-orange-500/10 border border-orange-500/30 text-orange-300 text-sm font-medium
-                       hover:bg-orange-500/15 hover:border-orange-500/50 transition-all
+                       bg-[#C97B3F]/8 border border-[#C97B3F]/25 text-[#D4894A] text-sm font-medium
+                       hover:bg-[#C97B3F]/12 hover:border-[#C97B3F]/40 transition-all
                        disabled:opacity-40 disabled:cursor-not-allowed"
           >
             <Send className="w-4 h-4" />
@@ -483,7 +482,7 @@ function ResultScreen({
       {weakTopics.length > 0 && (
         <section className="flex flex-col gap-3 p-5 rounded-2xl bg-white/[0.02] border border-white/[0.06]">
           <div className="flex items-center gap-2">
-            <TrendingDown className="w-4 h-4 text-orange-400/70" />
+            <TrendingDown className="w-4 h-4 text-[#C97B3F]/70" />
             <h2 className="text-sm font-medium text-zinc-200">Temas a reforzar</h2>
           </div>
           <div className="flex flex-wrap gap-1.5">
@@ -502,10 +501,9 @@ function ResultScreen({
         <Link
           href="/spark/session/new"
           className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl
-                     bg-gradient-to-r from-orange-600 to-orange-500
-                     hover:from-orange-500 hover:to-orange-400
+                     bg-[#A86030] hover:bg-[#C27035]
                      text-white text-sm font-semibold
-                     shadow-[0_0_24px_-8px_rgba(251,146,60,0.5)] transition-all"
+                     transition-all"
         >
           <RefreshCw className="w-4 h-4" />
           Otra práctica
@@ -670,7 +668,7 @@ function PracticeView() {
       <div className="flex items-center justify-between">
         <Link
           href="/"
-          className="flex items-center gap-2 text-sm text-zinc-500 hover:text-orange-400 transition-colors"
+          className="flex items-center gap-2 text-sm text-zinc-500 hover:text-[#C97B3F] transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           Salir
@@ -686,7 +684,7 @@ function PracticeView() {
           )}
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-full
                           bg-white/[0.03] border border-white/[0.07]">
-            <Icon className="w-3.5 h-3.5 text-orange-400" />
+            <Icon className="w-3.5 h-3.5 text-[#C97B3F]" />
             <span className="text-xs text-zinc-300 font-medium">{meta.label}</span>
           </div>
         </div>
@@ -700,7 +698,7 @@ function PracticeView() {
         </div>
         <div className="h-1 rounded-full bg-white/[0.05] overflow-hidden">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-orange-500 to-amber-400
+            className="h-full rounded-full bg-[#C97B3F]/80
                        transition-all duration-500 ease-out"
             style={{ width: `${progress}%` }}
           />

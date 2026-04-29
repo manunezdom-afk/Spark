@@ -65,7 +65,7 @@ export function RecentDataPanels() {
                           bg-white/[0.02] border border-white/[0.06]">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <History className="w-4 h-4 text-orange-400/70" />
+            <History className="w-4 h-4 text-[#C97B3F]/70" />
             <h2 className="text-sm font-medium text-zinc-200">Sesiones recientes</h2>
           </div>
           {hydrated && sessions.length > 0 && (
@@ -98,9 +98,9 @@ export function RecentDataPanels() {
                   className="flex items-center gap-3 px-3 py-2.5 rounded-xl
                              bg-white/[0.02] border border-white/[0.04]
                              hover:bg-white/[0.04] hover:border-white/[0.08] transition-all">
-                  <div className="w-7 h-7 rounded-lg bg-orange-500/10 border border-orange-500/15
+                  <div className="w-7 h-7 rounded-lg bg-[#C97B3F]/10 border border-[#C97B3F]/12
                                   flex items-center justify-center shrink-0">
-                    <Icon className="w-3.5 h-3.5 text-orange-400" />
+                    <Icon className="w-3.5 h-3.5 text-[#C97B3F]" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-medium text-zinc-200 truncate">{s.name}</p>
@@ -117,7 +117,7 @@ export function RecentDataPanels() {
             <Link
               href="/spark/session/new"
               className="flex items-center justify-center gap-1.5 mt-1 py-2 rounded-lg
-                         text-[11px] text-orange-400/70 hover:text-orange-300 transition-colors"
+                         text-[11px] text-[#C97B3F]/70 hover:text-[#C97B3F] transition-colors"
             >
               Nueva sesión
               <ArrowRight className="w-3 h-3" />
@@ -130,7 +130,7 @@ export function RecentDataPanels() {
       <section className="flex flex-col gap-3 p-5 rounded-2xl
                           bg-white/[0.02] border border-white/[0.06]">
         <div className="flex items-center gap-2">
-          <TrendingDown className="w-4 h-4 text-orange-400/70" />
+          <TrendingDown className="w-4 h-4 text-[#C97B3F]/70" />
           <h2 className="text-sm font-medium text-zinc-200">Debilidades detectadas</h2>
         </div>
 

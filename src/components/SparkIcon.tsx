@@ -40,8 +40,8 @@ export function SparkIcon({ size = 40, className = '', bare = false }: SparkIcon
     >
       <defs>
         <linearGradient id="spark-bg" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#FF4500" />
-          <stop offset="100%" stopColor="#FFAA00" />
+          <stop offset="0%" stopColor="#A85C28" />
+          <stop offset="100%" stopColor="#C98440" />
         </linearGradient>
       </defs>
       {/* Background */}

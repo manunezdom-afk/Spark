@@ -3,7 +3,7 @@ export default function LoginPage() {
     <div className="min-h-screen bg-[#07080B] text-white flex items-center justify-center">
       <div className="flex flex-col items-center gap-6 p-8 rounded-2xl bg-white/[0.03] border border-white/10 w-full max-w-sm">
         <h1 className="text-2xl font-semibold">
-          Spark <span className="text-orange-400">Login</span>
+          Spark <span className="text-[#C97B3F]">Login</span>
         </h1>
         <p className="text-zinc-500 text-sm text-center">
           Autenticación con Supabase — próximamente.

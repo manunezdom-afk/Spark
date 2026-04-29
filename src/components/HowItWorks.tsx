@@ -55,8 +55,8 @@ export function HowItWorks() {
                           : 'opacity-0 translate-y-3'}`}
           >
             <div className="flex items-start justify-between">
-              <div className="w-9 h-9 rounded-xl bg-orange-500/10 border border-orange-500/10 flex items-center justify-center">
-                <step.Icon className="w-4 h-4 text-orange-400" />
+              <div className="w-9 h-9 rounded-xl bg-[#C97B3F]/10 border border-[#C97B3F]/10 flex items-center justify-center">
+                <step.Icon className="w-4 h-4 text-[#C97B3F]" />
               </div>
               <span className="text-2xl font-bold text-white/[0.04] select-none">
                 {step.number}

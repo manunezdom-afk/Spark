@@ -27,7 +27,7 @@ function FlashcardPreview() {
       <div className="p-3 rounded-lg bg-white/[0.04] border border-white/[0.08] text-xs text-zinc-300 leading-relaxed">
         ¿Qué postula la espiral del silencio?
       </div>
-      <div className="p-3 rounded-lg bg-orange-500/5 border border-orange-500/15 text-xs text-zinc-400 leading-relaxed">
+      <div className="p-3 rounded-lg bg-[#C97B3F]/5 border border-[#C97B3F]/12 text-xs text-zinc-400 leading-relaxed">
         Las personas tienden a callar opiniones que perciben como minoritarias,
         reforzando la opinión dominante.
       </div>
@@ -72,11 +72,11 @@ function SimulationPreview() {
     <div className="flex flex-col gap-2">
       <span className="text-[10px] uppercase tracking-wider text-zinc-600">Así se ve</span>
       <div className="flex items-center justify-between">
-        <span className="font-mono text-sm text-orange-300 font-semibold">12:45</span>
+        <span className="font-mono text-sm text-[#C97B3F] font-semibold">12:45</span>
         <span className="text-[11px] text-zinc-500">Pregunta 3 / 10</span>
       </div>
       <div className="w-full h-1 rounded-full bg-white/[0.05]">
-        <div className="h-full w-[30%] rounded-full bg-orange-500/50" />
+        <div className="h-full w-[30%] rounded-full bg-[#C97B3F]/40" />
       </div>
       <p className="text-[11px] text-zinc-400 leading-snug">
         Define qué entiende la teoría crítica por "industria cultural"
@@ -134,21 +134,20 @@ export function MethodCards() {
               href={`/spark/session/new?method=${id}`}
               className="group flex flex-col gap-4 p-5 rounded-2xl
                          bg-white/[0.03] border border-white/[0.07]
-                         hover:bg-white/[0.05] hover:border-orange-500/30
-                         hover:shadow-[0_0_24px_-8px_rgba(251,146,60,0.25)]
+                         hover:bg-white/[0.05] hover:border-[#C97B3F]/25
                          transition-all duration-300"
             >
               {/* ── Always visible ── */}
               <div className="flex flex-col gap-3">
-                <div className="w-9 h-9 rounded-xl bg-orange-500/10 border border-orange-500/10
+                <div className="w-9 h-9 rounded-xl bg-[#C97B3F]/10 border border-[#C97B3F]/10
                                 flex items-center justify-center
-                                group-hover:bg-orange-500/15 group-hover:border-orange-500/20
+                                group-hover:bg-[#C97B3F]/15 group-hover:border-[#C97B3F]/20
                                 transition-all duration-300">
-                  <Icon className="w-4 h-4 text-orange-400" />
+                  <Icon className="w-4 h-4 text-[#C97B3F]" />
                 </div>
                 <div>
                   <h3 className="font-semibold text-white text-sm
-                                 group-hover:text-orange-300 transition-colors duration-200">
+                                 group-hover:text-[#D4894A] transition-colors duration-200">
                     {m.label}
                   </h3>
                   <p className="text-xs text-zinc-500 mt-0.5 leading-snug">{m.short}</p>

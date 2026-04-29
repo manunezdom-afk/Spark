@@ -115,7 +115,7 @@ function NewSessionForm() {
       {/* ── Back ────────────────────────────────────────────── */}
       <Link
         href="/"
-        className="flex items-center gap-2 text-sm text-zinc-500 hover:text-orange-400 transition-colors w-fit"
+        className="flex items-center gap-2 text-sm text-zinc-500 hover:text-[#C97B3F] transition-colors w-fit"
       >
         <ArrowLeft className="w-4 h-4" />
         Volver
@@ -124,7 +124,7 @@ function NewSessionForm() {
       {/* ── Title ───────────────────────────────────────────── */}
       <header className="flex flex-col gap-4">
         <div>
-          <p className="text-xs font-medium uppercase tracking-widest text-orange-400/80">Paso a paso</p>
+          <p className="text-xs font-medium uppercase tracking-widest text-[#C97B3F]/80">Paso a paso</p>
           <h1 className="text-3xl font-semibold tracking-tight mt-1">Nueva sesión de práctica</h1>
           <p className="text-sm text-zinc-400 mt-2">
             Nombra tu prueba, elige un método y pega tus apuntes. Nova arma la práctica.
@@ -146,7 +146,7 @@ function NewSessionForm() {
       {/* ── 1. Name ─────────────────────────────────────────── */}
       <Field
         step="1"
-        icon={<Tag className="w-4 h-4 text-orange-400/70" />}
+        icon={<Tag className="w-4 h-4 text-[#C97B3F]/70" />}
         label="¿Qué estás preparando?"
         hint="Ej: Solemne de Psicología · Control de Historia · Certamen de Cálculo II"
         done={step1Done}
@@ -158,14 +158,14 @@ function NewSessionForm() {
           placeholder="Solemne de Teorías de la Comunicación"
           className="w-full p-4 rounded-xl bg-white/[0.03] border border-white/[0.07] text-white
                      placeholder:text-zinc-600 outline-none text-sm
-                     focus:border-orange-500/60 focus:bg-white/[0.05] transition-all"
+                     focus:border-[#C97B3F]/40 focus:bg-white/[0.05] transition-all"
         />
       </Field>
 
       {/* ── 2. Method ───────────────────────────────────────── */}
       <Field
         step="2"
-        icon={<Sparkles className="w-4 h-4 text-orange-400/70" />}
+        icon={<Sparkles className="w-4 h-4 text-[#C97B3F]/70" />}
         label="Método de práctica"
         hint="Elige cómo quieres que Nova te entrene."
         done={step2Done}
@@ -183,15 +183,15 @@ function NewSessionForm() {
                 className={`group relative flex flex-col items-start gap-3 p-4 rounded-xl text-left
                             border transition-all duration-150
                             ${selected
-                              ? 'bg-orange-500/10 border-orange-500/50 shadow-[0_0_18px_-6px_rgba(251,146,60,0.4)]'
+                              ? 'bg-[#C97B3F]/8 border-[#C97B3F]/35'
                               : 'bg-white/[0.02] border-white/[0.07] hover:bg-white/[0.05] hover:border-white/[0.12]'}`}
               >
                 <div className="flex items-center justify-between w-full">
                   <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors
                                    ${selected
-                                     ? 'bg-orange-500/20 border border-orange-500/30'
+                                     ? 'bg-[#C97B3F]/15 border border-[#C97B3F]/25'
                                      : 'bg-white/[0.05] border border-white/10'}`}>
-                    <Icon className={`w-4 h-4 transition-colors ${selected ? 'text-orange-300' : 'text-zinc-400'}`} />
+                    <Icon className={`w-4 h-4 transition-colors ${selected ? 'text-[#C97B3F]' : 'text-zinc-400'}`} />
                   </div>
                   {!m.ready && (
                     <span className="text-[10px] uppercase tracking-wider text-zinc-600 border border-white/10 rounded-full px-1.5 py-0.5">
@@ -201,7 +201,7 @@ function NewSessionForm() {
                 </div>
                 <div>
                   <h3 className={`font-medium text-sm transition-colors
-                                  ${selected ? 'text-orange-300' : 'text-white'}`}>
+                                  ${selected ? 'text-[#D4894A]' : 'text-white'}`}>
                     {m.label}
                   </h3>
                   <p className="text-[11px] text-zinc-500 mt-0.5 leading-snug">{m.short}</p>
@@ -211,7 +211,7 @@ function NewSessionForm() {
           })}
         </div>
         {method && (
-          <p className="text-xs text-zinc-500 mt-3 leading-relaxed pl-3 border-l-2 border-orange-500/30">
+          <p className="text-xs text-zinc-500 mt-3 leading-relaxed pl-3 border-l-2 border-[#C97B3F]/25">
             {METHODS[method].description}
           </p>
         )}
@@ -220,7 +220,7 @@ function NewSessionForm() {
       {/* ── 3. Content ──────────────────────────────────────── */}
       <Field
         step="3"
-        icon={<FileText className="w-4 h-4 text-orange-400/70" />}
+        icon={<FileText className="w-4 h-4 text-[#C97B3F]/70" />}
         label="Contenido o tema"
         hint="Pega tus apuntes, un resumen o lista de conceptos. Cuanto más específico, mejor."
         done={step3Done}
@@ -233,7 +233,7 @@ function NewSessionForm() {
             rows={6}
             className={`w-full p-4 rounded-xl bg-white/[0.03] border border-white/[0.07] text-white
                        outline-none text-sm leading-relaxed resize-y min-h-[140px]
-                       focus:border-orange-500/60 focus:bg-white/[0.05] transition-all
+                       focus:border-[#C97B3F]/40 focus:bg-white/[0.05] transition-all
                        placeholder:transition-opacity placeholder:duration-300
                        ${phVisible ? 'placeholder:opacity-60' : 'placeholder:opacity-0'}`}
           />
@@ -244,7 +244,7 @@ function NewSessionForm() {
                 <span
                   key={i}
                   className={`w-1 h-1 rounded-full transition-all duration-300
-                              ${i === phIdx ? 'bg-orange-400/60 scale-125' : 'bg-zinc-700'}`}
+                              ${i === phIdx ? 'bg-[#C97B3F]/60 scale-125' : 'bg-zinc-700'}`}
                 />
               ))}
             </div>
@@ -261,11 +261,10 @@ function NewSessionForm() {
         onClick={handleSubmit}
         disabled={!canSubmit || busy}
         className="group flex items-center justify-center gap-3 w-full py-4 rounded-xl
-                   bg-gradient-to-r from-orange-600 to-orange-500
-                   hover:from-orange-500 hover:to-orange-400
-                   font-semibold text-white shadow-[0_0_30px_-8px_rgba(251,146,60,0.4)]
+                   bg-[#A86030] hover:bg-[#C27035]
+                   font-semibold text-white
                    transition-all duration-300
-                   disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none"
+                   disabled:opacity-40 disabled:cursor-not-allowed"
       >
         {busy ? 'Nova está pensando…' : 'Generar práctica con Nova'}
         {!busy && <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />}
@@ -290,12 +289,12 @@ function NovaThinking({ step }: { step: number }) {
 
         {/* Pulsing brain with orbital dot */}
         <div className="relative">
-          <div className="absolute inset-[-30px] rounded-full bg-violet-500/20 blur-3xl animate-pulse" />
+          <div className="absolute inset-[-30px] rounded-full bg-violet-500/8 blur-3xl animate-pulse" />
           <div className="relative w-24 h-24 rounded-3xl
                           bg-gradient-to-br from-violet-500/25 to-violet-700/15
                           border border-violet-400/30
                           flex items-center justify-center
-                          shadow-[0_0_60px_-8px_rgba(139,92,246,0.6)]">
+                          shadow-[0_0_40px_-12px_rgba(139,92,246,0.25)]">
             <Brain className="w-11 h-11 text-violet-200 animate-pulse" />
           </div>
           {/* Orbital dot */}
@@ -303,13 +302,13 @@ function NovaThinking({ step }: { step: number }) {
                style={{ animationDuration: '3s' }}>
             <span className="absolute top-0 left-1/2 -translate-x-1/2
                              w-2 h-2 rounded-full bg-violet-300
-                             shadow-[0_0_12px_rgba(196,181,253,0.9)]" />
+                             shadow-[0_0_8px_rgba(196,181,253,0.3)]" />
           </div>
           <div className="absolute inset-[-16px] animate-spin"
                style={{ animationDuration: '4.5s', animationDirection: 'reverse' }}>
             <span className="absolute bottom-0 left-1/2 -translate-x-1/2
-                             w-1.5 h-1.5 rounded-full bg-orange-300
-                             shadow-[0_0_10px_rgba(253,186,116,0.8)]" />
+                             w-1.5 h-1.5 rounded-full bg-[#C97B3F]
+                             shadow-[0_0_6px_rgba(201,123,63,0.3)]" />
           </div>
         </div>
 
@@ -331,7 +330,7 @@ function NovaThinking({ step }: { step: number }) {
               key={i}
               className={`h-1.5 rounded-full transition-all duration-500
                           ${i < step ? 'w-6 bg-violet-400'
-                          : i === step ? 'w-8 bg-violet-300 shadow-[0_0_8px_rgba(196,181,253,0.8)]'
+                          : i === step ? 'w-8 bg-violet-400'
                           :              'w-3 bg-zinc-800'}`}
             />
           ))}
@@ -366,10 +365,10 @@ function Field({
                          transition-all duration-300
                          ${done
                            ? 'bg-emerald-500/15 border border-emerald-500/40'
-                           : 'bg-orange-500/10 border border-orange-500/30'}`}>
+                           : 'bg-[#C97B3F]/8 border border-[#C97B3F]/25'}`}>
           <span
             className={`absolute text-[11px] font-medium transition-all duration-200
-                         ${done ? 'opacity-0 scale-50' : 'opacity-100 scale-100'} text-orange-300`}
+                         ${done ? 'opacity-0 scale-50' : 'opacity-100 scale-100'} text-[#C97B3F]`}
           >
             {step}
           </span>
