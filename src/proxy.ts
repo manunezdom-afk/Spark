@@ -1,9 +1,7 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
-// Refresca el token de sesión en cada request para que no expire silenciosamente.
-// También protege las rutas /spark/* — redirige a /login si no hay sesión.
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(
@@ -29,7 +27,6 @@ export async function middleware(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser();
 
-  // Protege todo lo que está bajo /spark y /api/spark
   const isProtected =
     request.nextUrl.pathname.startsWith('/spark') ||
     request.nextUrl.pathname.startsWith('/api/spark');
@@ -46,7 +43,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Excluye archivos estáticos y favicon, corre en todo lo demás
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 };
