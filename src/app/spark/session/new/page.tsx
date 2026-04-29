@@ -12,7 +12,7 @@ function NewSessionForm() {
   return (
     <main className="max-w-2xl mx-auto px-6 py-16 flex flex-col gap-8">
       <header>
-        <p className="text-sm text-purple-400 uppercase tracking-widest">Nuevo Ejercicio</p>
+        <p className="text-sm text-[#C97B3F] uppercase tracking-widest">Nuevo Ejercicio</p>
         <h1 className="text-3xl font-semibold mt-1">{ENGINE_LABELS[engine]}</h1>
       </header>
 

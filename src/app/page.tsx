@@ -7,12 +7,14 @@ export default function SparkDashboard() {
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-purple-900/20 blur-[120px]" />
         <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-[#A78BFA]/10 blur-[120px]" />
+        <div className="absolute top-[5%] right-[0%] w-[30%] h-[30%] rounded-full bg-[#C97B3F]/8 blur-[100px]" />
       </div>
 
       <main className="relative z-10 max-w-5xl mx-auto px-6 py-12 md:py-20 flex flex-col gap-12">
         <header>
           <h1 className="text-4xl md:text-5xl font-semibold tracking-tight">
-            Spark <span className="text-purple-400">Dashboard</span>
+            <span className="text-[#C97B3F]">Spark</span>{" "}
+            <span className="text-purple-400">Dashboard</span>
           </h1>
           <p className="text-zinc-400 mt-2 text-lg">
             Centro de control de automatizaciones.
@@ -22,8 +24,8 @@ export default function SparkDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Main Action Button */}
           <div className="md:col-span-1">
-            <button className="w-full group relative flex flex-col items-center justify-center gap-4 p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-xl transition-all duration-300 hover:bg-white/10 hover:border-purple-500/50 hover:shadow-[0_0_30px_-5px_rgba(167,139,250,0.3)] text-left">
-              <div className="h-16 w-16 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 group-hover:scale-110 group-hover:bg-purple-500 group-hover:text-white transition-all duration-300">
+            <button className="w-full group relative flex flex-col items-center justify-center gap-4 p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-xl transition-all duration-300 hover:bg-white/10 hover:border-[#C97B3F]/40 hover:shadow-[0_0_30px_-5px_rgba(201,123,63,0.25)] text-left">
+              <div className="h-16 w-16 rounded-full bg-[#C97B3F]/15 flex items-center justify-center text-[#C97B3F] group-hover:scale-110 group-hover:bg-[#C97B3F] group-hover:text-white transition-all duration-300">
                 <Play className="w-8 h-8 ml-1" fill="currentColor" />
               </div>
               <div className="text-center">
