@@ -1,14 +1,11 @@
-// /spark/session/new — Session configuration screen
-// User picks topics, engine-specific params (persona for roleplay), then fires.
-// TODO: fetch user topics from Supabase
-
 'use client';
 
+import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import type { LearningEngine } from '@/modules/spark/types';
 import { ENGINE_LABELS } from '@/modules/spark/engines';
 
-export default function NewSessionPage() {
+function NewSessionForm() {
   const params = useSearchParams();
   const engine = (params.get('engine') ?? 'socratic') as LearningEngine;
 
@@ -19,7 +16,6 @@ export default function NewSessionPage() {
         <h1 className="text-3xl font-semibold mt-1">{ENGINE_LABELS[engine]}</h1>
       </header>
 
-      {/* Topic selector — placeholder */}
       <section className="flex flex-col gap-3">
         <label className="text-sm text-zinc-400">Selecciona el tema a trabajar</label>
         <div className="p-4 rounded-xl bg-white/[0.03] border border-white/10 text-zinc-500 text-sm">
@@ -42,5 +38,17 @@ export default function NewSessionPage() {
         Comenzar sesión
       </button>
     </main>
+  );
+}
+
+export default function NewSessionPage() {
+  return (
+    <Suspense fallback={
+      <main className="max-w-2xl mx-auto px-6 py-16">
+        <div className="h-8 w-48 rounded-lg bg-white/5 animate-pulse" />
+      </main>
+    }>
+      <NewSessionForm />
+    </Suspense>
   );
 }
