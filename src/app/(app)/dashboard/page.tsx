@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Layers, Activity, Play, Sparkles, Flame } from "lucide-react";
+import { Activity, Play, Sparkles, Flame } from "lucide-react";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import {
   getDueFlashcardsCount,
@@ -13,6 +13,7 @@ import { recommendEngines } from "@/modules/spark/scheduler/sm2";
 import { ENGINE_LABELS, ENGINE_DESCRIPTIONS } from "@/modules/spark/engines";
 import { Button } from "@/components/ui/button";
 import { WelcomeTour } from "@/components/onboarding/WelcomeTour";
+import { DashboardPreview } from "@/components/demo/DashboardPreview";
 import type { LearningEngine } from "@/modules/spark/types";
 
 export const dynamic = "force-dynamic";
@@ -156,16 +157,8 @@ export default async function DashboardPage() {
           </div>
         </section>
       ) : (
-        <section className="flex flex-col items-center text-center py-16 gap-4 max-w-md mx-auto">
-          <Layers className="w-8 h-8 text-muted-foreground/50" strokeWidth={1.5} />
-          <h2 className="text-2xl font-semibold">Empieza por crear un tema</h2>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            Pega un texto, una clase o un capítulo. Spark identifica los conceptos
-            atómicos y arma sesiones de entrenamiento para ti.
-          </p>
-          <Button asChild variant="spark" size="lg">
-            <Link href="/topics">Crear primer tema</Link>
-          </Button>
+        <section className="py-8">
+          <DashboardPreview />
         </section>
       )}
     </div>

@@ -3,6 +3,10 @@
 import { useState, useEffect } from "react";
 import { X, ChevronRight, ChevronLeft, Zap, BookOpen, Brain, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { AnimatedConversation } from "@/components/demo/AnimatedConversation";
+import { AnimatedTopicsGrid } from "@/components/demo/AnimatedTopicsGrid";
+import { AnimatedEngineList } from "@/components/demo/AnimatedEngineList";
+import { AnimatedMasteryBars } from "@/components/demo/AnimatedMasteryBars";
 
 const STORAGE_KEY = "spark:welcome-tour-seen";
 
@@ -17,6 +21,8 @@ const SLIDES = [
     borderColor: "border-spark/20",
     bgColor: "bg-spark/[0.08]",
     iconColor: "text-spark",
+    previewLabel: "Así se ve una sesión en vivo",
+    PreviewComponent: AnimatedConversation,
   },
   {
     icon: BookOpen,
@@ -28,6 +34,8 @@ const SLIDES = [
     borderColor: "border-nova-mid/20",
     bgColor: "bg-nova-mid/[0.08]",
     iconColor: "text-nova-mid",
+    previewLabel: "Tu biblioteca de temas",
+    PreviewComponent: AnimatedTopicsGrid,
   },
   {
     icon: Brain,
@@ -39,6 +47,8 @@ const SLIDES = [
     borderColor: "border-spark/20",
     bgColor: "bg-spark/[0.08]",
     iconColor: "text-spark",
+    previewLabel: "5 formas de entrenar",
+    PreviewComponent: AnimatedEngineList,
   },
   {
     icon: Trophy,
@@ -50,12 +60,15 @@ const SLIDES = [
     borderColor: "border-nova-mid/20",
     bgColor: "bg-nova-mid/[0.08]",
     iconColor: "text-nova-mid",
+    previewLabel: "Tu progreso real",
+    PreviewComponent: AnimatedMasteryBars,
   },
 ];
 
 export function WelcomeTour() {
   const [visible, setVisible] = useState(false);
   const [slide, setSlide] = useState(0);
+  const [transitioning, setTransitioning] = useState(false);
 
   useEffect(() => {
     const seen = localStorage.getItem(STORAGE_KEY);
@@ -67,15 +80,26 @@ export function WelcomeTour() {
     setVisible(false);
   }
 
+  function goTo(next: number) {
+    if (transitioning) return;
+    setTransitioning(true);
+    setTimeout(() => {
+      setSlide(next);
+      setTransitioning(false);
+    }, 180);
+  }
+
   if (!visible) return null;
 
   const current = SLIDES[slide];
   const Icon = current.icon;
+  const { PreviewComponent } = current;
   const isLast = slide === SLIDES.length - 1;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/70 backdrop-blur-md">
-      <div className="w-full max-w-md bg-[#0a0c11] border border-white/[0.08] rounded-2xl shadow-[0_32px_80px_rgba(0,0,0,0.6)] overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/75 backdrop-blur-md">
+      <div className="w-full max-w-3xl bg-[#0a0c11] border border-white/[0.08] rounded-2xl shadow-[0_32px_80px_rgba(0,0,0,0.7)] overflow-hidden">
+
         {/* Progress bar */}
         <div className="h-[2px] bg-white/[0.04] w-full">
           <div
@@ -84,7 +108,7 @@ export function WelcomeTour() {
           />
         </div>
 
-        {/* Ecosystem identity */}
+        {/* Header */}
         <div className="flex items-center gap-2 px-6 pt-4 pb-0">
           <div className="w-5 h-5 rounded-md bg-spark/10 border border-spark/20 flex items-center justify-center">
             <Zap className="w-2.5 h-2.5 text-spark" strokeWidth={1.5} fill="currentColor" />
@@ -93,63 +117,105 @@ export function WelcomeTour() {
             Spark · Focus OS
           </span>
           <div className="flex-1" />
-          <button onClick={dismiss} className="text-muted-foreground/40 hover:text-muted-foreground transition-colors p-1">
+          <button
+            onClick={dismiss}
+            className="text-muted-foreground/40 hover:text-muted-foreground transition-colors p-1"
+          >
             <X className="w-3.5 h-3.5" strokeWidth={1.5} />
           </button>
         </div>
 
-        <div className="p-6 sm:p-8 pt-5">
-          {/* Slide counter */}
-          <div className="flex items-center justify-between mb-6">
-            <span className="font-mono text-[10px] text-muted-foreground/40">
-              {slide + 1} / {SLIDES.length}
-            </span>
-          </div>
+        {/* Two-column body */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-0 sm:divide-x sm:divide-white/[0.05]">
 
-          {/* Content */}
-          <div className="flex flex-col gap-5">
-            <div className={`w-10 h-10 rounded-xl ${current.bgColor} border ${current.borderColor} flex items-center justify-center`}>
-              <Icon className={`w-5 h-5 ${current.iconColor}`} strokeWidth={1.5} />
-            </div>
-
-            <div>
-              <span className={`font-mono text-[10px] uppercase tracking-[0.2em] ${current.accentColor} mb-2 block`}>
-                {current.tag}
+          {/* Left — text */}
+          <div className="p-6 sm:p-8 pt-5 flex flex-col">
+            <div className="mb-4">
+              <span className="font-mono text-[10px] text-muted-foreground/40">
+                {slide + 1} / {SLIDES.length}
               </span>
-              <h2 className="text-2xl font-semibold leading-tight mb-3 tracking-tight">{current.title}</h2>
-              <p className="text-sm text-muted-foreground leading-relaxed">{current.body}</p>
             </div>
 
-            <div className="text-xs text-muted-foreground/50 border-l-2 border-white/[0.05] pl-3 italic leading-relaxed">
-              {current.hint}
-            </div>
-          </div>
-
-          {/* Navigation */}
-          <div className="flex items-center justify-between mt-8">
-            <button
-              onClick={() => setSlide((s) => s - 1)}
-              disabled={slide === 0}
-              className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground disabled:opacity-0 transition-colors"
+            <div
+              className={`flex flex-col gap-5 flex-1 transition-all duration-200 ease-out ${
+                transitioning ? "opacity-0 translate-y-1" : "opacity-100 translate-y-0"
+              }`}
             >
-              <ChevronLeft className="w-4 h-4" strokeWidth={1.5} />
-              Anterior
-            </button>
+              <div className={`w-10 h-10 rounded-xl ${current.bgColor} border ${current.borderColor} flex items-center justify-center`}>
+                <Icon className={`w-5 h-5 ${current.iconColor}`} strokeWidth={1.5} />
+              </div>
 
-            {isLast ? (
-              <Button onClick={dismiss} variant="spark" size="sm">
-                Empezar a entrenar
-              </Button>
-            ) : (
+              <div>
+                <span className={`font-mono text-[10px] uppercase tracking-[0.2em] ${current.accentColor} mb-2 block`}>
+                  {current.tag}
+                </span>
+                <h2 className="text-xl sm:text-2xl font-semibold leading-tight mb-3 tracking-tight">
+                  {current.title}
+                </h2>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {current.body}
+                </p>
+              </div>
+
+              <div className="text-xs text-muted-foreground/50 border-l-2 border-white/[0.05] pl-3 italic leading-relaxed">
+                {current.hint}
+              </div>
+            </div>
+
+            {/* Navigation */}
+            <div className="flex items-center justify-between mt-8">
               <button
-                onClick={() => setSlide((s) => s + 1)}
-                className="inline-flex items-center gap-1.5 text-sm text-foreground hover:text-spark transition-colors"
+                onClick={() => goTo(slide - 1)}
+                disabled={slide === 0}
+                className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground disabled:opacity-0 transition-colors"
               >
-                Siguiente
-                <ChevronRight className="w-4 h-4" strokeWidth={1.5} />
+                <ChevronLeft className="w-4 h-4" strokeWidth={1.5} />
+                Anterior
               </button>
-            )}
+
+              {isLast ? (
+                <Button onClick={dismiss} variant="spark" size="sm">
+                  Empezar a entrenar
+                </Button>
+              ) : (
+                <button
+                  onClick={() => goTo(slide + 1)}
+                  className="inline-flex items-center gap-1.5 text-sm text-foreground hover:text-spark transition-colors"
+                >
+                  Siguiente
+                  <ChevronRight className="w-4 h-4" strokeWidth={1.5} />
+                </button>
+              )}
+            </div>
           </div>
+
+          {/* Right — animated preview */}
+          <div className="hidden sm:flex flex-col p-6 bg-white/[0.01]">
+            <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-muted-foreground/30 mb-4 block">
+              {current.previewLabel}
+            </span>
+            <div
+              className={`flex-1 transition-all duration-200 ease-out ${
+                transitioning ? "opacity-0 scale-[0.98]" : "opacity-100 scale-100"
+              }`}
+              key={slide}
+            >
+              <PreviewComponent />
+            </div>
+          </div>
+        </div>
+
+        {/* Step dots */}
+        <div className="flex items-center justify-center gap-1.5 pb-5 sm:pb-0 sm:hidden">
+          {SLIDES.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => goTo(i)}
+              className={`w-1.5 h-1.5 rounded-full transition-all ${
+                i === slide ? "bg-spark w-4" : "bg-white/[0.15]"
+              }`}
+            />
+          ))}
         </div>
       </div>
     </div>

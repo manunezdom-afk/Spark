@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { Activity } from "lucide-react";
 import { redirect } from "next/navigation";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import { getAllMastery, getTopicsByIds } from "@/lib/spark/queries";
 import { MasteryBar } from "@/components/mastery/MasteryBar";
+import { AnimatedMasteryBars } from "@/components/demo/AnimatedMasteryBars";
 
 export const dynamic = "force-dynamic";
 
@@ -29,12 +29,30 @@ export default async function MasteryPage() {
       </header>
 
       {mastery.length === 0 ? (
-        <div className="flex flex-col items-center text-center py-16 gap-3 max-w-md mx-auto">
-          <Activity className="w-8 h-8 text-muted-foreground/50" strokeWidth={1.5} />
-          <h2 className="text-2xl font-semibold">Todavía no entrenas nada</h2>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            Cuando completes tu primera sesión, esta lista mostrará el avance por tema.
-          </p>
+        <div className="flex flex-col gap-10 max-w-sm">
+          <div>
+            <div className="flex items-center gap-2 mb-4">
+              <div className="h-px flex-1 bg-white/[0.04]" />
+              <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground/30 px-3">
+                Así se verá tu progreso
+              </span>
+              <div className="h-px flex-1 bg-white/[0.04]" />
+            </div>
+            <AnimatedMasteryBars loop />
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <h2 className="text-xl font-semibold">Todavía no entrenas nada</h2>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Completa tu primera sesión y esta lista mostrará el avance real por tema, con fechas de repaso calculadas por SM-2.
+            </p>
+            <Link
+              href="/topics"
+              className="mt-2 inline-flex items-center gap-1.5 text-sm text-spark hover:text-spark/80 transition-colors"
+            >
+              Ir a mis temas
+            </Link>
+          </div>
         </div>
       ) : (
         <ul className="flex flex-col divide-y divide-white/[0.06]">

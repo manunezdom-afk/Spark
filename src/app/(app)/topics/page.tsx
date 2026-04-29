@@ -1,9 +1,9 @@
-import { BookMarked } from "lucide-react";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import { getTopics, getAllMastery } from "@/lib/spark/queries";
 import { redirect } from "next/navigation";
 import { TopicCard } from "@/components/topics/TopicCard";
 import { NewTopicDialog } from "@/components/topics/NewTopicDialog";
+import { AnimatedTopicsGrid } from "@/components/demo/AnimatedTopicsGrid";
 
 export const dynamic = "force-dynamic";
 
@@ -34,23 +34,37 @@ export default async function TopicsPage() {
       </header>
 
       {topics.length === 0 ? (
-        <div className="flex flex-col items-center justify-center text-center py-20 gap-4 max-w-sm mx-auto">
-          <BookMarked className="w-8 h-8 text-muted-foreground/50" strokeWidth={1.5} />
+        <div className="flex flex-col gap-10 max-w-sm mx-auto py-8">
+          {/* Animated preview */}
           <div>
-            <h2 className="text-2xl font-semibold mb-2">Aún no tienes temas</h2>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Empieza importando tus materias desde Kairos, o crea un tema manualmente.
-            </p>
+            <div className="flex items-center gap-2 mb-4">
+              <div className="h-px flex-1 bg-white/[0.04]" />
+              <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground/30 px-3">
+                Así se verá tu biblioteca
+              </span>
+              <div className="h-px flex-1 bg-white/[0.04]" />
+            </div>
+            <AnimatedTopicsGrid loop />
           </div>
-          <div className="w-full text-left p-4 rounded-lg border border-white/[0.06] bg-white/[0.02] text-sm text-muted-foreground leading-relaxed">
-            <div className="font-medium text-foreground mb-1">Para conectar con Kairos:</div>
-            <ol className="list-decimal list-inside space-y-1 text-xs">
-              <li>Click en <span className="text-foreground font-medium">Nuevo tema</span> arriba a la derecha</li>
-              <li>Selecciona la pestaña <span className="text-nova-mid font-medium">Desde Kairos</span></li>
-              <li>Elige tus materias y haz click en Importar</li>
-            </ol>
+
+          {/* CTA + instructions */}
+          <div className="flex flex-col items-center text-center gap-4">
+            <div>
+              <h2 className="text-xl font-semibold mb-2">Crea tu primera unidad de combate</h2>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Pega un texto, importa desde Kairos o escribe el tema manualmente. Spark lo convierte en sesiones de entrenamiento.
+              </p>
+            </div>
+            <NewTopicDialog />
+            <div className="w-full text-left p-4 rounded-lg border border-white/[0.06] bg-white/[0.02] text-sm text-muted-foreground">
+              <div className="font-medium text-foreground mb-2 text-xs uppercase tracking-[0.14em] font-mono">Para conectar con Kairos</div>
+              <ol className="list-decimal list-inside space-y-1.5 text-xs">
+                <li>Click en <span className="text-foreground font-medium">Nuevo tema</span> arriba a la derecha</li>
+                <li>Selecciona la pestaña <span className="text-nova-mid font-medium">Desde Kairos</span></li>
+                <li>Elige tus materias y haz click en Importar</li>
+              </ol>
+            </div>
           </div>
-          <NewTopicDialog />
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
