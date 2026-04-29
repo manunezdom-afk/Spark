@@ -11,6 +11,7 @@ import {
   upsertMasteryState,
   completeSession,
   insertFlashcards,
+  checkAndIncrementRateLimit,
 } from "@/lib/spark/queries";
 import { buildEvaluatorPrompt } from "@/modules/spark/prompts/evaluator";
 import { sm2, scoreToQuality } from "@/modules/spark/scheduler/sm2";
@@ -44,6 +45,11 @@ export async function POST(_request: NextRequest, { params }: RouteContext) {
   const db = await getSupabaseServerClient();
   const { data: { user } } = await db.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const rate = await checkAndIncrementRateLimit(db, user.id);
+  if (!rate.allowed) {
+    return NextResponse.json({ error: "Límite diario de sesiones alcanzado." }, { status: 429 });
+  }
 
   const session = await getSession(db, sessionId);
   if (!session || session.user_id !== user.id) {
