@@ -6,12 +6,12 @@
 //   3. Paste your study material
 // Submitting routes to /spark/practice/active (mock) until Nova generation is wired.
 
-import { Suspense, useState } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
   ArrowLeft, ArrowRight, Sparkles, FileText, Tag,
-  Layers, ListChecks, Timer, MessageCircle, Brain,
+  Layers, ListChecks, Timer, MessageCircle, Brain, Check,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { METHOD_ORDER, METHODS, methodFromEngineParam, type StudyMethod } from '@/lib/spark/methods';
@@ -23,6 +23,19 @@ const METHOD_ICONS: Record<StudyMethod, LucideIcon> = {
   socratic:   MessageCircle,
 };
 
+// ── Cycling placeholder for the content textarea ──────────────
+// Rotates through realistic examples every 2.8s so users
+// immediately understand what kind of material to paste.
+
+const CONTENT_PLACEHOLDERS = [
+  'Modelo de Lasswell, Teoría de la aguja hipodérmica, Espiral del silencio de Noelle-Neumann…',
+  'Derivadas, regla de la cadena, integrales por sustitución, teorema fundamental del cálculo…',
+  'Homeostasis, membrana celular, ATP y fosforilación oxidativa, ciclo de Krebs…',
+  'Demanda y oferta, elasticidad precio, equilibrio de Nash, teoría de juegos básica…',
+  'Revolución francesa, causas, etapas, Terror, Napoleón, impacto en Europa…',
+  'Psicología del desarrollo, Piaget, etapas cognitivas, Vygotsky, zona de desarrollo próximo…',
+];
+
 function NewSessionForm() {
   const router = useRouter();
   const params = useSearchParams();
@@ -33,12 +46,33 @@ function NewSessionForm() {
     methodFromEngineParam(params.get('engine')) ??
     null;
 
-  const [method,  setMethod]  = useState<StudyMethod | null>(initialMethod);
-  const [name,    setName]    = useState('');
-  const [content, setContent] = useState('');
-  const [busy,    setBusy]    = useState(false);
+  const [method,      setMethod]      = useState<StudyMethod | null>(initialMethod);
+  const [name,        setName]        = useState('');
+  const [content,     setContent]     = useState('');
+  const [busy,        setBusy]        = useState(false);
+  const [phIdx,       setPhIdx]       = useState(0);
+  const [phVisible,   setPhVisible]   = useState(true);
+
+  // Cycle through content placeholder examples every 2.8s
+  useEffect(() => {
+    if (content.trim()) return; // stop cycling once user typed something
+    const t = setInterval(() => {
+      setPhVisible(false);
+      setTimeout(() => {
+        setPhIdx((i) => (i + 1) % CONTENT_PLACEHOLDERS.length);
+        setPhVisible(true);
+      }, 300);
+    }, 2800);
+    return () => clearInterval(t);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [content]);
 
   const canSubmit = !!method && name.trim().length > 0 && content.trim().length > 0;
+
+  // Step completion state for the animated dots
+  const step1Done = name.trim().length > 0;
+  const step2Done = !!method;
+  const step3Done = content.trim().length > 0;
 
   function handleSubmit() {
     if (!canSubmit) return;
@@ -90,6 +124,7 @@ function NewSessionForm() {
         icon={<Tag className="w-4 h-4 text-orange-400/70" />}
         label="¿Qué estás preparando?"
         hint="Ej: Solemne de Psicología · Control de Historia · Certamen de Cálculo II"
+        done={step1Done}
       >
         <input
           type="text"
@@ -108,6 +143,7 @@ function NewSessionForm() {
         icon={<Sparkles className="w-4 h-4 text-orange-400/70" />}
         label="Método de práctica"
         hint="Elige cómo quieres que Nova te entrene."
+        done={step2Done}
       >
         <div className="grid grid-cols-2 gap-2.5">
           {METHOD_ORDER.map((id) => {
@@ -162,16 +198,33 @@ function NewSessionForm() {
         icon={<FileText className="w-4 h-4 text-orange-400/70" />}
         label="Contenido o tema"
         hint="Pega tus apuntes, un resumen o lista de conceptos. Cuanto más específico, mejor."
+        done={step3Done}
       >
-        <textarea
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder={'Ej: Modelo de Lasswell, Teoría de la aguja hipodérmica, Espiral del silencio…'}
-          rows={6}
-          className="w-full p-4 rounded-xl bg-white/[0.03] border border-white/[0.07] text-white
-                     placeholder:text-zinc-600 outline-none text-sm leading-relaxed resize-y min-h-[140px]
-                     focus:border-orange-500/60 focus:bg-white/[0.05] transition-all"
-        />
+        <div className="relative">
+          <textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder={CONTENT_PLACEHOLDERS[phIdx]}
+            rows={6}
+            className={`w-full p-4 rounded-xl bg-white/[0.03] border border-white/[0.07] text-white
+                       outline-none text-sm leading-relaxed resize-y min-h-[140px]
+                       focus:border-orange-500/60 focus:bg-white/[0.05] transition-all
+                       placeholder:transition-opacity placeholder:duration-300
+                       ${phVisible ? 'placeholder:opacity-60' : 'placeholder:opacity-0'}`}
+          />
+          {/* Cycling indicator — tiny dots showing which example is visible */}
+          {!content.trim() && (
+            <div className="absolute bottom-3 right-3 flex gap-1">
+              {CONTENT_PLACEHOLDERS.map((_, i) => (
+                <span
+                  key={i}
+                  className={`w-1 h-1 rounded-full transition-all duration-300
+                              ${i === phIdx ? 'bg-orange-400/60 scale-125' : 'bg-zinc-700'}`}
+                />
+              ))}
+            </div>
+          )}
+        </div>
         <p className="text-[11px] text-zinc-600 mt-2">
           Próximamente podrás importar apuntes directamente desde Kairos.
         </p>
@@ -197,26 +250,45 @@ function NewSessionForm() {
 }
 
 // ── Field wrapper ─────────────────────────────────────────────
+// `done` drives a subtle animated completion indicator on the step bubble.
 function Field({
   step,
   icon,
   label,
   hint,
+  done = false,
   children,
 }: {
   step:     string;
   icon:     React.ReactNode;
   label:    string;
   hint:     string;
+  done?:    boolean;
   children: React.ReactNode;
 }) {
   return (
     <section className="flex flex-col gap-3">
       <div className="flex items-start gap-3">
-        <span className="shrink-0 w-6 h-6 rounded-full bg-orange-500/10 border border-orange-500/30
-                         flex items-center justify-center text-[11px] font-medium text-orange-300">
-          {step}
-        </span>
+        {/* Step bubble: number collapses to checkmark when done */}
+        <div className={`relative shrink-0 w-6 h-6 rounded-full flex items-center justify-center
+                         transition-all duration-300
+                         ${done
+                           ? 'bg-emerald-500/15 border border-emerald-500/40'
+                           : 'bg-orange-500/10 border border-orange-500/30'}`}>
+          <span
+            className={`absolute text-[11px] font-medium transition-all duration-200
+                         ${done ? 'opacity-0 scale-50' : 'opacity-100 scale-100'} text-orange-300`}
+          >
+            {step}
+          </span>
+          <span
+            className={`absolute transition-all duration-200
+                         ${done ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}`}
+          >
+            <Check className="w-3 h-3 text-emerald-400" />
+          </span>
+        </div>
+
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             {icon}

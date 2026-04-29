@@ -8,24 +8,10 @@ import {
   Brain,
   TrendingDown,
   History,
-  Layers,
-  ListChecks,
-  Timer,
-  MessageCircle,
 } from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
 import { SparkIcon } from '@/components/SparkIcon';
 import { HowItWorks } from '@/components/HowItWorks';
-import { METHOD_ORDER, METHODS } from '@/lib/spark/methods';
-import type { StudyMethod } from '@/lib/spark/methods';
-
-// Lucide icons for each method — no emojis
-const METHOD_ICONS: Record<StudyMethod, LucideIcon> = {
-  flashcards: Layers,
-  quiz:       ListChecks,
-  simulation: Timer,
-  socratic:   MessageCircle,
-};
+import { MethodCards } from '@/components/MethodCards';
 
 export default function SparkDashboard() {
   return (
@@ -123,45 +109,8 @@ export default function SparkDashboard() {
         {/* ── How it works (animated mini-tutorial) ───────────── */}
         <HowItWorks />
 
-        {/* ── Methods grid ────────────────────────────────────── */}
-        <section className="flex flex-col gap-4">
-          <div className="flex items-baseline justify-between">
-            <h2 className="text-base font-medium text-zinc-200">Métodos de estudio</h2>
-            <span className="text-xs text-zinc-600">elige uno y empieza</span>
-          </div>
-
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-            {METHOD_ORDER.map((id) => {
-              const m    = METHODS[id];
-              const Icon = METHOD_ICONS[id];
-              return (
-                <Link
-                  key={id}
-                  href={`/spark/session/new?method=${id}`}
-                  className="group flex flex-col gap-4 p-5 rounded-2xl
-                             bg-white/[0.03] border border-white/[0.07]
-                             hover:bg-white/[0.06] hover:border-orange-500/30
-                             hover:shadow-[0_0_24px_-8px_rgba(251,146,60,0.25)]
-                             transition-all duration-200"
-                >
-                  <div className="w-9 h-9 rounded-xl bg-orange-500/10 border border-orange-500/10
-                                  flex items-center justify-center
-                                  group-hover:bg-orange-500/15 group-hover:border-orange-500/20
-                                  transition-all">
-                    <Icon className="w-4 h-4 text-orange-400" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-white text-sm
-                                   group-hover:text-orange-300 transition-colors">
-                      {m.label}
-                    </h3>
-                    <p className="text-xs text-zinc-500 mt-0.5 leading-snug">{m.short}</p>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        </section>
+        {/* ── Methods grid (with hover mini-tutorials) ─────── */}
+        <MethodCards />
 
         {/* ── Recent + Weaknesses ─────────────────────────────── */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
