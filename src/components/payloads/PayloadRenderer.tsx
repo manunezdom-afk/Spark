@@ -17,6 +17,10 @@ export function PayloadRenderer({ payload }: { payload: TurnPayload }) {
       return <GraphView payload={payload} />;
     case "score":
       return <ScoreSummary payload={payload} />;
+    // Test payloads are rendered by dedicated test pages, not in chat
+    case "test_questions":
+    case "test_result":
+      return null;
     default: {
       const exhaustive: never = payload;
       void exhaustive;

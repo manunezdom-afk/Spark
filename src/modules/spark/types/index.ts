@@ -5,7 +5,46 @@ export type LearningEngine =
   | 'devils_advocate'
   | 'roleplay'
   | 'bridge_builder'
-  | 'socratic';
+  | 'socratic'
+  | 'test_alternativas'
+  | 'test_desarrollo';
+
+export type TestType = 'alternativas' | 'desarrollo';
+
+export interface TestQuestion {
+  id: number;
+  text: string;
+  // For alternativas:
+  options?: string[];          // ["A. ...", "B. ...", "C. ...", "D. ..."]
+  correct_index?: number;      // 0-based index of correct option
+  // For desarrollo:
+  expected_concepts?: string[];
+  // Shown after submission (both types):
+  explanation?: string;
+}
+
+export interface TestAnswer {
+  question_id: number;
+  selected_index?: number;   // alternativas
+  text_answer?: string;      // desarrollo
+}
+
+export interface TestQuestionResult {
+  question_id: number;
+  correct: boolean;
+  score: number;             // 0-100
+  feedback: string;
+  correct_answer?: string;   // for alternativas: text of correct option
+}
+
+export interface TestResult {
+  session_id: string;
+  score: number;
+  total_questions: number;
+  correct_count: number;
+  question_results: TestQuestionResult[];
+  feedback: string;
+}
 
 export type SessionStatus = 'active' | 'completed' | 'abandoned';
 
@@ -150,7 +189,22 @@ export type TurnPayload =
   | QuizPayload
   | DebuggerPayload
   | GraphNodePayload
-  | ScorePayload;
+  | ScorePayload
+  | TestQuestionsPayload
+  | TestResultPayload;
+
+export interface TestQuestionsPayload {
+  type: 'test_questions';
+  test_type: TestType;
+  questions: TestQuestion[];
+}
+
+export interface TestResultPayload {
+  type: 'test_result';
+  score: number;
+  question_results: TestQuestionResult[];
+  feedback: string;
+}
 
 export interface FlashcardPayload {
   type: 'flashcard';

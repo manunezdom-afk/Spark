@@ -14,11 +14,14 @@ import type { LearningEngine, SparkTopic } from "@/modules/spark/types";
 import { toast } from "sonner";
 
 const ENGINE_LIMITS: Record<LearningEngine, { min: number; max: number }> = {
-  debugger: { min: 1, max: 2 },
-  devils_advocate: { min: 1, max: 1 },
-  roleplay: { min: 1, max: 3 },
-  bridge_builder: { min: 2, max: 6 },
-  socratic: { min: 1, max: 2 },
+  debugger:           { min: 1, max: 2 },
+  devils_advocate:    { min: 1, max: 1 },
+  roleplay:           { min: 1, max: 3 },
+  bridge_builder:     { min: 2, max: 6 },
+  socratic:           { min: 1, max: 2 },
+  // Test engines go through /tests/new, not this form
+  test_alternativas:  { min: 1, max: 5 },
+  test_desarrollo:    { min: 1, max: 5 },
 };
 
 function NewSessionForm() {

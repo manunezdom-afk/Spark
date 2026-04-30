@@ -197,6 +197,10 @@ Nunca uses preguntas de opción múltiple como primera opción.
 Si el usuario no puede responder en 2 intentos, ofrece un scaffolding mínimo (una pista, no la respuesta).
 Al final de la sesión, genera 3 flashcards \`FlashcardPayload\` basadas en los gaps identificados.
 `,
+
+  // Test engines use /api/tests/*, not the chat system
+  test_alternativas: '',
+  test_desarrollo: '',
 };
 
 // ─────────────────────────────────────────────────────────────

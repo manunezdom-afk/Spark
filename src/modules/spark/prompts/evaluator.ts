@@ -69,4 +69,8 @@ const EVAL_CRITERIA: Record<LearningEngine, string> = {
   roleplay: `1. Aplicación bajo presión: ¿usó conceptos en respuestas operativas, no teóricas?
 2. Adaptación al personaje: ¿respondió al tono y constraints del escenario?
 3. Decisión: ¿tomó posiciones concretas en momentos de tensión?`,
+
+  // Test engines use /api/tests/submit, not this evaluator
+  test_alternativas: '',
+  test_desarrollo: '',
 };

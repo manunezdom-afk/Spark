@@ -8,6 +8,7 @@ import {
   Layers,
   AlertCircle,
   Activity,
+  ClipboardList,
   User,
   LogOut,
   ExternalLink,
@@ -23,6 +24,7 @@ const NAV: { href: string; label: string; icon: typeof Home }[] = [
   { href: "/topics", label: "Temas", icon: BookMarked },
   { href: "/mastery", label: "Maestría", icon: Activity },
   { href: "/flashcards/review", label: "Repaso", icon: Layers },
+  { href: "/tests/new", label: "Pruebas", icon: ClipboardList },
   { href: "/errors", label: "Errores", icon: AlertCircle },
 ];
 
