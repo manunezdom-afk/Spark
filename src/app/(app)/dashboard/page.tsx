@@ -132,42 +132,63 @@ export default async function DashboardPage() {
         </section>
       )}
 
-      {hasTopics ? (
-        <section>
-          <h2 className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground mb-3">
-            {daysToDeadline !== null && daysToDeadline <= 7
-              ? `Recomendado · ${daysToDeadline} ${daysToDeadline === 1 ? "día" : "días"} para tu deadline`
-              : "Recomendado para hoy"}
+      <section>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
+            {hasTopics
+              ? daysToDeadline !== null && daysToDeadline <= 7
+                ? `Recomendado · ${daysToDeadline} ${daysToDeadline === 1 ? "día" : "días"} para tu deadline`
+                : "Recomendado para hoy"
+              : "Empieza aquí"}
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            {recommended.map((engine) => (
-              <Link
-                key={engine}
-                href="/topics"
-                className="group flex flex-col gap-2 p-5 rounded-lg border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] hover:border-spark/30 transition-colors"
-              >
-                <Sparkles className="w-4 h-4 text-spark" strokeWidth={1.5} />
-                <div className="font-medium">{ENGINE_LABELS[engine]}</div>
-                <div className="text-xs text-muted-foreground leading-relaxed">
-                  {ENGINE_DESCRIPTIONS[engine]}
-                </div>
+          {!hasTopics && (
+            <Button asChild variant="spark" size="sm">
+              <Link href="/topics">
+                <Layers className="w-3.5 h-3.5" strokeWidth={1.5} />
+                Crear primer tema
               </Link>
-            ))}
-          </div>
-        </section>
-      ) : (
-        <section className="flex flex-col items-center text-center py-16 gap-4 max-w-md mx-auto">
-          <Layers className="w-8 h-8 text-muted-foreground/50" strokeWidth={1.5} />
-          <h2 className="text-2xl font-semibold">Empieza por crear un tema</h2>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            Pega un texto, una clase o un capítulo. Spark identifica los conceptos
-            atómicos y arma sesiones de entrenamiento para ti.
+            </Button>
+          )}
+        </div>
+
+        <div className={`grid grid-cols-1 md:grid-cols-3 gap-3 ${!hasTopics ? "relative" : ""}`}>
+          {recommended.map((engine) => (
+            <Link
+              key={engine}
+              href="/topics"
+              className={`group flex flex-col gap-2 p-5 rounded-lg border transition-colors ${
+                hasTopics
+                  ? "border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] hover:border-spark/30"
+                  : "border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] hover:border-spark/30"
+              }`}
+            >
+              {!hasTopics && (
+                <span className="self-start font-mono text-[9px] uppercase tracking-[0.16em] text-muted-foreground/50 border border-white/[0.08] px-2 py-0.5 rounded-full mb-1">
+                  Ejemplo
+                </span>
+              )}
+              <Sparkles className={`w-4 h-4 text-spark ${!hasTopics ? "opacity-50" : ""}`} strokeWidth={1.5} />
+              <div className={`font-medium ${!hasTopics ? "text-foreground/50" : ""}`}>
+                {ENGINE_LABELS[engine]}
+              </div>
+              <div className={`text-xs leading-relaxed ${!hasTopics ? "text-muted-foreground/50" : "text-muted-foreground"}`}>
+                {ENGINE_DESCRIPTIONS[engine]}
+              </div>
+              {!hasTopics && (
+                <div className="mt-auto pt-3 text-[11px] text-spark/70 font-medium">
+                  Crea un tema para entrenar →
+                </div>
+              )}
+            </Link>
+          ))}
+        </div>
+
+        {!hasTopics && (
+          <p className="mt-4 text-xs text-muted-foreground/50 text-center">
+            Pega un texto, una clase o un capítulo y Spark arma las sesiones por ti.
           </p>
-          <Button asChild variant="spark" size="lg">
-            <Link href="/topics">Crear primer tema</Link>
-          </Button>
-        </section>
-      )}
+        )}
+      </section>
     </div>
     </>
   );
