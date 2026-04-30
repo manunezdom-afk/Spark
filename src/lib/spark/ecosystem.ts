@@ -13,15 +13,11 @@
 export const KAIROS_URL =
   process.env.NEXT_PUBLIC_KAIROS_URL ?? "https://kairostudios.me";
 
-export const SPARK_URL =
-  process.env.NEXT_PUBLIC_SPARK_URL ?? "https://spark.focusos.cl";
+export const FOCUS_URL =
+  process.env.NEXT_PUBLIC_FOCUS_URL ?? "https://usefocus.me";
 
-export const FOCUS_IOS_URL =
-  process.env.NEXT_PUBLIC_FOCUS_IOS_URL ??
-  "https://apps.apple.com/cl/app/focus-os";
-
-export const FOCUS_LANDING_URL =
-  process.env.NEXT_PUBLIC_FOCUS_LANDING_URL ?? "https://focusos.cl";
+/** Alias semántico — Focus es iOS, esto apunta a la landing con "Download" */
+export const FOCUS_IOS_URL = FOCUS_URL;
 
 /**
  * Construye un URL de Kairos hacia una sesión específica.
