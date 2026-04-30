@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Zap, ArrowRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { sendOtp, signInWithGoogle, verifyOtp } from "@/lib/auth/session";
+import { sendOtp, signInAnonymously, signInWithGoogle, verifyOtp } from "@/lib/auth/session";
 import { toast } from "sonner";
 
 type Mode = "signin" | "signup";
@@ -18,6 +18,7 @@ export default function LoginPage() {
   const [code, setCode] = useState("");
   const [busy, setBusy] = useState(false);
   const [googleBusy, setGoogleBusy] = useState(false);
+  const [guestBusy, setGuestBusy] = useState(false);
 
   async function onSendCode(e: React.FormEvent) {
     e.preventDefault();
@@ -65,6 +66,19 @@ export default function LoginPage() {
       setGoogleBusy(false);
     }
     // Si ok: Supabase redirige a Google, no hay nada más que hacer.
+  }
+
+  async function onGuest() {
+    setGuestBusy(true);
+    const result = await signInAnonymously();
+    if (!result.ok) {
+      toast.error(result.error);
+      setGuestBusy(false);
+      return;
+    }
+    toast.success("Listo. Tus datos se guardan en este dispositivo.");
+    router.replace("/dashboard");
+    router.refresh();
   }
 
   return (
@@ -141,6 +155,25 @@ export default function LoginPage() {
                   : "¿Ya tienes cuenta? Iniciar sesión"}
               </button>
             </form>
+
+            <div className="flex items-center gap-3 text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+              <div className="h-px flex-1 bg-border" />
+              <span>o sin cuenta</span>
+              <div className="h-px flex-1 bg-border" />
+            </div>
+
+            <button
+              type="button"
+              onClick={onGuest}
+              disabled={guestBusy || busy || googleBusy}
+              className="h-12 flex items-center justify-center gap-2 rounded-md border border-border bg-background text-sm font-medium text-muted-foreground transition-colors hover:border-foreground/30 hover:text-foreground disabled:opacity-60"
+            >
+              {guestBusy ? "Entrando…" : "Probar sin cuenta"}
+              <ArrowRight className="w-4 h-4" strokeWidth={1.5} />
+            </button>
+            <p className="text-[10.5px] leading-relaxed text-muted-foreground text-center -mt-2">
+              Tu progreso se guarda. Crea cuenta luego para no perderlo.
+            </p>
           </>
         ) : (
           <form onSubmit={onVerify} className="flex flex-col gap-4">

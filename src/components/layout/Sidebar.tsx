@@ -14,7 +14,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
-import { useSparkAuth } from "@/lib/auth/session";
+import { isAnonymousUser, useSparkAuth } from "@/lib/auth/session";
 import { BrandOrb } from "@/components/brand/BrandOrb";
 import { KAIROS_URL, FOCUS_IOS_URL } from "@/lib/spark/ecosystem";
 import { IOSFocusBanner } from "@/components/layout/IOSFocusBanner";
@@ -31,6 +31,7 @@ const NAV: { href: string; label: string; icon: typeof Home }[] = [
 export function Sidebar() {
   const pathname = usePathname();
   const { signOut, user } = useSparkAuth();
+  const guest = isAnonymousUser(user);
 
   return (
     <aside className="w-[228px] shrink-0 hidden md:flex flex-col border-r border-black/[0.06] bg-background/70 backdrop-blur-2xl">
@@ -84,6 +85,25 @@ export function Sidebar() {
         </div>
       </div>
 
+      {/* Guest mode banner */}
+      {guest && (
+        <div className="mx-3 mb-2 rounded-lg border border-spark/30 bg-spark/[0.06] p-2.5">
+          <p className="text-[11px] font-semibold text-foreground leading-snug">
+            Modo invitado
+          </p>
+          <p className="mt-0.5 text-[10.5px] leading-snug text-foreground/60">
+            Tu progreso se guarda. {" "}
+            <Link
+              href="/login"
+              className="font-medium text-spark underline-offset-2 hover:underline"
+            >
+              Crear cuenta
+            </Link>{" "}
+            para no perderlo.
+          </p>
+        </div>
+      )}
+
       {/* Account */}
       <div className="px-3 py-3 border-t border-black/[0.06] flex flex-col gap-1">
         <Link
@@ -96,14 +116,16 @@ export function Sidebar() {
           )}
         >
           <User className="w-4 h-4 shrink-0" strokeWidth={1.75} />
-          <span className="truncate text-[12px]">{user?.email ?? "Cuenta"}</span>
+          <span className="truncate text-[12px]">
+            {guest ? "Invitado" : (user?.email ?? "Cuenta")}
+          </span>
         </Link>
         <button
           onClick={signOut}
           className="flex items-center gap-3 px-3.5 py-2 rounded-full text-sm text-foreground/60 hover:text-foreground hover:bg-black/[0.04] transition-colors w-full"
         >
           <LogOut className="w-4 h-4 shrink-0" strokeWidth={1.75} />
-          Cerrar sesión
+          {guest ? "Salir" : "Cerrar sesión"}
         </button>
       </div>
     </aside>
