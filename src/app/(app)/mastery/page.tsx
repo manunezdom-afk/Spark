@@ -37,7 +37,7 @@ export default async function MasteryPage() {
           </p>
         </div>
       ) : (
-        <ul className="flex flex-col divide-y divide-white/[0.06]">
+        <ul className="flex flex-col divide-y divide-black/[0.06]">
           {mastery.map((m) => {
             const topic = topicById.get(m.topic_id);
             if (!topic) return null;
@@ -53,7 +53,7 @@ export default async function MasteryPage() {
               <li key={m.id}>
                 <Link
                   href={`/topics/${topic.id}`}
-                  className="flex flex-col gap-2 py-4 hover:bg-white/[0.02] -mx-3 px-3 rounded-md transition-colors"
+                  className="flex flex-col gap-2 py-4 hover:bg-black/[0.03] -mx-3 px-3 rounded-md transition-colors"
                 >
                   <div className="flex items-center justify-between gap-4">
                     <div className="min-w-0">

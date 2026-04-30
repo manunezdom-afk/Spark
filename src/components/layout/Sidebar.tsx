@@ -28,15 +28,15 @@ export function Sidebar() {
   const { signOut, user } = useSparkAuth();
 
   return (
-    <aside className="w-[220px] shrink-0 hidden md:flex flex-col border-r border-white/[0.06] bg-white/[0.01] backdrop-blur-xl">
+    <aside className="w-[220px] shrink-0 hidden md:flex flex-col border-r border-black/[0.07] bg-background/80 backdrop-blur-xl">
       {/* App header */}
-      <div className="px-4 h-16 border-b border-white/[0.06] flex items-center gap-3">
+      <div className="px-4 h-16 border-b border-black/[0.07] flex items-center gap-3">
         <div className="w-7 h-7 rounded-lg bg-spark/10 border border-spark/20 flex items-center justify-center shrink-0">
           <Zap className="w-3.5 h-3.5 text-spark" strokeWidth={1.5} fill="currentColor" />
         </div>
         <div className="min-w-0">
           <div className="text-sm font-semibold tracking-tight leading-none">Spark</div>
-          <div className="text-[9px] uppercase tracking-[0.18em] text-muted-foreground/50 mt-0.5 leading-none">
+          <div className="text-[9px] uppercase tracking-[0.18em] text-muted-foreground/60 mt-0.5 leading-none">
             Focus OS
           </div>
         </div>
@@ -54,8 +54,8 @@ export function Sidebar() {
               className={cn(
                 "relative flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors",
                 active
-                  ? "bg-white/[0.06] text-foreground"
-                  : "text-muted-foreground hover:text-foreground hover:bg-white/[0.03]"
+                  ? "bg-black/[0.06] text-foreground font-medium"
+                  : "text-muted-foreground hover:text-foreground hover:bg-black/[0.04]"
               )}
             >
               {active && (
@@ -70,7 +70,7 @@ export function Sidebar() {
 
       {/* Ecosystem footer */}
       <div className="px-4 pb-2">
-        <div className="text-[9px] uppercase tracking-[0.18em] text-muted-foreground/30 font-mono mb-1.5 px-1">
+        <div className="text-[9px] uppercase tracking-[0.18em] text-muted-foreground/40 font-mono mb-1.5 px-1">
           Familia
         </div>
         <div className="flex flex-col gap-0.5">
@@ -80,24 +80,24 @@ export function Sidebar() {
           ].map((app) => (
             <div
               key={app.label}
-              className="flex items-center justify-between px-1 py-1 text-[10px] text-muted-foreground/40"
+              className="flex items-center justify-between px-1 py-1 text-[10px] text-muted-foreground/50"
             >
               <span className="font-medium">{app.label}</span>
-              <span className="text-muted-foreground/25">{app.sub}</span>
+              <span className="text-muted-foreground/40">{app.sub}</span>
             </div>
           ))}
         </div>
       </div>
 
       {/* Account */}
-      <div className="px-3 py-3 border-t border-white/[0.06] flex flex-col gap-0.5">
+      <div className="px-3 py-3 border-t border-black/[0.07] flex flex-col gap-0.5">
         <Link
           href="/cuenta"
           className={cn(
             "flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors",
             pathname === "/cuenta"
-              ? "bg-white/[0.06] text-foreground"
-              : "text-muted-foreground hover:text-foreground hover:bg-white/[0.03]"
+              ? "bg-black/[0.06] text-foreground font-medium"
+              : "text-muted-foreground hover:text-foreground hover:bg-black/[0.04]"
           )}
         >
           <User className="w-4 h-4 shrink-0" strokeWidth={1.5} />
@@ -105,7 +105,7 @@ export function Sidebar() {
         </Link>
         <button
           onClick={signOut}
-          className="flex items-center gap-3 px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-white/[0.03] transition-colors w-full"
+          className="flex items-center gap-3 px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-black/[0.04] transition-colors w-full"
         >
           <LogOut className="w-4 h-4 shrink-0" strokeWidth={1.5} />
           Cerrar sesión

@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { MobileTopBar } from "@/components/layout/MobileTopBar";
+import { PageHelp } from "@/components/layout/PageHelp";
 import { AuthProvider } from "@/lib/auth/session";
 
 export default function AppLayout({ children }: { children: ReactNode }) {
@@ -14,6 +15,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           {children}
         </main>
         <MobileNav />
+        <PageHelp />
       </div>
     </AuthProvider>
   );

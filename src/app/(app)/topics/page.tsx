@@ -42,7 +42,7 @@ export default async function TopicsPage() {
               Empieza importando tus materias desde Kairos, o crea un tema manualmente.
             </p>
           </div>
-          <div className="w-full text-left p-4 rounded-lg border border-white/[0.06] bg-white/[0.02] text-sm text-muted-foreground leading-relaxed">
+          <div className="w-full text-left p-4 rounded-lg border border-black/[0.07] bg-black/[0.02] text-sm text-muted-foreground leading-relaxed">
             <div className="font-medium text-foreground mb-1">Para conectar con Kairos:</div>
             <ol className="list-decimal list-inside space-y-1 text-xs">
               <li>Click en <span className="text-foreground font-medium">Nuevo tema</span> arriba a la derecha</li>
