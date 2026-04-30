@@ -202,13 +202,13 @@ export function NewTopicDialog() {
             <button
               key={key}
               onClick={() => setTab(key)}
-              className={`px-4 py-2 text-sm transition-colors ${
+              className={`flex items-center gap-1.5 px-4 py-2 text-sm transition-colors ${
                 tab === key
-                  ? "text-foreground border-b-2 border-spark"
+                  ? "text-foreground border-b-2 border-white/70"
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              <Icon className="w-3.5 h-3.5 inline mr-2" strokeWidth={1.5} />
+              <Icon className="w-3.5 h-3.5 shrink-0" strokeWidth={1.5} />
               {label}
             </button>
           ))}
@@ -331,28 +331,52 @@ export function NewTopicDialog() {
                 <div className="flex flex-col gap-2 max-h-[360px] overflow-y-auto pr-1">
                   {kairosSubjects.map((s) => {
                     const isSelected = selectedSubjects.has(s.id);
+                    // s.emoji puede ser un emoji real ("📚") o un nombre de ícono ("book-open")
+                    // Solo mostramos el emoji si contiene un carácter fuera del rango ASCII
+                    const realEmoji = s.emoji && /[^\x00-\x7F]/.test(s.emoji) ? s.emoji : null;
+                    const accentColor = s.color ?? null;
                     return (
                       <button key={s.id} onClick={() => {
                         const next = new Set(selectedSubjects);
                         if (isSelected) next.delete(s.id); else next.add(s.id);
                         setSelectedSubjects(next);
-                      }} className={`text-left p-3 rounded-md border transition-colors ${
-                        isSelected ? "border-spark/40 bg-spark/[0.05]" : "border-white/10 bg-white/[0.02] hover:bg-white/[0.04]"
+                      }} className={`text-left p-3 rounded-lg border transition-colors ${
+                        isSelected
+                          ? "border-white/20 bg-white/[0.05]"
+                          : "border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/10"
                       }`}>
                         <div className="flex items-center justify-between gap-3">
                           <div className="flex items-center gap-3 min-w-0">
-                            {s.emoji && <span className="text-lg shrink-0">{s.emoji}</span>}
+                            {/* Indicador izquierdo: emoji real o ícono genérico con color */}
+                            <div
+                              className="w-8 h-8 rounded-lg shrink-0 flex items-center justify-center text-base"
+                              style={{
+                                background: accentColor
+                                  ? `${accentColor}18`
+                                  : "rgba(255,255,255,0.04)",
+                                border: `1px solid ${accentColor ? `${accentColor}30` : "rgba(255,255,255,0.07)"}`,
+                              }}
+                            >
+                              {realEmoji
+                                ? realEmoji
+                                : <BookOpen
+                                    className="w-4 h-4"
+                                    strokeWidth={1.5}
+                                    style={{ color: accentColor ?? "rgba(255,255,255,0.4)" }}
+                                  />
+                              }
+                            </div>
                             <div className="min-w-0">
                               <div className="font-medium text-sm truncate">{s.name}</div>
-                              <div className="text-xs text-muted-foreground mt-0.5">
-                                {s.professor && <span>{s.professor} · </span>}
+                              <div className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1 flex-wrap">
                                 {s.session_count} {s.session_count === 1 ? "clase" : "clases"}
-                                {s.term && <span> · {s.term}</span>}
+                                {s.professor && <><span className="opacity-40">·</span><span>{s.professor}</span></>}
+                                {s.term && <><span className="opacity-40">·</span><span>{s.term}</span></>}
                               </div>
                             </div>
                           </div>
                           <div className={`w-5 h-5 rounded shrink-0 border flex items-center justify-center transition-colors ${
-                            isSelected ? "bg-spark border-spark" : "border-white/20"
+                            isSelected ? "bg-foreground border-foreground" : "border-white/20"
                           }`}>
                             {isSelected && <Check className="w-3 h-3 text-background" strokeWidth={2.5} />}
                           </div>
@@ -362,8 +386,16 @@ export function NewTopicDialog() {
                   })}
                 </div>
                 <div className="flex justify-end pt-2">
-                  <Button onClick={onImportFromKairos} disabled={busy || selectedSubjects.size === 0}>
-                    {busy ? "Importando…" : `Importar ${selectedSubjects.size > 0 ? selectedSubjects.size : ""} ${selectedSubjects.size === 1 ? "materia" : "materias"}`}
+                  <Button
+                    onClick={onImportFromKairos}
+                    disabled={busy || selectedSubjects.size === 0}
+                  >
+                    {busy
+                      ? "Importando…"
+                      : selectedSubjects.size > 0
+                        ? `Importar ${selectedSubjects.size} ${selectedSubjects.size === 1 ? "materia" : "materias"}`
+                        : "Importar materias"
+                    }
                   </Button>
                 </div>
               </>
