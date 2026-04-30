@@ -13,7 +13,7 @@ export default async function ReviewPage() {
   const cards = await getDueFlashcards(db, user.id);
 
   return (
-    <div className="p-6 md:p-10 max-w-2xl">
+    <div className="w-full max-w-2xl mx-auto p-6 md:p-10 animate-fade-up">
       <header className="flex flex-col gap-2 mb-10">
         <span className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
           Spark · Repaso
