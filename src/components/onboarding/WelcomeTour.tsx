@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { X, Zap, BookOpen, Brain, Trophy, ChevronRight, ChevronLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 const STORAGE_KEY = "spark:welcome-tour-seen";
 
@@ -75,123 +74,223 @@ export function WelcomeTour() {
     <>
       <style jsx global>{`
         @keyframes spark-tour-in {
-          from { opacity: 0; transform: scale(0.96) translateY(10px); }
+          from { opacity: 0; transform: scale(0.95) translateY(12px); }
           to   { opacity: 1; transform: scale(1)    translateY(0); }
         }
-        @keyframes spark-tour-from-right {
-          from { opacity: 0; transform: translateX(22px); }
+        @keyframes spark-tour-right {
+          from { opacity: 0; transform: translateX(28px); }
           to   { opacity: 1; transform: translateX(0); }
         }
-        @keyframes spark-tour-from-left {
-          from { opacity: 0; transform: translateX(-22px); }
+        @keyframes spark-tour-left {
+          from { opacity: 0; transform: translateX(-28px); }
           to   { opacity: 1; transform: translateX(0); }
         }
       `}</style>
 
-      <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+      {/* Backdrop */}
+      <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 sm:p-6"
+        style={{ background: "rgba(0,0,0,0.75)", backdropFilter: "blur(6px)" }}
+      >
+        {/* Card */}
         <div
-          className="w-full max-w-md bg-[#0a0c11] border border-white/[0.08] rounded-2xl shadow-[0_32px_80px_rgba(0,0,0,0.6)] overflow-hidden"
-          style={{ animation: "spark-tour-in 320ms cubic-bezier(0.34, 1.4, 0.64, 1) both" }}
+          className="relative w-full max-w-[420px] rounded-2xl overflow-hidden"
+          style={{
+            background: "#181c27",
+            border: "1px solid rgba(255,255,255,0.10)",
+            boxShadow: "0 0 0 1px rgba(255,255,255,0.04), 0 40px 100px rgba(0,0,0,0.8)",
+            animation: "spark-tour-in 340ms cubic-bezier(0.34, 1.3, 0.64, 1) both",
+          }}
         >
           {/* Progress bar */}
-          <div className="h-[2px] bg-white/[0.04] w-full">
+          <div style={{ height: "3px", background: "rgba(255,255,255,0.06)" }}>
             <div
-              className="h-full bg-spark transition-all duration-500 ease-out"
-              style={{ width: `${((slide + 1) / SLIDES.length) * 100}%` }}
+              style={{
+                height: "100%",
+                background: "var(--spark, #e07b3a)",
+                width: `${((slide + 1) / SLIDES.length) * 100}%`,
+                transition: "width 500ms ease-out",
+              }}
             />
           </div>
 
           {/* Header */}
-          <div className="flex items-center gap-2 px-6 pt-4 pb-0">
-            <div className="w-5 h-5 rounded-md bg-spark/10 border border-spark/20 flex items-center justify-center">
-              <Zap className="w-2.5 h-2.5 text-spark" strokeWidth={1.5} fill="currentColor" />
+          <div className="flex items-center gap-2 px-5 pt-4">
+            <div style={{
+              width: 22, height: 22, borderRadius: 6,
+              background: "rgba(224,123,58,0.12)",
+              border: "1px solid rgba(224,123,58,0.25)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+            }}>
+              <Zap style={{ width: 11, height: 11, color: "var(--spark, #e07b3a)" }} strokeWidth={1.5} fill="currentColor" />
             </div>
-            <span className="font-mono text-[9px] uppercase tracking-[0.22em] text-muted-foreground/40">
+            <span style={{
+              fontFamily: "monospace", fontSize: 9,
+              textTransform: "uppercase", letterSpacing: "0.22em",
+              color: "rgba(255,255,255,0.35)",
+            }}>
               Spark · Focus OS
             </span>
-            <div className="flex-1" />
+            <div style={{ flex: 1 }} />
             <button
               onClick={dismiss}
-              className="text-muted-foreground/40 hover:text-muted-foreground transition-colors p-1"
+              style={{
+                color: "rgba(255,255,255,0.35)", padding: 4, borderRadius: 6,
+                background: "transparent", border: "none", cursor: "pointer",
+                transition: "color 150ms",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.75)")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.35)")}
             >
-              <X className="w-3.5 h-3.5" strokeWidth={1.5} />
+              <X style={{ width: 14, height: 14 }} strokeWidth={1.5} />
             </button>
           </div>
 
-          {/* Animated content */}
-          <div className="overflow-hidden">
+          {/* Animated slide content */}
+          <div style={{ overflow: "hidden" }}>
             <div
               key={animKey}
-              className="px-6 sm:px-8 pt-6 pb-2"
               style={{
-                animation: `${
-                  dir === "next" ? "spark-tour-from-right" : "spark-tour-from-left"
-                } 260ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both`,
+                padding: "24px 28px 16px",
+                animation: `${dir === "next" ? "spark-tour-right" : "spark-tour-left"} 270ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both`,
               }}
             >
-              <div className="flex flex-col gap-5">
-                {/* Icon */}
-                <div className="w-11 h-11 rounded-xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center">
-                  <Icon className="w-5 h-5 text-foreground/60" strokeWidth={1.5} />
-                </div>
+              {/* Icon */}
+              <div style={{
+                width: 48, height: 48, borderRadius: 14,
+                background: "rgba(224,123,58,0.10)",
+                border: "1px solid rgba(224,123,58,0.22)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                marginBottom: 20,
+              }}>
+                <Icon style={{ width: 22, height: 22, color: "var(--spark, #e07b3a)" }} strokeWidth={1.5} />
+              </div>
 
-                <div>
-                  <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground/50 mb-2 block">
-                    {current.tag}
-                  </span>
-                  <h2 className="text-2xl font-semibold leading-tight mb-3 tracking-tight">
-                    {current.title}
-                  </h2>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{current.body}</p>
-                </div>
+              {/* Tag */}
+              <div style={{
+                fontFamily: "monospace", fontSize: 10,
+                textTransform: "uppercase", letterSpacing: "0.18em",
+                color: "rgba(255,255,255,0.45)",
+                marginBottom: 8,
+              }}>
+                {current.tag}
+              </div>
 
-                <div className="text-xs text-muted-foreground/50 border-l-2 border-white/[0.06] pl-3 italic leading-relaxed">
-                  {current.hint}
-                </div>
+              {/* Title */}
+              <h2 style={{
+                fontSize: "1.45rem", fontWeight: 600,
+                lineHeight: 1.25, letterSpacing: "-0.02em",
+                color: "#ffffff",
+                margin: "0 0 12px",
+              }}>
+                {current.title}
+              </h2>
+
+              {/* Body */}
+              <p style={{
+                fontSize: 14, lineHeight: 1.65,
+                color: "rgba(255,255,255,0.60)",
+                margin: 0,
+              }}>
+                {current.body}
+              </p>
+
+              {/* Hint */}
+              <div style={{
+                marginTop: 18,
+                borderLeft: "2px solid rgba(255,255,255,0.10)",
+                paddingLeft: 12,
+                fontSize: 12,
+                fontStyle: "italic",
+                color: "rgba(255,255,255,0.38)",
+                lineHeight: 1.6,
+              }}>
+                {current.hint}
               </div>
             </div>
           </div>
 
           {/* Navigation */}
-          <div className="flex items-center justify-between px-6 sm:px-8 py-5">
-            {/* Animated dot indicators */}
-            <div className="flex items-center gap-1.5">
+          <div style={{
+            display: "flex", alignItems: "center",
+            justifyContent: "space-between",
+            padding: "14px 28px 22px",
+          }}>
+            {/* Dots */}
+            <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
               {SLIDES.map((_, i) => (
                 <div
                   key={i}
-                  className="h-1.5 rounded-full transition-all duration-300"
                   style={{
-                    width: i === slide ? "18px" : "6px",
-                    background:
-                      i === slide
-                        ? "rgba(255,255,255,0.65)"
-                        : "rgba(255,255,255,0.16)",
+                    height: 6, borderRadius: 99,
+                    width: i === slide ? 20 : 6,
+                    background: i === slide ? "rgba(255,255,255,0.75)" : "rgba(255,255,255,0.18)",
+                    transition: "all 280ms ease",
                   }}
                 />
               ))}
             </div>
 
-            <div className="flex items-center gap-2">
+            {/* Buttons */}
+            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
               {slide > 0 && (
                 <button
                   onClick={goPrev}
-                  className="grid h-8 w-8 place-items-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-white/[0.05] transition-colors"
+                  style={{
+                    width: 34, height: 34, borderRadius: 8,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    background: "rgba(255,255,255,0.06)",
+                    border: "1px solid rgba(255,255,255,0.08)",
+                    color: "rgba(255,255,255,0.55)", cursor: "pointer",
+                    transition: "background 150ms",
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.10)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.06)")}
                 >
-                  <ChevronLeft className="w-4 h-4" strokeWidth={1.5} />
+                  <ChevronLeft style={{ width: 16, height: 16 }} strokeWidth={1.5} />
                 </button>
               )}
 
               {isLast ? (
-                <Button onClick={dismiss} variant="spark" size="sm">
+                <button
+                  onClick={dismiss}
+                  style={{
+                    padding: "8px 18px",
+                    borderRadius: 8,
+                    background: "#ffffff",
+                    border: "none",
+                    color: "#13161f",
+                    fontSize: 13,
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    letterSpacing: "-0.01em",
+                    transition: "opacity 150ms",
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.88")}
+                  onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
+                >
                   Empezar a entrenar
-                </Button>
+                </button>
               ) : (
                 <button
                   onClick={goNext}
-                  className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground px-4 py-1.5 rounded-lg bg-white/[0.06] hover:bg-white/[0.09] transition-colors"
+                  style={{
+                    display: "flex", alignItems: "center", gap: 6,
+                    padding: "8px 16px",
+                    borderRadius: 8,
+                    background: "#ffffff",
+                    border: "none",
+                    color: "#13161f",
+                    fontSize: 13,
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    letterSpacing: "-0.01em",
+                    transition: "opacity 150ms",
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.88")}
+                  onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
                 >
                   Siguiente
-                  <ChevronRight className="w-4 h-4" strokeWidth={1.5} />
+                  <ChevronRight style={{ width: 14, height: 14 }} strokeWidth={2} />
                 </button>
               )}
             </div>
