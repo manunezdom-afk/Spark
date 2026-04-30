@@ -9,6 +9,7 @@ import {
   getSessions,
 } from "@/lib/spark/queries";
 import { MasteryBar } from "@/components/mastery/MasteryBar";
+import { KairosSourceHeader } from "@/components/topics/KairosSourceHeader";
 import { ENGINE_LABELS, ENGINE_DESCRIPTIONS } from "@/modules/spark/engines";
 import type { LearningEngine } from "@/modules/spark/types";
 
@@ -53,6 +54,12 @@ export default async function TopicDetailPage({ params }: RouteParams) {
       </Link>
 
       <header className="flex flex-col gap-3 mb-10">
+        {topic.kairos_subject_id && (
+          <KairosSourceHeader
+            subjectId={topic.kairos_subject_id}
+            color={topic.kairos_color}
+          />
+        )}
         {topic.category && (
           <span className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
             {topic.category}

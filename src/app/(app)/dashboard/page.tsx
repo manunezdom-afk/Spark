@@ -49,12 +49,26 @@ export default async function DashboardPage() {
     <>
       <WelcomeTour />
       <div className="p-6 md:p-12 max-w-5xl animate-fade-up">
-        {kairosTopics.length > 0 && (
-          <div className="mb-8 inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-black/[0.07] bg-white/60 backdrop-blur-sm text-[11px] font-medium text-muted-foreground">
-            <span className="w-1.5 h-1.5 rounded-full bg-spark animate-brand-pulse" />
-            Conectado con Kairos · {kairosTopics.length} {kairosTopics.length === 1 ? "materia" : "materias"}
-          </div>
-        )}
+        <div className="mb-8 flex flex-wrap gap-2">
+          {kairosTopics.length > 0 && (
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-black/[0.07] bg-white/60 backdrop-blur-sm text-[11px] font-medium text-muted-foreground">
+              <span className="w-1.5 h-1.5 rounded-full bg-spark animate-brand-pulse" />
+              Conectado con Kairos · {kairosTopics.length}{" "}
+              {kairosTopics.length === 1 ? "materia" : "materias"}
+            </div>
+          )}
+          {daysToDeadline !== null && daysToDeadline <= 14 && (
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-emerald-500/15 bg-emerald-50/60 backdrop-blur-sm text-[11px] font-medium text-emerald-700">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              Focus avisa: prueba en{" "}
+              {daysToDeadline === 0
+                ? "hoy"
+                : daysToDeadline === 1
+                  ? "1 día"
+                  : `${daysToDeadline} días`}
+            </div>
+          )}
+        </div>
 
         <header className="flex flex-col gap-3 mb-12">
           <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted-foreground/70">

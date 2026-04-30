@@ -10,10 +10,13 @@ import {
   Activity,
   User,
   LogOut,
+  ExternalLink,
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { useSparkAuth } from "@/lib/auth/session";
 import { BrandOrb } from "@/components/brand/BrandOrb";
+import { KAIROS_URL, FOCUS_IOS_URL } from "@/lib/spark/ecosystem";
+import { IOSFocusBanner } from "@/components/layout/IOSFocusBanner";
 
 const NAV: { href: string; label: string; icon: typeof Home }[] = [
   { href: "/dashboard", label: "Hoy", icon: Home },
@@ -66,24 +69,16 @@ export function Sidebar() {
         })}
       </nav>
 
+      <IOSFocusBanner />
+
       {/* Ecosystem footer */}
-      <div className="px-5 pb-3">
-        <div className="text-[9px] uppercase tracking-[0.22em] text-muted-foreground/50 font-mono mb-2 px-1">
+      <div className="px-3 pb-3">
+        <div className="text-[9px] uppercase tracking-[0.22em] text-muted-foreground/50 font-mono mb-1.5 px-2">
           Familia
         </div>
-        <div className="flex flex-col gap-1">
-          {[
-            { label: "Focus", sub: "Calendario" },
-            { label: "Kairos", sub: "Notas" },
-          ].map((app) => (
-            <div
-              key={app.label}
-              className="flex items-center justify-between px-1 py-0.5 text-[11px]"
-            >
-              <span className="font-medium text-foreground/70">{app.label}</span>
-              <span className="text-muted-foreground/50 text-[10px]">{app.sub}</span>
-            </div>
-          ))}
+        <div className="flex flex-col gap-0.5">
+          <EcosystemLink href={KAIROS_URL} label="Kairos" sub="Notas" dot="#A78BFA" />
+          <EcosystemLink href={FOCUS_IOS_URL} label="Focus" sub="Calendario" dot="#5DD2A8" />
         </div>
       </div>
 
@@ -110,5 +105,38 @@ export function Sidebar() {
         </button>
       </div>
     </aside>
+  );
+}
+
+function EcosystemLink({
+  href,
+  label,
+  sub,
+  dot,
+}: {
+  href: string;
+  label: string;
+  sub: string;
+  dot: string;
+}) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group flex items-center gap-2 rounded px-2 py-1 text-[11px] transition-colors hover:bg-black/[0.04]"
+    >
+      <span
+        className="h-1.5 w-1.5 shrink-0 rounded-full"
+        style={{ background: dot }}
+      />
+      <span className="font-medium text-foreground/70 group-hover:text-foreground">
+        {label}
+      </span>
+      <span className="text-muted-foreground/50 text-[10px] flex-1 truncate">
+        {sub}
+      </span>
+      <ExternalLink className="h-2.5 w-2.5 text-muted-foreground/40 opacity-0 transition-opacity group-hover:opacity-100" />
+    </a>
   );
 }
