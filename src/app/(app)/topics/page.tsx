@@ -17,10 +17,11 @@ export default async function TopicsPage() {
   } = await db.auth.getUser();
   if (!user) redirect("/login");
 
-  let [topics, mastery] = await Promise.all([
+  const [initialTopics, mastery] = await Promise.all([
     getTopics(db, user.id),
     getAllMastery(db, user.id),
   ]);
+  let topics = initialTopics;
 
   // Auto-seed demo examples for new / empty users
   if (topics.length === 0) {
