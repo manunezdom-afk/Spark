@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import { getAllMastery, getTopicsByIds } from "@/lib/spark/queries";
 import { MasteryBar } from "@/components/mastery/MasteryBar";
+import { GradientText } from "@/components/brand/GradientText";
 
 export const dynamic = "force-dynamic";
 
@@ -18,13 +19,14 @@ export default async function MasteryPage() {
   const now = Date.now();
 
   return (
-    <div className="p-6 md:p-10 max-w-3xl">
+    <div className="p-6 md:p-12 max-w-3xl animate-fade-up">
       <header className="flex flex-col gap-2 mb-10">
-        <span className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
+        <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted-foreground/70">
           Spark · Maestría
         </span>
-        <h1 className="text-4xl font-semibold tracking-tight">
-          Lo que sabes <span className="italic text-nova-mid">hoy.</span>
+        <h1 className="text-display-md md:text-display-lg text-foreground">
+          <span className="font-light">Lo que sabes</span>{" "}
+          <GradientText italic className="font-light">hoy.</GradientText>
         </h1>
       </header>
 

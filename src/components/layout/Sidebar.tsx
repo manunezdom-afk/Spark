@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  Zap,
   Home,
   BookMarked,
   Layers,
@@ -14,6 +13,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { useSparkAuth } from "@/lib/auth/session";
+import { BrandOrb } from "@/components/brand/BrandOrb";
 
 const NAV: { href: string; label: string; icon: typeof Home }[] = [
   { href: "/dashboard", label: "Hoy", icon: Home },
@@ -28,22 +28,20 @@ export function Sidebar() {
   const { signOut, user } = useSparkAuth();
 
   return (
-    <aside className="w-[220px] shrink-0 hidden md:flex flex-col border-r border-black/[0.07] bg-background/80 backdrop-blur-xl">
-      {/* App header */}
-      <div className="px-4 h-16 border-b border-black/[0.07] flex items-center gap-3">
-        <div className="w-7 h-7 rounded-lg bg-spark/10 border border-spark/20 flex items-center justify-center shrink-0">
-          <Zap className="w-3.5 h-3.5 text-spark" strokeWidth={1.5} fill="currentColor" />
-        </div>
+    <aside className="w-[228px] shrink-0 hidden md:flex flex-col border-r border-black/[0.06] bg-background/70 backdrop-blur-2xl">
+      {/* Brand header */}
+      <div className="px-5 h-[68px] flex items-center gap-3">
+        <BrandOrb size="sm" />
         <div className="min-w-0">
-          <div className="text-sm font-semibold tracking-tight leading-none">Spark</div>
-          <div className="text-[9px] uppercase tracking-[0.18em] text-muted-foreground/60 mt-0.5 leading-none">
+          <div className="text-[15px] font-semibold tracking-tight leading-none">Spark</div>
+          <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground/70 mt-1 leading-none font-medium">
             Focus OS
           </div>
         </div>
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-3 py-5 flex flex-col gap-0.5">
+      <nav className="flex-1 px-3 py-3 flex flex-col gap-1">
         {NAV.map((item) => {
           const active = pathname === item.href || pathname.startsWith(item.href + "/");
           const Icon = item.icon;
@@ -52,16 +50,16 @@ export function Sidebar() {
               key={item.href}
               href={item.href}
               className={cn(
-                "relative flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors",
+                "group relative flex items-center gap-3 px-3.5 py-2.5 rounded-full text-sm transition-all duration-200",
                 active
-                  ? "bg-black/[0.06] text-foreground font-medium"
-                  : "text-muted-foreground hover:text-foreground hover:bg-black/[0.04]"
+                  ? "bg-foreground text-background font-semibold"
+                  : "text-foreground/70 hover:text-foreground hover:bg-black/[0.04] font-medium"
               )}
             >
-              {active && (
-                <span className="absolute left-0 top-1.5 bottom-1.5 w-[2px] rounded-full bg-spark" />
-              )}
-              <Icon className="w-4 h-4 shrink-0" strokeWidth={1.5} />
+              <Icon
+                className={cn("w-[17px] h-[17px] shrink-0 transition-transform", !active && "group-hover:scale-110")}
+                strokeWidth={active ? 2 : 1.75}
+              />
               {item.label}
             </Link>
           );
@@ -69,45 +67,45 @@ export function Sidebar() {
       </nav>
 
       {/* Ecosystem footer */}
-      <div className="px-4 pb-2">
-        <div className="text-[9px] uppercase tracking-[0.18em] text-muted-foreground/40 font-mono mb-1.5 px-1">
+      <div className="px-5 pb-3">
+        <div className="text-[9px] uppercase tracking-[0.22em] text-muted-foreground/50 font-mono mb-2 px-1">
           Familia
         </div>
-        <div className="flex flex-col gap-0.5">
+        <div className="flex flex-col gap-1">
           {[
             { label: "Focus", sub: "Calendario" },
             { label: "Kairos", sub: "Notas" },
           ].map((app) => (
             <div
               key={app.label}
-              className="flex items-center justify-between px-1 py-1 text-[10px] text-muted-foreground/50"
+              className="flex items-center justify-between px-1 py-0.5 text-[11px]"
             >
-              <span className="font-medium">{app.label}</span>
-              <span className="text-muted-foreground/40">{app.sub}</span>
+              <span className="font-medium text-foreground/70">{app.label}</span>
+              <span className="text-muted-foreground/50 text-[10px]">{app.sub}</span>
             </div>
           ))}
         </div>
       </div>
 
       {/* Account */}
-      <div className="px-3 py-3 border-t border-black/[0.07] flex flex-col gap-0.5">
+      <div className="px-3 py-3 border-t border-black/[0.06] flex flex-col gap-1">
         <Link
           href="/cuenta"
           className={cn(
-            "flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors",
+            "flex items-center gap-3 px-3.5 py-2 rounded-full text-sm transition-colors",
             pathname === "/cuenta"
-              ? "bg-black/[0.06] text-foreground font-medium"
-              : "text-muted-foreground hover:text-foreground hover:bg-black/[0.04]"
+              ? "bg-foreground text-background font-medium"
+              : "text-foreground/70 hover:text-foreground hover:bg-black/[0.04]"
           )}
         >
-          <User className="w-4 h-4 shrink-0" strokeWidth={1.5} />
-          <span className="truncate text-xs">{user?.email ?? "Cuenta"}</span>
+          <User className="w-4 h-4 shrink-0" strokeWidth={1.75} />
+          <span className="truncate text-[12px]">{user?.email ?? "Cuenta"}</span>
         </Link>
         <button
           onClick={signOut}
-          className="flex items-center gap-3 px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-black/[0.04] transition-colors w-full"
+          className="flex items-center gap-3 px-3.5 py-2 rounded-full text-sm text-foreground/60 hover:text-foreground hover:bg-black/[0.04] transition-colors w-full"
         >
-          <LogOut className="w-4 h-4 shrink-0" strokeWidth={1.5} />
+          <LogOut className="w-4 h-4 shrink-0" strokeWidth={1.75} />
           Cerrar sesión
         </button>
       </div>

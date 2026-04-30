@@ -1,37 +1,39 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X, Zap, BookOpen, Brain, Trophy, ChevronRight, ChevronLeft } from "lucide-react";
+import { X, BookOpen, Brain, Trophy, ArrowRight, ArrowLeft, Zap } from "lucide-react";
+import { BrandOrb } from "@/components/brand/BrandOrb";
+import { GradientText } from "@/components/brand/GradientText";
 
 const STORAGE_KEY = "spark:welcome-tour-seen";
 
 const SLIDES = [
   {
     icon: Zap,
-    tag: "Bienvenido",
-    title: "No memorices. Entrena.",
+    tag: "Hola.",
+    title: <>No memorices. <GradientText italic>Entrena.</GradientText></>,
     body: "Spark no es un lugar para guardar notas. Nova te hace preguntas difíciles, detecta lo que no sabes y te lleva al borde de tu propio entendimiento.",
-    hint: "Abajo tienes temas de ejemplo para que veas cómo funciona.",
+    hint: "Empieza creando un tema o importando tus materias desde Kairos.",
   },
   {
     icon: BookOpen,
     tag: "Tus temas",
-    title: "Cada tema es una unidad de combate.",
-    body: "Crea temas manualmente, extráelos pegando texto, o importa directamente tus materias desde Kairos. Spark lee tus propias notas de clase y las usa como contexto.",
+    title: <>Cada tema es una <GradientText italic>unidad</GradientText> de combate.</>,
+    body: "Crea temas manualmente, extráelos pegando texto, o importa directamente tus materias desde Kairos. Spark lee tus propias notas de clase y las usa como contexto en cada sesión.",
     hint: "Los temas marcados con 'Kairos' usan tus notas reales en cada sesión.",
   },
   {
     icon: Brain,
-    tag: "Los 5 motores",
-    title: "Cada motor te ataca distinto.",
+    tag: "Cinco motores",
+    title: <>Cada motor te <GradientText italic>ataca</GradientText> distinto.</>,
     body: "Socrático te pregunta hasta que expliques bien. Debugger te mete errores a propósito. Abogado del diablo contradice todo lo que dices. Bridge Builder conecta conceptos. Roleplay te pone en situaciones reales.",
-    hint: "Elige el motor según lo que necesitas: entender, aplicar o defender.",
+    hint: "Elige el motor según lo que necesites: entender, aplicar o defender.",
   },
   {
     icon: Trophy,
     tag: "Maestría",
-    title: "Nova recuerda lo que fallaste.",
-    body: "Cada sesión actualiza tu nivel de maestría por tema usando el algoritmo SM-2 de repetición espaciada. Los temas que más fallas vuelven antes. Los que dominas esperan más.",
+    title: <>Nova recuerda lo que <GradientText italic>fallaste.</GradientText></>,
+    body: "Cada sesión actualiza tu nivel de maestría con el algoritmo SM-2 de repetición espaciada. Los temas que más fallas vuelven antes. Los que dominas esperan más.",
     hint: "Después de tu primera sesión real, verás la barra de maestría moverse.",
   },
 ];
@@ -73,224 +75,143 @@ export function WelcomeTour() {
   return (
     <>
       <style jsx global>{`
-        @keyframes spark-tour-in {
-          from { opacity: 0; transform: scale(0.95) translateY(12px); }
+        @keyframes tour-modal-in {
+          from { opacity: 0; transform: scale(0.96) translateY(12px); }
           to   { opacity: 1; transform: scale(1)    translateY(0); }
         }
-        @keyframes spark-tour-right {
+        @keyframes tour-content-right {
           from { opacity: 0; transform: translateX(28px); }
           to   { opacity: 1; transform: translateX(0); }
         }
-        @keyframes spark-tour-left {
+        @keyframes tour-content-left {
           from { opacity: 0; transform: translateX(-28px); }
           to   { opacity: 1; transform: translateX(0); }
         }
       `}</style>
 
-      {/* Backdrop */}
-      <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 sm:p-6"
-        style={{ background: "rgba(0,0,0,0.75)", backdropFilter: "blur(6px)" }}
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
+        style={{
+          background: "rgba(20, 16, 28, 0.55)",
+          backdropFilter: "blur(8px)",
+        }}
       >
-        {/* Card */}
         <div
-          className="relative w-full max-w-[420px] rounded-2xl overflow-hidden"
+          className="relative w-full max-w-[460px] rounded-[28px] overflow-hidden bg-card"
           style={{
-            background: "#181c27",
-            border: "1px solid rgba(255,255,255,0.10)",
-            boxShadow: "0 0 0 1px rgba(255,255,255,0.04), 0 40px 100px rgba(0,0,0,0.8)",
-            animation: "spark-tour-in 340ms cubic-bezier(0.34, 1.3, 0.64, 1) both",
+            border: "1px solid rgba(0,0,0,0.06)",
+            boxShadow: "0 0 0 1px rgba(255,255,255,0.5) inset, 0 30px 80px rgba(0,0,0,0.18)",
+            animation: "tour-modal-in 360ms cubic-bezier(0.34, 1.4, 0.64, 1) both",
           }}
         >
-          {/* Progress bar */}
-          <div style={{ height: "3px", background: "rgba(255,255,255,0.06)" }}>
+          {/* Animated brand wash at top */}
+          <div className="relative h-[120px] overflow-hidden">
+            <div className="absolute inset-0 bg-brand-gradient opacity-90" />
             <div
+              className="absolute inset-0"
               style={{
-                height: "100%",
-                background: "var(--spark, #e07b3a)",
-                width: `${((slide + 1) / SLIDES.length) * 100}%`,
-                transition: "width 500ms ease-out",
+                background:
+                  "radial-gradient(ellipse at 50% 100%, rgba(255,255,255,0.55), transparent 60%)",
               }}
             />
-          </div>
-
-          {/* Header */}
-          <div className="flex items-center gap-2 px-5 pt-4">
-            <div style={{
-              width: 22, height: 22, borderRadius: 6,
-              background: "rgba(224,123,58,0.12)",
-              border: "1px solid rgba(224,123,58,0.25)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-            }}>
-              <Zap style={{ width: 11, height: 11, color: "var(--spark, #e07b3a)" }} strokeWidth={1.5} fill="currentColor" />
+            {/* Floating brand orb */}
+            <div className="absolute left-1/2 -translate-x-1/2 bottom-0 translate-y-1/2 animate-float">
+              <BrandOrb size="lg" />
             </div>
-            <span style={{
-              fontFamily: "monospace", fontSize: 9,
-              textTransform: "uppercase", letterSpacing: "0.22em",
-              color: "rgba(255,255,255,0.35)",
-            }}>
-              Spark · Focus OS
-            </span>
-            <div style={{ flex: 1 }} />
+            {/* Close button */}
             <button
               onClick={dismiss}
-              style={{
-                color: "rgba(255,255,255,0.35)", padding: 4, borderRadius: 6,
-                background: "transparent", border: "none", cursor: "pointer",
-                transition: "color 150ms",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.75)")}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.35)")}
+              className="absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center bg-black/15 hover:bg-black/25 backdrop-blur-sm text-white transition-colors"
+              aria-label="Cerrar"
             >
-              <X style={{ width: 14, height: 14 }} strokeWidth={1.5} />
+              <X className="w-4 h-4" strokeWidth={2} />
             </button>
+            {/* Step pill */}
+            <div className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-black/15 backdrop-blur-sm text-white text-[10px] font-mono font-medium tracking-wider">
+              {slide + 1} / {SLIDES.length}
+            </div>
           </div>
 
-          {/* Animated slide content */}
-          <div style={{ overflow: "hidden" }}>
+          {/* Content (animated per slide) */}
+          <div className="overflow-hidden pt-12">
             <div
               key={animKey}
+              className="px-8 pb-2"
               style={{
-                padding: "24px 28px 16px",
-                animation: `${dir === "next" ? "spark-tour-right" : "spark-tour-left"} 270ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both`,
+                animation: `${dir === "next" ? "tour-content-right" : "tour-content-left"} 320ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both`,
               }}
             >
-              {/* Icon */}
-              <div style={{
-                width: 48, height: 48, borderRadius: 14,
-                background: "rgba(224,123,58,0.10)",
-                border: "1px solid rgba(224,123,58,0.22)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                marginBottom: 20,
-              }}>
-                <Icon style={{ width: 22, height: 22, color: "var(--spark, #e07b3a)" }} strokeWidth={1.5} />
-              </div>
+              <div className="flex flex-col gap-4 items-center text-center">
+                {/* Tag */}
+                <div className="flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-[0.22em] text-muted-foreground/80">
+                  <Icon className="w-3 h-3" strokeWidth={2} />
+                  {current.tag}
+                </div>
 
-              {/* Tag */}
-              <div style={{
-                fontFamily: "monospace", fontSize: 10,
-                textTransform: "uppercase", letterSpacing: "0.18em",
-                color: "rgba(255,255,255,0.45)",
-                marginBottom: 8,
-              }}>
-                {current.tag}
-              </div>
+                {/* Title with gradient italic accent */}
+                <h2 className="text-[1.7rem] font-light leading-[1.18] tracking-tight text-foreground">
+                  {current.title}
+                </h2>
 
-              {/* Title */}
-              <h2 style={{
-                fontSize: "1.45rem", fontWeight: 600,
-                lineHeight: 1.25, letterSpacing: "-0.02em",
-                color: "#ffffff",
-                margin: "0 0 12px",
-              }}>
-                {current.title}
-              </h2>
+                {/* Body */}
+                <p className="text-[14px] text-muted-foreground leading-[1.65] max-w-[360px]">
+                  {current.body}
+                </p>
 
-              {/* Body */}
-              <p style={{
-                fontSize: 14, lineHeight: 1.65,
-                color: "rgba(255,255,255,0.60)",
-                margin: 0,
-              }}>
-                {current.body}
-              </p>
-
-              {/* Hint */}
-              <div style={{
-                marginTop: 18,
-                borderLeft: "2px solid rgba(255,255,255,0.10)",
-                paddingLeft: 12,
-                fontSize: 12,
-                fontStyle: "italic",
-                color: "rgba(255,255,255,0.38)",
-                lineHeight: 1.6,
-              }}>
-                {current.hint}
+                {/* Hint */}
+                <div className="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-black/[0.07] bg-black/[0.02] text-[11px] text-muted-foreground/90">
+                  <span className="w-1 h-1 rounded-full bg-spark animate-brand-pulse" />
+                  {current.hint}
+                </div>
               </div>
             </div>
           </div>
 
           {/* Navigation */}
-          <div style={{
-            display: "flex", alignItems: "center",
-            justifyContent: "space-between",
-            padding: "14px 28px 22px",
-          }}>
+          <div className="flex items-center justify-between px-7 py-6 mt-4">
             {/* Dots */}
-            <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+            <div className="flex items-center gap-1.5">
               {SLIDES.map((_, i) => (
                 <div
                   key={i}
+                  className="rounded-full transition-all duration-300 ease-spring"
                   style={{
-                    height: 6, borderRadius: 99,
-                    width: i === slide ? 20 : 6,
-                    background: i === slide ? "rgba(255,255,255,0.75)" : "rgba(255,255,255,0.18)",
-                    transition: "all 280ms ease",
+                    height: 6,
+                    width: i === slide ? 22 : 6,
+                    background: i === slide
+                      ? "linear-gradient(90deg, var(--grad-1), var(--grad-2))"
+                      : "rgba(0,0,0,0.12)",
                   }}
                 />
               ))}
             </div>
 
-            {/* Buttons */}
-            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            <div className="flex items-center gap-2">
               {slide > 0 && (
                 <button
                   onClick={goPrev}
-                  style={{
-                    width: 34, height: 34, borderRadius: 8,
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    background: "rgba(255,255,255,0.06)",
-                    border: "1px solid rgba(255,255,255,0.08)",
-                    color: "rgba(255,255,255,0.55)", cursor: "pointer",
-                    transition: "background 150ms",
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.10)")}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.06)")}
+                  className="w-10 h-10 rounded-full flex items-center justify-center border border-black/[0.07] bg-white hover:bg-black/[0.04] transition-colors text-foreground/70 hover:text-foreground"
+                  aria-label="Anterior"
                 >
-                  <ChevronLeft style={{ width: 16, height: 16 }} strokeWidth={1.5} />
+                  <ArrowLeft className="w-4 h-4" strokeWidth={1.75} />
                 </button>
               )}
 
               {isLast ? (
                 <button
                   onClick={dismiss}
-                  style={{
-                    padding: "8px 18px",
-                    borderRadius: 8,
-                    background: "#ffffff",
-                    border: "none",
-                    color: "#13161f",
-                    fontSize: 13,
-                    fontWeight: 600,
-                    cursor: "pointer",
-                    letterSpacing: "-0.01em",
-                    transition: "opacity 150ms",
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.88")}
-                  onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
+                  className="px-5 py-2.5 rounded-full bg-foreground text-background text-[13px] font-semibold tracking-tight hover:opacity-90 transition-opacity inline-flex items-center gap-1.5"
                 >
                   Empezar a entrenar
+                  <ArrowRight className="w-3.5 h-3.5" strokeWidth={2} />
                 </button>
               ) : (
                 <button
                   onClick={goNext}
-                  style={{
-                    display: "flex", alignItems: "center", gap: 6,
-                    padding: "8px 16px",
-                    borderRadius: 8,
-                    background: "#ffffff",
-                    border: "none",
-                    color: "#13161f",
-                    fontSize: 13,
-                    fontWeight: 600,
-                    cursor: "pointer",
-                    letterSpacing: "-0.01em",
-                    transition: "opacity 150ms",
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.88")}
-                  onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
+                  className="px-5 py-2.5 rounded-full bg-foreground text-background text-[13px] font-semibold tracking-tight hover:opacity-90 transition-opacity inline-flex items-center gap-1.5"
                 >
                   Siguiente
-                  <ChevronRight style={{ width: 14, height: 14 }} strokeWidth={2} />
+                  <ArrowRight className="w-3.5 h-3.5" strokeWidth={2} />
                 </button>
               )}
             </div>
