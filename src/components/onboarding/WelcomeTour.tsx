@@ -18,15 +18,15 @@ const SLIDES = [
   {
     icon: BookOpen,
     tag: "Tus temas",
-    title: <>Cada tema es una <GradientText italic>unidad</GradientText> de combate.</>,
-    body: "Crea temas manualmente, extráelos pegando texto, o importa directamente tus materias desde Kairos. Spark lee tus propias notas de clase y las usa como contexto en cada sesión.",
+    title: <>Cada tema, una <GradientText italic>clase</GradientText> propia.</>,
+    body: "Crea temas a mano, pega texto para extraerlos, o importa tus materias desde Kairos. Spark lee tus apuntes y los usa como contexto en cada sesión.",
     hint: "Los temas marcados con 'Kairos' usan tus notas reales en cada sesión.",
   },
   {
     icon: Brain,
     tag: "Cinco motores",
-    title: <>Cada motor te <GradientText italic>ataca</GradientText> distinto.</>,
-    body: "Socrático te pregunta hasta que expliques bien. Debugger te mete errores a propósito. Abogado del diablo contradice todo lo que dices. Bridge Builder conecta conceptos. Roleplay te pone en situaciones reales.",
+    title: <>Cada motor te <GradientText italic>entrena</GradientText> distinto.</>,
+    body: "Cinco caminos según lo que necesites: cazar errores en un texto, defender tu postura, conectar temas, simular un caso real, o responder pregunta a pregunta hasta que te quede claro.",
     hint: "Elige el motor según lo que necesites: entender, aplicar o defender.",
   },
   {

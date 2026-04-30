@@ -67,21 +67,21 @@ const ENGINE_TOPIC_LIMITS: Record<LearningEngine, { min: number; max: number }> 
 };
 
 export const ENGINE_LABELS: Record<LearningEngine, string> = {
-  debugger:           'The Debugger',
-  devils_advocate:    'Abogado del Diablo',
-  roleplay:           'Roleplay de Alta Presión',
-  bridge_builder:     'Bridge Builder',
-  socratic:           'Método Socrático',
-  test_alternativas:  'Prueba de Alternativas',
-  test_desarrollo:    'Prueba de Desarrollo',
+  debugger:           'Cazar errores',
+  devils_advocate:    'Defender postura',
+  roleplay:           'Caso real',
+  bridge_builder:     'Conectar temas',
+  socratic:           'Preguntas guiadas',
+  test_alternativas:  'Prueba de alternativas',
+  test_desarrollo:    'Prueba de desarrollo',
 };
 
 export const ENGINE_DESCRIPTIONS: Record<LearningEngine, string> = {
-  debugger:           'Encuentra los 3 errores ocultos en el texto generado por Spark.',
-  devils_advocate:    'Defiende tu postura ante argumentos adversariales con tus propias notas.',
-  roleplay:           'Aplica tus conocimientos en un escenario de alta presión con consecuencias reales.',
+  debugger:           'Encuentra los errores escondidos en un texto generado por Spark.',
+  devils_advocate:    'Defiende tu postura ante contraargumentos con tus propias notas.',
+  roleplay:           'Aplica lo que sabes en un escenario realista con presión.',
   bridge_builder:     'Descubre conexiones no obvias entre materias que creías separadas.',
-  socratic:           'Responde preguntas de por qué hasta que el conocimiento sea tuyo de verdad.',
+  socratic:           'Responde preguntas de por qué hasta que el concepto sea tuyo.',
   test_alternativas:  'Preguntas de opción múltiple generadas por IA. Corrección automática.',
   test_desarrollo:    'Preguntas abiertas evaluadas por IA según los conceptos clave del tema.',
 };

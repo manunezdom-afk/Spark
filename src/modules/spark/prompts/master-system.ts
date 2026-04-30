@@ -101,13 +101,13 @@ function buildCalendarPressure(ctx: EngineContext): string {
     strategy = 'Modo repaso exprés: flashcards + preguntas de Active Recall de alta densidad. Sin exploración lateral.';
   } else if (ctx.days_to_deadline <= 3) {
     urgency = 'ALTA (2–3 días)';
-    strategy = 'Consolida conceptos clave. Usa el Método Socrático y el Debugger para identificar brechas críticas.';
+    strategy = 'Consolida conceptos clave. Usa Preguntas Guiadas y Cazar Errores para identificar brechas críticas.';
   } else if (ctx.days_to_deadline <= 7) {
     urgency = 'MODERADA (4–7 días)';
-    strategy = 'Profundiza y conecta. Bridge Builder + Abogado del Diablo para fortalecer argumentos.';
+    strategy = 'Profundiza y conecta. Conectar Temas + Defender Postura para fortalecer argumentos.';
   } else {
     urgency = 'BAJA (>7 días)';
-    strategy = 'Modo exploración profunda. Roleplay de Alta Presión y Síntesis Interdisciplinaria.';
+    strategy = 'Modo exploración profunda. Caso Real y Síntesis Interdisciplinaria.';
   }
 
   return `
