@@ -8,6 +8,12 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
   applicationName: "Spark",
   appleWebApp: { capable: true, title: "Spark", statusBarStyle: "black-translucent" },
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+    ],
+    apple: "/icons/icon-192.png",
+  },
 };
 
 export const viewport: Viewport = {
