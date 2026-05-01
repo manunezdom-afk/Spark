@@ -16,6 +16,7 @@ import {
 import { cn } from "@/lib/utils/cn";
 import { isAnonymousUser, useSparkAuth } from "@/lib/auth/session";
 import { BrandOrb } from "@/components/brand/BrandOrb";
+import { NovaMark } from "@/components/nova/NovaMark";
 import { KAIROS_URL, FOCUS_IOS_URL } from "@/lib/spark/ecosystem";
 import { IOSFocusBanner } from "@/components/layout/IOSFocusBanner";
 
@@ -46,8 +47,35 @@ export function Sidebar() {
         </div>
       </div>
 
+      {/* Nova pill */}
+      <div className="px-3 pt-1 pb-2">
+        <Link
+          href="/dashboard"
+          className="flex items-center gap-2.5 px-3 py-2.5 rounded-full transition-opacity hover:opacity-90 active:opacity-75"
+          style={{
+            background: "linear-gradient(135deg, rgba(139,92,246,0.10) 0%, rgba(217,70,239,0.07) 55%, rgba(255,138,76,0.10) 100%)",
+            border: "1px solid rgba(139,92,246,0.16)",
+          }}
+          title="Nova · tu coach de IA"
+        >
+          <div
+            className="w-5 h-5 rounded-full grid place-items-center shrink-0"
+            style={{
+              background: "linear-gradient(135deg, #8B5CF6 0%, #D946EF 55%, #FF8A4C 100%)",
+              boxShadow: "0 2px 8px rgba(139,92,246,0.28)",
+            }}
+          >
+            <NovaMark size={10} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="text-[11.5px] font-semibold leading-none text-foreground/80">Nova</div>
+            <div className="text-[9.5px] leading-none mt-0.5 text-muted-foreground/50">Tu coach de IA</div>
+          </div>
+        </Link>
+      </div>
+
       {/* Nav */}
-      <nav className="flex-1 px-3 py-3 flex flex-col gap-1">
+      <nav className="flex-1 px-3 py-1 flex flex-col gap-1">
         {NAV.map((item) => {
           const active = pathname === item.href || pathname.startsWith(item.href + "/");
           const Icon = item.icon;
