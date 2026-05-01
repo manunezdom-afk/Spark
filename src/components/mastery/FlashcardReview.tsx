@@ -46,10 +46,13 @@ export function FlashcardReview({ initial }: { initial: SparkFlashcard[] }) {
   const [revealed, setRevealed] = useState(false);
   const [busy, setBusy] = useState(false);
 
+  const [hintVisible, setHintVisible] = useState(false);
+
   // Demo mode state
   const [demoIndex, setDemoIndex] = useState(0);
   const [demoRevealed, setDemoRevealed] = useState(false);
   const [demoDone, setDemoDone] = useState(false);
+  const [demoHintVisible, setDemoHintVisible] = useState(false);
 
   // ── Demo mode ──────────────────────────────────────────────────────────
   if (wasEmptyInitially.current) {
@@ -98,7 +101,16 @@ export function FlashcardReview({ initial }: { initial: SparkFlashcard[] }) {
             {demoRevealed ? card.back : card.front}
           </p>
           {!demoRevealed && card.hint && (
-            <p className="text-xs text-muted-foreground italic">Pista: {card.hint}</p>
+            demoHintVisible ? (
+              <p className="text-xs text-muted-foreground italic">Pista: {card.hint}</p>
+            ) : (
+              <button
+                onClick={() => setDemoHintVisible(true)}
+                className="text-xs text-muted-foreground/50 hover:text-muted-foreground underline underline-offset-2 transition-colors"
+              >
+                Ver pista
+              </button>
+            )
           )}
         </div>
 
@@ -124,6 +136,7 @@ export function FlashcardReview({ initial }: { initial: SparkFlashcard[] }) {
                   } else {
                     setDemoIndex(next);
                     setDemoRevealed(false);
+                    setDemoHintVisible(false);
                   }
                 }}
                 variant={q.tone}
@@ -173,6 +186,7 @@ export function FlashcardReview({ initial }: { initial: SparkFlashcard[] }) {
       if (!res.ok) throw new Error((await res.json()).error ?? "Error");
       setQueue((q) => q.slice(1));
       setRevealed(false);
+      setHintVisible(false);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Error");
     } finally {
@@ -196,7 +210,16 @@ export function FlashcardReview({ initial }: { initial: SparkFlashcard[] }) {
           {revealed ? card.back : card.front}
         </p>
         {!revealed && card.hint && (
-          <p className="text-xs text-muted-foreground italic">Pista: {card.hint}</p>
+          hintVisible ? (
+            <p className="text-xs text-muted-foreground italic">Pista: {card.hint}</p>
+          ) : (
+            <button
+              onClick={() => setHintVisible(true)}
+              className="text-xs text-muted-foreground/50 hover:text-muted-foreground underline underline-offset-2 transition-colors"
+            >
+              Ver pista
+            </button>
+          )
         )}
       </div>
 
