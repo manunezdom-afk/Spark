@@ -31,7 +31,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = async () => {
     const supabase = getSupabaseBrowserClient();
-    await supabase.auth.signOut();
+    // Anonymous sessions can't be invalidated server-side; local scope ensures
+    // the cookie is always cleared regardless of server response.
+    const scope = isAnonymousUser(session?.user ?? null) ? "local" : "global";
+    await supabase.auth.signOut({ scope });
     window.location.href = "/login";
   };
 

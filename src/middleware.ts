@@ -40,9 +40,12 @@ export async function middleware(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser();
 
-  // Public paths: allow anonymous, but logged-in users on /login → /dashboard
+  // Anonymous users can visit /login to create a real account (link identity).
+  const isAnonymous = (user as (typeof user & { is_anonymous?: boolean }) | null)?.is_anonymous === true;
+
+  // Public paths: non-anonymous logged-in users on /login or / → /dashboard
   if (PUBLIC_PATHS.has(pathname)) {
-    if (user && (pathname === "/login" || pathname === "/")) {
+    if (user && !isAnonymous && (pathname === "/login" || pathname === "/")) {
       return NextResponse.redirect(new URL("/dashboard", request.url));
     }
     return response;
