@@ -12,7 +12,6 @@ import {
 import { recommendEngines } from "@/modules/spark/scheduler/sm2";
 import { ENGINE_LABELS, ENGINE_DESCRIPTIONS } from "@/modules/spark/engines";
 import { Button } from "@/components/ui/button";
-import { WelcomeTour } from "@/components/onboarding/WelcomeTour";
 import { GradientText } from "@/components/brand/GradientText";
 import { BrandOrb } from "@/components/brand/BrandOrb";
 import { NovaDashboardEntry } from "@/components/nova/NovaDashboardEntry";
@@ -48,7 +47,6 @@ export default async function DashboardPage() {
 
   return (
     <>
-      <WelcomeTour />
       <div className="p-6 md:p-12 max-w-5xl animate-fade-up">
         <div className="mb-8 flex flex-wrap gap-2">
           {kairosTopics.length > 0 && (

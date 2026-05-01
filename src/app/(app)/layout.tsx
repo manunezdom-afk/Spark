@@ -6,6 +6,7 @@ import { PageHelp } from "@/components/layout/PageHelp";
 import { AuthProvider } from "@/lib/auth/session";
 import { NovaAskProvider } from "@/components/nova/NovaAskProvider";
 import { KairosBridgeProvider } from "@/components/providers/KairosBridgeProvider";
+import { WelcomeTour } from "@/components/onboarding/WelcomeTour";
 
 export default function AppLayout({ children }: { children: ReactNode }) {
   return (
@@ -21,6 +22,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           <MobileNav />
           <PageHelp />
         </div>
+        <WelcomeTour />
       </NovaAskProvider>
     </AuthProvider>
   );
