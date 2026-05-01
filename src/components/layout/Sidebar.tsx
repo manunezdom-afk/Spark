@@ -16,7 +16,9 @@ import {
 import { cn } from "@/lib/utils/cn";
 import { isAnonymousUser, useSparkAuth } from "@/lib/auth/session";
 import { BrandOrb } from "@/components/brand/BrandOrb";
-import { NovaPill } from "@/components/nova/NovaPill";
+import { NovaMark } from "@/components/nova/NovaMark";
+import { useNovaAsk } from "@/components/nova/NovaAskProvider";
+import { useNovaContext } from "@/lib/nova/context";
 import { KAIROS_URL, FOCUS_IOS_URL } from "@/lib/spark/ecosystem";
 import { IOSFocusBanner } from "@/components/layout/IOSFocusBanner";
 
@@ -33,6 +35,8 @@ export function Sidebar() {
   const pathname = usePathname();
   const { signOut, user } = useSparkAuth();
   const guest = isAnonymousUser(user);
+  const ask = useNovaAsk();
+  const ctx = useNovaContext();
 
   return (
     <aside className="w-[228px] shrink-0 hidden md:flex flex-col border-r border-black/[0.06] bg-background/70 backdrop-blur-2xl">
@@ -47,9 +51,26 @@ export function Sidebar() {
         </div>
       </div>
 
-      {/* Nova pill */}
-      <div className="px-3 pt-1 pb-2">
-        <NovaPill variant="bar" className="w-full" />
+      {/* Nova — entrada principal */}
+      <div className="px-3 pt-1 pb-3">
+        <button
+          type="button"
+          onClick={ask.open}
+          title="Pregúntale a Nova · N"
+          className="w-full group relative overflow-hidden flex items-center gap-3 px-4 py-3.5 rounded-2xl text-white transition-all duration-200 shadow-[0_4px_20px_var(--color-nova-glow)] hover:shadow-[0_6px_28px_var(--color-nova-glow)] hover:scale-[1.015] active:scale-[0.985] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-nova/50"
+          style={{ background: "var(--gradient-nova)" }}
+        >
+          {/* Brillo al hover */}
+          <span className="pointer-events-none absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-2xl" />
+          <span className="relative grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-white/20 backdrop-blur-sm">
+            <NovaMark size={16} variant="filled" />
+          </span>
+          <span className="relative flex flex-col text-left min-w-0 flex-1">
+            <span className="text-[13px] font-semibold leading-tight">Pregúntale a Nova</span>
+            <span className="text-[10.5px] leading-tight opacity-75 truncate">{ctx.scopeLabel}</span>
+          </span>
+          <kbd className="relative shrink-0 rounded border border-white/30 bg-white/15 px-1.5 py-0.5 font-mono text-[9px] font-semibold opacity-80">N</kbd>
+        </button>
       </div>
 
       {/* Nav */}
