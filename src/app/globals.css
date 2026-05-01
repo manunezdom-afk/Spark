@@ -45,6 +45,17 @@
 }
 
 @layer base {
+  /* Nova AI — tokens compartidos con Kairos */
+  --nova-from: #8B5CF6;
+  --nova-mid: #D946EF;
+  --nova-to: #FF8A4C;
+  --color-nova: #A855F7;
+  --color-nova-hover: #9333EA;
+  --color-nova-soft: rgba(168, 85, 247, 0.08);
+  --color-nova-strong: #7C3AED;
+  --color-nova-glow: rgba(168, 85, 247, 0.25);
+  --gradient-nova: linear-gradient(135deg, #8B5CF6 0%, #D946EF 55%, #FF8A4C 100%);
+
   * { @apply border-border; }
   html, body { @apply h-full; }
   body {

@@ -54,9 +54,10 @@ const config: Config = {
           glow: "rgba(255, 138, 76, 0.20)",
         },
         nova: {
-          coral: "#FF5D8F",
-          purple: "#9D6BD9",
-          sky: "#5B8AEE",
+          DEFAULT: "var(--color-nova)",
+          hover: "var(--color-nova-hover)",
+          soft: "var(--color-nova-soft)",
+          strong: "var(--color-nova-strong)",
         },
       },
       fontFamily: {
@@ -128,6 +129,9 @@ const config: Config = {
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-up": "fade-up 320ms cubic-bezier(0.34, 1.4, 0.64, 1) both",
         "scale-in": "scale-in 220ms cubic-bezier(0.34, 1.4, 0.64, 1) both",
+      },
+      backgroundImage: {
+        "gradient-nova": "var(--gradient-nova)",
       },
       transitionTimingFunction: {
         spring: "cubic-bezier(0.34, 1.4, 0.64, 1)",
