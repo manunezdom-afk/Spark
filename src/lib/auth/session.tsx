@@ -57,6 +57,9 @@ export async function sendOtp(email: string, mode: "signin" | "signup"): Promise
       // silenciosa de cuentas. En "signup" sí permitimos crear, pero la UX
       // lo deja explícito en el copy del botón.
       shouldCreateUser: mode === "signup",
+      // Asegura que el link mágico del correo regrese a Spark y no al
+      // Site URL configurado en Supabase (que puede ser el dominio de Focus).
+      emailRedirectTo: `${window.location.origin}/auth/callback?next=/dashboard`,
     },
   });
   if (error) throw error;
@@ -68,6 +71,9 @@ export async function verifyOtp(email: string, token: string): Promise<void> {
     email,
     token,
     type: "email",
+    options: {
+      redirectTo: `${window.location.origin}/auth/callback?next=/dashboard`,
+    },
   });
   if (error) throw error;
 }
