@@ -3,6 +3,7 @@
 import * as React from "react";
 
 import { NovaAskDialog } from "@/components/nova/NovaAskDialog";
+import { useTutorialStore } from "@/lib/tutorial/store";
 
 interface NovaAskContextValue {
   open: () => void;
@@ -36,6 +37,8 @@ export function NovaAskProvider({ children }: { children: React.ReactNode }) {
       ) {
         return;
       }
+      // No abrir Nova mientras el tour está activo.
+      if (useTutorialStore.getState().welcomeOpen) return;
       e.preventDefault();
       setIsOpen((v) => !v);
     }

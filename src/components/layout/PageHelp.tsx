@@ -1,8 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { HelpCircle, X, Zap, BookMarked, Activity, Layers, AlertCircle, Play } from "lucide-react";
+import {
+  HelpCircle,
+  X,
+  Zap,
+  BookMarked,
+  Activity,
+  Layers,
+  AlertCircle,
+  Play,
+  Compass,
+  Sparkles,
+} from "lucide-react";
+
+import { useTutorialStore } from "@/lib/tutorial/store";
+import { useNovaAsk } from "@/components/nova/NovaAskProvider";
 
 interface HelpItem {
   icon: React.ElementType;
@@ -65,17 +79,84 @@ const HINTS: Record<string, PageHints> = {
       { icon: Play, label: "Relanzar sesión", desc: "Puedes iniciar una sesión enfocada solo en los temas donde más fallaste." },
     ],
   },
+  "/sessions": {
+    title: "Sesiones",
+    subtitle: "Tu historial de entrenamiento",
+    items: [
+      { icon: Activity, label: "Abiertas", desc: "Las sesiones que dejaste a medias siguen aquí. Puedes continuarlas o terminarlas para que cuenten para tu maestría." },
+      { icon: Play, label: "Completadas", desc: "Cada sesión guarda tu puntaje y la devolución de Spark. Pulsa una para revisarla." },
+      { icon: Zap, label: "Pruebas", desc: "Las pruebas de alternativas y desarrollo viven aquí también, con su resultado y desglose." },
+    ],
+  },
+  "/sessions/new": {
+    title: "Nueva sesión",
+    subtitle: "Elige método y temas",
+    items: [
+      { icon: Zap, label: "Método", desc: "Cinco opciones según lo que necesites: comprender (Socrático), practicar (Cazar errores), defender (Devil's), conectar (Bridge) o aplicar (Caso real)." },
+      { icon: BookMarked, label: "Temas", desc: "Cada método permite uno o varios temas. Si no tienes temas todavía, ve a Temas y crea uno antes." },
+      { icon: Play, label: "Comenzar", desc: "Spark abre el chat con el primer turno del coach. A partir de ahí responde tú: cuanto más empujes, más aprendes." },
+    ],
+  },
+  "/tests/new": {
+    title: "Nueva prueba",
+    subtitle: "Simulador con corrección automática",
+    items: [
+      { icon: Zap, label: "Tipo", desc: "Alternativas se corrige al instante. Desarrollo lo evalúa Nova según conceptos clave." },
+      { icon: BookMarked, label: "Cantidad y temas", desc: "Elige cuántas preguntas y sobre qué temas. Spark las genera con tu contexto real." },
+      { icon: Play, label: "Resultado", desc: "Al terminar ves desglose por pregunta, retroalimentación y tu puntaje. Cuenta para la maestría del tema." },
+    ],
+  },
+  "/cuenta": {
+    title: "Tu cuenta",
+    subtitle: "Identidad, perfil y tutorial",
+    items: [
+      { icon: BookMarked, label: "Perfil", desc: "Carrera, rol, estilo de aprendizaje y proyectos. Nova lo usa para adaptar las sesiones a tu realidad." },
+      { icon: Play, label: "Ver tour", desc: "Botón 'Ver tour' reabre la bienvenida cuando quieras refrescar cómo se usa Spark." },
+      { icon: Zap, label: "Instalar como app", desc: "Instálala en tu dispositivo desde aquí cuando aparezca el botón Instalar." },
+    ],
+  },
+};
+
+const FALLBACK_HINTS: PageHints = {
+  title: "Cómo usar Spark",
+  subtitle: "Atajos y acciones disponibles",
+  items: [
+    { icon: BookMarked, label: "Crear contenido", desc: "En Temas pulsas 'Nuevo tema' para crear manualmente, pegar texto o importar desde Kairos." },
+    { icon: Play, label: "Estudiar", desc: "Desde un tema abres una sesión con el método que prefieras, o vas a Pruebas si quieres simular un examen." },
+    { icon: Activity, label: "Tu progreso", desc: "Maestría te dice qué tema toca repasar. Repaso saca las tarjetas que vencen hoy." },
+  ],
 };
 
 export function PageHelp() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const openWelcome = useTutorialStore((s) => s.openWelcome);
+  const ask = useNovaAsk();
 
-  // Match hints by prefix (handles /topics/[id] etc)
+  // Atajo `?` global para abrir/cerrar el panel.
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key !== "?" && !(e.key === "/" && e.shiftKey)) return;
+      const target = e.target as HTMLElement | null;
+      if (target) {
+        const tag = target.tagName;
+        if (tag === "INPUT" || tag === "TEXTAREA") return;
+        if (target.isContentEditable) return;
+      }
+      // No abrir mientras el tour está activo.
+      if (useTutorialStore.getState().welcomeOpen) return;
+      e.preventDefault();
+      setOpen((v) => !v);
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  // Match hints by prefix (handles /topics/[id] etc).
+  // Si la página no tiene hints específicos, usamos el fallback genérico
+  // — el botón debe estar siempre disponible.
   const key = Object.keys(HINTS).find((k) => pathname === k || pathname.startsWith(k + "/")) ?? null;
-  if (!key) return null;
-
-  const hints = HINTS[key];
+  const hints = key ? HINTS[key] : FALLBACK_HINTS;
 
   return (
     <>
@@ -150,9 +231,31 @@ export function PageHelp() {
           </ul>
 
           {/* Footer */}
-          <div className="px-5 py-3 border-t border-black/[0.06]">
-            <p className="text-[10px] text-muted-foreground/60 text-center">
-              El tour completo está en el botón <span className="font-mono">?</span> de cada página
+          <div className="px-5 py-3 border-t border-black/[0.06] flex flex-col gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                setOpen(false);
+                ask.open();
+              }}
+              className="flex items-center gap-2 w-full text-left rounded-xl border border-nova/20 bg-nova-soft/60 px-3 py-2 text-[12px] font-medium text-nova hover:border-nova/35 hover:bg-nova-soft transition-colors"
+            >
+              <Sparkles className="w-3.5 h-3.5" strokeWidth={1.75} />
+              Pregúntale a Nova cómo se usa
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setOpen(false);
+                openWelcome();
+              }}
+              className="flex items-center gap-2 w-full text-left rounded-xl border border-black/[0.06] bg-white/60 px-3 py-2 text-[12px] font-medium text-foreground hover:border-black/[0.10] hover:bg-white transition-colors"
+            >
+              <Compass className="w-3.5 h-3.5" strokeWidth={1.75} />
+              Ver tour de bienvenida
+            </button>
+            <p className="text-[10px] text-muted-foreground/60 text-center mt-1">
+              Atajo de ayuda: <span className="font-mono">?</span> · Nova: <span className="font-mono">N</span>
             </p>
           </div>
         </div>

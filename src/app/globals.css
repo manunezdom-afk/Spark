@@ -192,3 +192,233 @@
 .animate-brand-pulse { animation: brand-pulse 3.5s ease-in-out infinite; }
 .animate-spark-cursor { animation: spark-cursor 0.9s step-end infinite; }
 .animate-float { animation: float-y 4s ease-in-out infinite; }
+
+/* ============================================================
+ * Welcome Tour animations — usadas en /components/onboarding/
+ * welcomeAnimations.tsx. Cada slide del WelcomeTour tiene una
+ * pieza animada propia, todo CSS sin JS.
+ * ============================================================ */
+
+@keyframes spark-welcome-fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spark-welcome-orbit {
+  0%   { transform: rotate(0deg)   translateX(64px) rotate(0deg);   opacity: 0.55; }
+  50%  { opacity: 0.95; }
+  100% { transform: rotate(360deg) translateX(64px) rotate(-360deg); opacity: 0.55; }
+}
+
+@keyframes spark-welcome-conf {
+  0%   { transform: translate(0,0) scale(0.6); opacity: 0; }
+  20%  { opacity: 1; }
+  100% { transform: translate(var(--cx, 40px), var(--cy, -50px)) scale(1.05); opacity: 0; }
+}
+
+@keyframes spark-welcome-slide-up {
+  from { opacity: 0; transform: translateY(14px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes spark-welcome-bar-fill {
+  from { transform: scaleX(0); transform-origin: left; }
+  to   { transform: scaleX(1); transform-origin: left; }
+}
+
+@keyframes spark-welcome-glow-pulse {
+  0%, 100% { opacity: 0.55; transform: translate(-50%, -50%) scale(1); }
+  50%      { opacity: 0.95; transform: translate(-50%, -50%) scale(1.08); }
+}
+
+/* ----- Slide 1: Brand orb with orbit dots ----- */
+.spark-welcome-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 220px;
+  height: 220px;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 138, 76, 0.32) 0%,
+    rgba(217, 70, 239, 0.18) 40%,
+    transparent 70%
+  );
+  filter: blur(20px);
+  animation: spark-welcome-glow-pulse 3.5s ease-in-out infinite;
+  pointer-events: none;
+}
+.spark-welcome-orb {
+  position: relative;
+  z-index: 2;
+  animation: spark-welcome-fade-in 540ms cubic-bezier(0.34, 1.4, 0.64, 1) both;
+}
+.spark-welcome-orbit-dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 7px;
+  height: 7px;
+  border-radius: 9999px;
+  pointer-events: none;
+}
+.spark-welcome-orbit-dot--a {
+  background: var(--grad-1);
+  animation: spark-welcome-orbit 6s linear infinite;
+}
+.spark-welcome-orbit-dot--b {
+  background: var(--grad-2);
+  animation: spark-welcome-orbit 6s linear infinite -1.5s;
+}
+.spark-welcome-orbit-dot--c {
+  background: var(--grad-3);
+  animation: spark-welcome-orbit 6s linear infinite -3s;
+}
+.spark-welcome-orbit-dot--d {
+  background: var(--grad-4);
+  animation: spark-welcome-orbit 6s linear infinite -4.5s;
+}
+
+/* ----- Slide 2: Topics fading in ----- */
+.spark-welcome-topic {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-left-width: 3px;
+  opacity: 0;
+  animation: spark-welcome-slide-up 480ms cubic-bezier(0.34, 1.4, 0.64, 1) forwards;
+}
+
+/* ----- Slide 3: Methods grid ----- */
+.spark-welcome-method {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  opacity: 0;
+  animation: spark-welcome-slide-up 460ms cubic-bezier(0.34, 1.4, 0.64, 1) forwards;
+}
+
+/* ----- Slide 4: Nova pill + cards ----- */
+.spark-welcome-nova-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 240px;
+  height: 240px;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle,
+    rgba(168, 85, 247, 0.28) 0%,
+    rgba(255, 138, 76, 0.14) 50%,
+    transparent 75%
+  );
+  filter: blur(22px);
+  pointer-events: none;
+  animation: spark-welcome-glow-pulse 3.2s ease-in-out infinite;
+}
+.spark-welcome-nova-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px 6px 6px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(168, 85, 247, 0.24);
+  box-shadow: 0 6px 20px rgba(168, 85, 247, 0.14);
+  position: relative;
+  z-index: 3;
+}
+.spark-welcome-nova-card {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  font-size: 11px;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+  opacity: 0;
+  animation: spark-welcome-fade-in 520ms cubic-bezier(0.34, 1.4, 0.64, 1) forwards;
+}
+.spark-welcome-nova-card--a { top: 28px;  left: 26px;  }
+.spark-welcome-nova-card--b { top: 60px;  right: 22px; }
+.spark-welcome-nova-card--c { bottom: 30px; left: 38px; }
+
+/* ----- Slide 5: Mastery bars filling up ----- */
+.spark-welcome-bar {
+  opacity: 0;
+  animation: spark-welcome-fade-in 360ms ease-out forwards;
+}
+.spark-welcome-bar-fill {
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: spark-welcome-bar-fill 900ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ----- Slide 6: Start screen with confetti ----- */
+.spark-welcome-start-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 200px;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 138, 76, 0.34) 0%,
+    transparent 70%
+  );
+  filter: blur(20px);
+  pointer-events: none;
+  animation: spark-welcome-glow-pulse 3s ease-in-out infinite;
+}
+.spark-welcome-start-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 138, 76, 0.24);
+  box-shadow: 0 6px 20px rgba(255, 138, 76, 0.18);
+  position: relative;
+  z-index: 3;
+  animation: spark-welcome-fade-in 540ms cubic-bezier(0.34, 1.4, 0.64, 1) both;
+}
+.spark-welcome-conf {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--grad-1);
+  pointer-events: none;
+  animation: spark-welcome-conf 1.6s ease-out infinite;
+}
+.spark-welcome-conf--a { --cx:  60px; --cy: -50px; background: var(--grad-1); animation-delay: 0.0s; }
+.spark-welcome-conf--b { --cx: -55px; --cy: -40px; background: var(--grad-2); animation-delay: 0.2s; }
+.spark-welcome-conf--c { --cx:  45px; --cy:  60px; background: var(--grad-3); animation-delay: 0.4s; }
+.spark-welcome-conf--d { --cx: -65px; --cy:  45px; background: var(--grad-4); animation-delay: 0.6s; }
+.spark-welcome-conf--e { --cx:  10px; --cy: -70px; background: var(--grad-2); animation-delay: 0.8s; }
+
+/* Stage container utility (used by tour slide swap). */
+.spark-welcome-stage-fade {
+  animation: spark-welcome-fade-in 380ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}

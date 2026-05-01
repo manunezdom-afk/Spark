@@ -1,15 +1,27 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { LogOut, Download, Zap, BookOpen, Calendar } from "lucide-react";
+import {
+  LogOut,
+  Download,
+  Zap,
+  BookOpen,
+  Calendar,
+  Compass,
+  RotateCcw,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSparkAuth } from "@/lib/auth/session";
+import { useTutorialStore } from "@/lib/tutorial/store";
+import { toast } from "sonner";
 import type { SparkUserContext } from "@/modules/spark/types";
 
 export default function AccountPage() {
   const { user, signOut } = useSparkAuth();
   const [ctx, setCtx] = useState<SparkUserContext | null>(null);
   const [installPrompt, setInstallPrompt] = useState<Event | null>(null);
+  const openWelcome = useTutorialStore((s) => s.openWelcome);
+  const resetAll = useTutorialStore((s) => s.resetAll);
 
   useEffect(() => {
     fetch("/api/user-context")
@@ -91,6 +103,42 @@ export default function AccountPage() {
           </Button>
         </section>
       )}
+
+      {/* Tutorial replay */}
+      <section className="flex flex-col gap-3 mb-8">
+        <div className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
+          Tutorial
+        </div>
+        <div className="rounded-2xl border border-black/[0.06] bg-white/60 p-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
+            <p className="text-sm font-medium text-foreground">
+              ¿Quieres ver el tour de bienvenida otra vez?
+            </p>
+            <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
+              Recuerda cómo se usan los temas, los métodos de estudio y Nova en
+              menos de un minuto.
+            </p>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                resetAll();
+                toast.success("Tutorial reactivado.");
+              }}
+              title="Olvida los tutoriales vistos y los vuelve a mostrar"
+            >
+              <RotateCcw className="w-3.5 h-3.5" strokeWidth={1.75} />
+              Reiniciar
+            </Button>
+            <Button variant="spark" size="sm" onClick={openWelcome}>
+              <Compass className="w-3.5 h-3.5" strokeWidth={1.75} />
+              Ver tour
+            </Button>
+          </div>
+        </div>
+      </section>
 
       {/* PWA Install */}
       {installPrompt && (

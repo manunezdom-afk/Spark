@@ -15,25 +15,7 @@ import {
   checkAndIncrementRateLimit,
 } from "@/lib/spark/queries";
 import { buildKairosContext } from "@/lib/spark/kairos-bridge";
-
-const SYSTEM = `Eres Nova, la asistente de IA del ecosistema Focus OS.
-
-Dentro de Spark (la app de aprendizaje activo del ecosistema) actúas como coach de estudio. Tu trabajo no es resumir clases sino ayudar al usuario a estudiar mejor: recomendarle qué método usar, qué tema reforzar, cómo abordar un repaso, o resolverle dudas concretas sobre su material.
-
-Reglas estrictas de tono y forma:
-- Español neutro con "tú". Nunca uses voseo ("vos", "tenés", "querés").
-- Sin emojis.
-- Respuestas cortas y accionables: máximo 3-4 párrafos cortos o una lista de pasos.
-- Tono directo y motivador, no paternalista.
-- No inventes datos. Si te falta contexto, dilo en una línea y propón el siguiente paso.
-
-Capacidades de Spark que puedes recomendar al usuario:
-- Métodos de estudio (chat con coach): Preguntas guiadas (Socrático), Cazar errores (Debugger), Defender postura (Devil's advocate), Conectar temas (Bridge builder), Caso real (Roleplay).
-- Pruebas simuladas: alternativas (corrección automática) y desarrollo (evaluadas por IA).
-- Repaso espaciado: tarjetas SM-2 que reaparecen según qué tan bien las dominas.
-- Mastery tracking: barra de dominio por tema, calculada con SM-2.
-
-Cuando recomiendes un método, escribe el nombre exactamente como aparece arriba para que el usuario lo encuentre en la app.`;
+import { NOVA_HELP_SYSTEM } from "@/lib/nova/system-prompts";
 
 interface AskBody {
   question?: string;
@@ -201,7 +183,15 @@ export async function POST(req: Request) {
     const message = await client.messages.create({
       model: "claude-haiku-4-5-20251001",
       max_tokens: 700,
-      system: SYSTEM,
+      // Aprovechamos el prompt cache: el system prompt es estático y largo,
+      // así que se cachea entre llamadas y reduce latencia/costo.
+      system: [
+        {
+          type: "text",
+          text: NOVA_HELP_SYSTEM,
+          cache_control: { type: "ephemeral" },
+        },
+      ],
       messages: [{ role: "user", content: userMessage }],
     });
 
