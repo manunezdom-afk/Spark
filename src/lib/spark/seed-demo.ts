@@ -88,7 +88,7 @@ export async function seedDemoData(db: SupabaseClient, userId: string) {
         type: "quiz",
         question: "Explica la necesidad de presencia digital sin usar jerga de marketing",
         expected_concepts: ["alcance", "visibilidad", "clientes potenciales", "comunicación directa"],
-        hint: "Piensa en cómo las personas buscan productos hoy",
+        difficulty: "medium",
       },
       turn_index: 0,
     },

@@ -16,12 +16,12 @@ export function TopicCard({
   return (
     <Link
       href={`/topics/${topic.id}`}
-      className="group flex flex-col gap-3 p-5 rounded-lg border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/[0.12] transition-all duration-200 backdrop-blur-xl hover:-translate-y-px hover:shadow-[0_6px_24px_rgba(201,123,63,0.08)]"
+      className="group relative flex flex-col gap-3 p-5 rounded-2xl border border-black/[0.06] bg-white/60 backdrop-blur-sm hover:bg-white hover:border-black/[0.10] transition-all duration-200 hover:-translate-y-px hover:shadow-[0_6px_24px_rgba(201,123,63,0.08)]"
     >
       {/* Kairos color accent bar */}
       {kairosColor && (
         <div
-          className="absolute left-0 top-3 bottom-3 w-[2px] rounded-full opacity-60"
+          className="absolute left-0 top-3 bottom-3 w-[2px] rounded-full opacity-70"
           style={{ backgroundColor: kairosColor }}
         />
       )}
@@ -41,7 +41,7 @@ export function TopicCard({
               </span>
             )}
             {topic.is_demo && (
-              <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-[0.14em] text-muted-foreground/60 border border-white/[0.08] bg-white/[0.03] px-1.5 py-0.5 rounded-full">
+              <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-[0.14em] text-muted-foreground/70 border border-black/[0.07] bg-black/[0.02] px-1.5 py-0.5 rounded-full">
                 <FlaskConical className="w-2.5 h-2.5" strokeWidth={1.5} />
                 Ejemplo
               </span>
@@ -65,7 +65,7 @@ export function TopicCard({
 
       <div className="flex items-center gap-3 text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
         <div className="flex items-center gap-1.5">
-          <div className="w-16 h-1 rounded-full bg-white/[0.06] overflow-hidden">
+          <div className="w-16 h-1 rounded-full bg-black/[0.06] overflow-hidden">
             <div
               className="h-full bg-gradient-to-r from-spark to-spark/70 transition-all"
               style={{ width: `${Math.max(score, 4)}%` }}
@@ -84,7 +84,7 @@ export function TopicCard({
           {topic.tags.slice(0, 4).map((t) => (
             <span
               key={t}
-              className="text-[10px] px-2 py-0.5 rounded-full bg-white/[0.04] border border-white/[0.06] text-muted-foreground"
+              className="text-[10px] px-2 py-0.5 rounded-full bg-black/[0.03] border border-black/[0.06] text-muted-foreground"
             >
               {t}
             </span>

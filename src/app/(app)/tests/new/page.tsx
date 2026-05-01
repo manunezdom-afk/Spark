@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft, ArrowRight, CheckSquare, AlignLeft } from "lucide-react";
 
@@ -40,10 +40,14 @@ const TYPE_CONFIG: Record<
   },
 };
 
-export default function NewTestPage() {
+function NewTestForm() {
   const router = useRouter();
+  const params = useSearchParams();
+  const presetTopic = params.get("topic");
   const [topics, setTopics] = useState<SparkTopic[]>([]);
-  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [selected, setSelected] = useState<Set<string>>(
+    new Set(presetTopic ? [presetTopic] : []),
+  );
   const [testType, setTestType] = useState<TestType>("alternativas");
   const [count, setCount] = useState(10);
   const [loadingTopics, setLoadingTopics] = useState(true);
@@ -254,5 +258,20 @@ export default function NewTestPage() {
         </Button>
       </div>
     </div>
+  );
+}
+
+export default function NewTestPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="p-6 md:p-10 max-w-2xl">
+          <div className="h-8 w-40 rounded bg-black/[0.05] animate-pulse mb-4" />
+          <div className="h-32 rounded bg-black/[0.05] animate-pulse" />
+        </div>
+      }
+    >
+      <NewTestForm />
+    </Suspense>
   );
 }

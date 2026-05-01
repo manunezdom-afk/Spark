@@ -34,7 +34,7 @@ export function DebuggerInteractive({ payload }: { payload: DebuggerPayload }) {
         )}
       </div>
 
-      <div className="p-5 rounded-lg border border-white/[0.10] bg-white/[0.03] leading-relaxed">
+      <div className="p-5 rounded-xl border border-black/[0.07] bg-white/60 leading-relaxed text-foreground/90">
         {sentences.map((s, i) => {
           const isMarked = marked.has(i);
           return (
@@ -44,7 +44,7 @@ export function DebuggerInteractive({ payload }: { payload: DebuggerPayload }) {
               className={`cursor-pointer transition-colors ${
                 isMarked
                   ? "bg-spark/20 border-b border-spark"
-                  : "hover:bg-white/[0.04]"
+                  : "hover:bg-black/[0.04]"
               }`}
             >
               {s}{" "}
@@ -63,7 +63,7 @@ export function DebuggerInteractive({ payload }: { payload: DebuggerPayload }) {
             {payload.errors.map((e) => (
               <li
                 key={e.id}
-                className="p-4 rounded-md border border-spark/30 bg-spark/[0.04] flex flex-col gap-2"
+                className="p-4 rounded-xl border border-spark/30 bg-spark/[0.04] flex flex-col gap-2"
               >
                 <div className="text-xs text-muted-foreground italic">
                   En: {e.position_hint}

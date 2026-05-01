@@ -49,8 +49,8 @@ export default function AccountPage() {
         <div className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
           Identidad
         </div>
-        <div className="p-4 rounded-md border border-white/[0.06] bg-white/[0.02]">
-          <div className="text-sm">{user?.email}</div>
+        <div className="p-4 rounded-2xl border border-black/[0.06] bg-white/60">
+          <div className="text-sm text-foreground">{user?.email ?? "Sin correo"}</div>
         </div>
       </section>
 
@@ -60,27 +60,27 @@ export default function AccountPage() {
           <div className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
             Tu perfil de aprendizaje
           </div>
-          <div className="p-4 rounded-md border border-white/[0.06] bg-white/[0.02] flex flex-col gap-2">
+          <div className="p-4 rounded-2xl border border-black/[0.06] bg-white/60 flex flex-col gap-2">
             {ctx.career && (
-              <div className="text-sm">
+              <div className="text-sm text-foreground/90">
                 <span className="text-muted-foreground">Carrera: </span>
                 {ctx.career}
               </div>
             )}
             {ctx.user_role && (
-              <div className="text-sm">
+              <div className="text-sm text-foreground/90">
                 <span className="text-muted-foreground">Rol: </span>
                 {ctx.user_role}
               </div>
             )}
             {ctx.learning_style && (
-              <div className="text-sm">
+              <div className="text-sm text-foreground/90">
                 <span className="text-muted-foreground">Estilo: </span>
                 {ctx.learning_style}
               </div>
             )}
             {ctx.active_projects.length > 0 && (
-              <div className="text-sm">
+              <div className="text-sm text-foreground/90">
                 <span className="text-muted-foreground">Proyectos activos: </span>
                 {ctx.active_projects.length}
               </div>
@@ -106,7 +106,7 @@ export default function AccountPage() {
       )}
 
       {/* Sign out */}
-      <section className="pt-6 border-t border-white/[0.06] mb-12">
+      <section className="pt-6 border-t border-black/[0.06] mb-12">
         <Button onClick={signOut} variant="ghost">
           <LogOut className="w-4 h-4" strokeWidth={1.5} />
           Cerrar sesión
@@ -114,8 +114,8 @@ export default function AccountPage() {
       </section>
 
       {/* Focus OS ecosystem footer */}
-      <footer className="border-t border-white/[0.04] pt-8">
-        <div className="font-mono text-[9px] uppercase tracking-[0.2em] text-muted-foreground/40 mb-4">
+      <footer className="border-t border-black/[0.04] pt-8">
+        <div className="font-mono text-[9px] uppercase tracking-[0.2em] text-muted-foreground/60 mb-4">
           Familia Focus OS
         </div>
         <div className="flex items-center gap-6">
@@ -124,30 +124,30 @@ export default function AccountPage() {
               <Zap className="w-3 h-3 text-spark" strokeWidth={1.5} fill="currentColor" />
             </div>
             <div>
-              <div className="text-xs font-medium">Spark</div>
-              <div className="text-[9px] text-muted-foreground/40">Entrenamiento</div>
+              <div className="text-xs font-medium text-foreground">Spark</div>
+              <div className="text-[9px] text-muted-foreground/60">Entrenamiento</div>
             </div>
           </div>
-          <div className="flex items-center gap-2 opacity-40">
-            <div className="w-6 h-6 rounded-md bg-white/[0.06] border border-white/[0.08] flex items-center justify-center">
+          <div className="flex items-center gap-2 opacity-60">
+            <div className="w-6 h-6 rounded-md bg-black/[0.04] border border-black/[0.06] flex items-center justify-center">
               <BookOpen className="w-3 h-3 text-nova-mid" strokeWidth={1.5} />
             </div>
             <div>
               <div className="text-xs font-medium">Kairos</div>
-              <div className="text-[9px] text-muted-foreground/40">Notas</div>
+              <div className="text-[9px] text-muted-foreground/60">Notas</div>
             </div>
           </div>
-          <div className="flex items-center gap-2 opacity-40">
-            <div className="w-6 h-6 rounded-md bg-white/[0.06] border border-white/[0.08] flex items-center justify-center">
+          <div className="flex items-center gap-2 opacity-60">
+            <div className="w-6 h-6 rounded-md bg-black/[0.04] border border-black/[0.06] flex items-center justify-center">
               <Calendar className="w-3 h-3 text-primary" strokeWidth={1.5} />
             </div>
             <div>
               <div className="text-xs font-medium">Focus</div>
-              <div className="text-[9px] text-muted-foreground/40">Calendario</div>
+              <div className="text-[9px] text-muted-foreground/60">Calendario</div>
             </div>
           </div>
         </div>
-        <p className="text-[10px] text-muted-foreground/30 mt-4 leading-relaxed">
+        <p className="text-[10px] text-muted-foreground/60 mt-4 leading-relaxed">
           Tus datos son compartidos de forma segura entre las apps del ecosistema. Una sola cuenta para todo.
         </p>
       </footer>

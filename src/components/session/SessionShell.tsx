@@ -22,9 +22,9 @@ export function SessionShell({
 }) {
   return (
     <div className="flex flex-col h-screen md:h-auto md:min-h-screen">
-      <header className="sticky top-0 z-30 flex items-center justify-between gap-4 px-5 md:px-8 h-16 border-b border-white/[0.06] bg-[#0a0c11]/80 backdrop-blur-xl">
+      <header className="sticky top-0 z-30 flex items-center justify-between gap-4 px-5 md:px-8 h-16 border-b border-black/[0.06] bg-background/85 backdrop-blur-xl">
         <Link
-          href="/topics"
+          href="/dashboard"
           className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
         >
           <ChevronLeft className="w-4 h-4" strokeWidth={1.5} />

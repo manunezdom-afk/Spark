@@ -6,7 +6,7 @@ Spark es la app de aprendizaje activo del ecosistema FOCUS OS. Vive junto a Focu
 
 - **Copy en español neutral con "tú", nunca voseo.** No usar: vos, tenés, sos, querés, podés, hacé, decime, mirá, acá. Sí: tú, tienes, eres, quieres, puedes, haz, dime, mira, aquí. (Misma regla que Kairos — `/Users/martinnunezdominguez/Developer/kairos/CLAUDE.md`).
 - **Sin emojis en UI.** El design system del ecosistema lo prohíbe. Usar Lucide icons con `strokeWidth={1.5}`.
-- **Sin chat bubbles tipo Nova.** El coach habla en `ChallengeCard` con borde izquierdo `#C97B3F`. El user en `UserResponseBubble` minimal. Spark no es Nova: es un coach distinto.
+- **Sin chat bubbles tradicionales.** El coach habla en `ChallengeCard` (borde izquierdo `#C97B3F`, etiquetado como Nova). El usuario responde en `UserResponseBubble` minimal alineado a la derecha. Nova es la IA del ecosistema y dentro de Spark hace de coach de estudio: contextual, accionable, sin mensajes de chat genéricos.
 - **Las claves en `.env.local` nunca se commitean.**
 
 ## Boundaries con Focus y Kairos

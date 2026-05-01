@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { ChevronLeft, ArrowRight } from "lucide-react";
+import { ChevronLeft, ArrowRight, BookMarked } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -24,23 +24,36 @@ const ENGINE_LIMITS: Record<LearningEngine, { min: number; max: number }> = {
   test_desarrollo:    { min: 1, max: 5 },
 };
 
+const CHAT_ENGINE_OPTIONS: LearningEngine[] = [
+  "socratic",
+  "debugger",
+  "devils_advocate",
+  "bridge_builder",
+  "roleplay",
+];
+
 function NewSessionForm() {
   const router = useRouter();
   const params = useSearchParams();
 
-  const engine = (params.get("engine") ?? "socratic") as LearningEngine;
+  const requestedEngine = params.get("engine") as LearningEngine | null;
+  const engine: LearningEngine =
+    requestedEngine && requestedEngine in ENGINE_LIMITS
+      ? requestedEngine
+      : "socratic";
   const presetTopic = params.get("topic");
 
   const [topics, setTopics] = useState<SparkTopic[]>([]);
   const [selected, setSelected] = useState<Set<string>>(
-    new Set(presetTopic ? [presetTopic] : [])
+    new Set(presetTopic ? [presetTopic] : []),
   );
+  const [activeEngine, setActiveEngine] = useState<LearningEngine>(engine);
   const [persona, setPersona] = useState("");
   const [scenario, setScenario] = useState("");
   const [busy, setBusy] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  const limits = ENGINE_LIMITS[engine];
+  const limits = ENGINE_LIMITS[activeEngine];
 
   useEffect(() => {
     fetch("/api/topics")
@@ -48,17 +61,31 @@ function NewSessionForm() {
       .then((data) => {
         setTopics(data.topics ?? []);
         setLoading(false);
-      });
+      })
+      .catch(() => setLoading(false));
   }, []);
 
   function toggleTopic(id: string) {
     const next = new Set(selected);
     if (next.has(id)) next.delete(id);
     else {
-      if (selected.size >= limits.max) return;
+      if (selected.size >= limits.max) {
+        toast.error(`Este método admite máximo ${limits.max} ${limits.max === 1 ? "tema" : "temas"}.`);
+        return;
+      }
       next.add(id);
     }
     setSelected(next);
+  }
+
+  function changeEngine(next: LearningEngine) {
+    setActiveEngine(next);
+    const nextLimits = ENGINE_LIMITS[next];
+    // Trim selection if it exceeds the new max.
+    if (selected.size > nextLimits.max) {
+      const trimmed = new Set(Array.from(selected).slice(0, nextLimits.max));
+      setSelected(trimmed);
+    }
   }
 
   async function onStart() {
@@ -66,7 +93,7 @@ function NewSessionForm() {
       toast.error(`Necesitas seleccionar al menos ${limits.min} ${limits.min === 1 ? "tema" : "temas"}.`);
       return;
     }
-    if (engine === "roleplay" && !persona.trim()) {
+    if (activeEngine === "roleplay" && !persona.trim()) {
       toast.error("El roleplay requiere un personaje.");
       return;
     }
@@ -76,7 +103,7 @@ function NewSessionForm() {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          engine,
+          engine: activeEngine,
           topic_ids: Array.from(selected),
           persona: persona.trim() || undefined,
           scenario: scenario.trim() || undefined,
@@ -105,11 +132,41 @@ function NewSessionForm() {
         <span className="font-mono text-xs uppercase tracking-[0.2em] text-spark">
           Nueva sesión
         </span>
-        <h1 className="text-3xl font-semibold tracking-tight">{ENGINE_LABELS[engine]}</h1>
+        <h1 className="text-3xl font-semibold tracking-tight text-foreground">
+          {ENGINE_LABELS[activeEngine]}
+        </h1>
         <p className="text-muted-foreground leading-relaxed">
-          {ENGINE_DESCRIPTIONS[engine]}
+          {ENGINE_DESCRIPTIONS[activeEngine]}
         </p>
       </header>
+
+      <section className="flex flex-col gap-3 mb-6">
+        <Label>Método de estudio</Label>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          {CHAT_ENGINE_OPTIONS.map((opt) => {
+            const isActive = opt === activeEngine;
+            return (
+              <button
+                key={opt}
+                type="button"
+                onClick={() => changeEngine(opt)}
+                className={`text-left p-3 rounded-xl border transition-colors ${
+                  isActive
+                    ? "border-spark/40 bg-spark/[0.06]"
+                    : "border-black/[0.07] bg-white/60 hover:bg-white"
+                }`}
+              >
+                <div className="font-medium text-[13px] text-foreground">
+                  {ENGINE_LABELS[opt]}
+                </div>
+                <div className="text-[11px] text-muted-foreground line-clamp-2 mt-0.5">
+                  {ENGINE_DESCRIPTIONS[opt]}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </section>
 
       <section className="flex flex-col gap-3 mb-6">
         <div className="flex items-center justify-between">
@@ -124,12 +181,20 @@ function NewSessionForm() {
         {loading ? (
           <div className="text-sm text-muted-foreground">Cargando temas…</div>
         ) : topics.length === 0 ? (
-          <div className="p-4 rounded-md border border-white/10 bg-white/[0.02] text-sm text-muted-foreground">
-            No tienes temas aún.{" "}
-            <Link href="/topics" className="text-spark hover:underline">
-              Crea uno
-            </Link>{" "}
-            antes de empezar.
+          <div className="flex flex-col gap-3 p-5 rounded-2xl border border-black/[0.07] bg-white/60">
+            <div className="flex items-center gap-2 text-sm text-foreground">
+              <BookMarked className="w-4 h-4 text-spark" strokeWidth={1.75} />
+              Aún no tienes temas guardados.
+            </div>
+            <p className="text-[12px] text-muted-foreground">
+              Crea o importa un tema antes de iniciar una sesión.
+            </p>
+            <Button asChild variant="spark" size="sm" className="self-start rounded-full">
+              <Link href="/topics">
+                Crear o importar tema
+                <ArrowRight className="w-3.5 h-3.5" strokeWidth={2} />
+              </Link>
+            </Button>
           </div>
         ) : (
           <div className="flex flex-col gap-2 max-h-[280px] overflow-y-auto scrollbar-thin pr-1">
@@ -141,12 +206,12 @@ function NewSessionForm() {
                   key={t.id}
                   onClick={() => toggleTopic(t.id)}
                   disabled={disabled}
-                  className={`text-left p-3 rounded-md border transition-colors ${
+                  className={`text-left p-3 rounded-xl border transition-colors ${
                     isSelected
-                      ? "border-spark/40 bg-spark/[0.05]"
+                      ? "border-spark/40 bg-spark/[0.06]"
                       : disabled
-                      ? "border-white/[0.04] bg-white/[0.01] opacity-40 cursor-not-allowed"
-                      : "border-white/10 bg-white/[0.02] hover:bg-white/[0.04]"
+                        ? "border-black/[0.05] bg-white/40 opacity-50 cursor-not-allowed"
+                        : "border-black/[0.07] bg-white/60 hover:bg-white"
                   }`}
                 >
                   <div className="flex items-start justify-between gap-3">
@@ -156,7 +221,7 @@ function NewSessionForm() {
                           {t.category}
                         </div>
                       )}
-                      <div className="font-medium text-sm">{t.title}</div>
+                      <div className="font-medium text-sm text-foreground">{t.title}</div>
                     </div>
                   </div>
                 </button>
@@ -166,7 +231,7 @@ function NewSessionForm() {
         )}
       </section>
 
-      {engine === "roleplay" && (
+      {activeEngine === "roleplay" && (
         <>
           <section className="flex flex-col gap-3 mb-6">
             <Label htmlFor="persona">Personaje que adoptará Spark</Label>
@@ -193,7 +258,7 @@ function NewSessionForm() {
       <div className="flex justify-end pt-4">
         <Button
           onClick={onStart}
-          disabled={busy || selected.size < limits.min}
+          disabled={busy || selected.size < limits.min || topics.length === 0}
           size="lg"
           variant="spark"
         >

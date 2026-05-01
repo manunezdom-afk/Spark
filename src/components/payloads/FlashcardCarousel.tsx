@@ -41,10 +41,10 @@ export function FlashcardCarousel({ payload }: { payload: FlashcardPayload }) {
       <button
         onClick={() => setFlipped((f) => !f)}
         className={cn(
-          "p-6 rounded-lg border min-h-[180px] flex items-center justify-center text-center transition-colors",
+          "p-6 rounded-2xl border min-h-[180px] flex items-center justify-center text-center transition-colors",
           flipped
             ? "bg-spark/[0.05] border-spark/30"
-            : "bg-white/[0.03] border-white/[0.10] hover:bg-white/[0.05]"
+            : "bg-white/60 border-black/[0.08] hover:bg-white"
         )}
       >
         <div className="flex flex-col gap-3">

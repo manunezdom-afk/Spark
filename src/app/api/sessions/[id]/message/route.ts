@@ -17,6 +17,7 @@ import { sseStream, extractJsonPayload, stripJsonBlock } from "@/lib/streaming/s
 import type {
   EngineContext,
   SendMessageRequest,
+  SparkSessionTurn,
   SparkUserContext,
   TurnPayload,
 } from "@/modules/spark/types";
@@ -94,22 +95,36 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
     buildMasterSystemPrompt(session.engine, ctx) +
     (kairosContext ? `\n\n${kairosContext}` : "");
 
-  // Persist user turn upfront
-  const userTurn = await appendTurn(db, {
-    session_id: sessionId,
-    role: "user",
-    content: body.content,
-    payload: null,
-    turn_index: priorTurns.length,
-  });
+  // Synthetic kickoff: when the session is empty and the client requests
+  // the first assistant turn, do NOT persist the kickoff string as a user
+  // turn (it's not really from the student). We still need a user message
+  // for the model so it produces an opening turn, so we send a generic
+  // kickoff prompt that won't pollute the transcript.
+  const isKickoff =
+    priorTurns.length === 0 && body.content.trim().startsWith("[Inicio]");
 
-  const messages = [
-    ...priorTurns.map((t) => ({ role: t.role, content: t.content })),
-    { role: "user" as const, content: body.content },
-  ];
+  let userTurn: SparkSessionTurn | null = null;
+  if (!isKickoff) {
+    userTurn = await appendTurn(db, {
+      session_id: sessionId,
+      role: "user",
+      content: body.content,
+      payload: null,
+      turn_index: priorTurns.length,
+    });
+  }
+
+  const messages = isKickoff
+    ? [{ role: "user" as const, content: "Inicia la sesión." }]
+    : [
+        ...priorTurns.map((t) => ({ role: t.role, content: t.content })),
+        { role: "user" as const, content: body.content },
+      ];
+
+  const assistantTurnIndex = isKickoff ? 0 : priorTurns.length + 1;
 
   return sseStream(async (push, close) => {
-    push({ event: "user-turn", data: userTurn });
+    if (userTurn) push({ event: "user-turn", data: userTurn });
 
     const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! });
 
@@ -141,7 +156,7 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
         role: "assistant",
         content: displayText,
         payload,
-        turn_index: priorTurns.length + 1,
+        turn_index: assistantTurnIndex,
       });
 
       if (payload) {
@@ -163,7 +178,7 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
           role: "assistant",
           content: accumulated,
           payload: null,
-          turn_index: priorTurns.length + 1,
+          turn_index: assistantTurnIndex,
         }).catch(() => {});
       }
       push({

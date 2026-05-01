@@ -178,7 +178,7 @@ export default async function DashboardPage() {
             {recommended.map((engine, i) => (
               <Link
                 key={engine}
-                href="/topics"
+                href={hasTopics ? `/sessions/new?engine=${engine}` : "/topics"}
                 className="group relative flex flex-col gap-3 p-6 rounded-2xl border border-black/[0.06] bg-white/60 backdrop-blur-sm hover:bg-white hover:border-spark/30 hover:shadow-lift transition-all duration-300 ease-spring"
                 style={{ animation: `fade-up 360ms ${i * 80}ms cubic-bezier(0.34, 1.4, 0.64, 1) both` }}
               >

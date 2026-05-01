@@ -17,13 +17,13 @@ export function GraphView({ payload }: { payload: GraphNodePayload }) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {Array.from(byCategory.entries()).map(([cat, nodes]) => (
-          <div key={cat} className="p-4 rounded-md border border-white/[0.06] bg-white/[0.02]">
+          <div key={cat} className="p-4 rounded-xl border border-black/[0.07] bg-white/60">
             <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-spark mb-2">
               {cat}
             </div>
             <ul className="flex flex-col gap-1.5">
               {nodes.map((n, i) => (
-                <li key={i} className="text-sm">
+                <li key={i} className="text-sm text-foreground/90">
                   · {n.label}
                 </li>
               ))}

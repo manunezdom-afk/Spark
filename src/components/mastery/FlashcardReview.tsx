@@ -73,7 +73,7 @@ export function FlashcardReview({ initial }: { initial: SparkFlashcard[] }) {
     return (
       <div className="flex flex-col gap-6">
         {/* Demo banner */}
-        <div className="flex items-center gap-2.5 rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-2.5">
+        <div className="flex items-center gap-2.5 rounded-xl border border-black/[0.07] bg-white/60 px-4 py-2.5">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-spark/20 bg-spark/[0.08] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-spark shrink-0">
             <FlaskConical className="h-3 w-3" strokeWidth={1.5} />
             Ejemplo
@@ -90,11 +90,11 @@ export function FlashcardReview({ initial }: { initial: SparkFlashcard[] }) {
           </span>
         </div>
 
-        <div className="p-8 rounded-lg border border-white/[0.10] bg-white/[0.03] min-h-[260px] flex flex-col items-center justify-center text-center gap-4">
+        <div className="p-8 rounded-2xl border border-black/[0.07] bg-white/60 min-h-[260px] flex flex-col items-center justify-center text-center gap-4">
           <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-spark">
             {demoRevealed ? "Respuesta" : "Pregunta"}
           </span>
-          <p className="text-xl leading-relaxed max-w-2xl">
+          <p className="text-xl leading-relaxed max-w-2xl text-foreground">
             {demoRevealed ? card.back : card.front}
           </p>
           {!demoRevealed && card.hint && (
@@ -188,11 +188,11 @@ export function FlashcardReview({ initial }: { initial: SparkFlashcard[] }) {
         </span>
       </div>
 
-      <div className="p-8 rounded-lg border border-white/[0.10] bg-white/[0.03] min-h-[260px] flex flex-col items-center justify-center text-center gap-4">
+      <div className="p-8 rounded-2xl border border-black/[0.07] bg-white/60 min-h-[260px] flex flex-col items-center justify-center text-center gap-4">
         <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-spark">
           {revealed ? "Respuesta" : "Pregunta"}
         </span>
-        <p className="text-xl leading-relaxed max-w-2xl">
+        <p className="text-xl leading-relaxed max-w-2xl text-foreground">
           {revealed ? card.back : card.front}
         </p>
         {!revealed && card.hint && (

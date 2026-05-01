@@ -193,7 +193,7 @@ export function SessionView({
       >
         <div className="flex flex-col gap-8 pb-6">
           {warning && (
-            <div className="text-xs text-amber-400 px-3 py-2 rounded-md border border-amber-400/20 bg-amber-400/[0.04]">
+            <div className="text-xs text-amber-700 px-3 py-2 rounded-lg border border-amber-200 bg-amber-50">
               {warning}
             </div>
           )}
@@ -222,9 +222,9 @@ export function SessionView({
           )}
 
           {completionScore && (
-            <div className="p-6 rounded-lg border border-spark/30 bg-spark/[0.04]">
+            <div className="p-6 rounded-2xl border border-spark/25 bg-spark/[0.04]">
               <ScoreSummary payload={completionScore} />
-              <div className="flex justify-end gap-2 pt-6 mt-6 border-t border-white/[0.06]">
+              <div className="flex justify-end gap-2 pt-6 mt-6 border-t border-black/[0.06]">
                 <Button onClick={() => router.push("/dashboard")} variant="outline">
                   Volver al inicio
                 </Button>

@@ -10,6 +10,10 @@ const TITLES: Record<string, string> = {
   "/topics": "Temas",
   "/mastery": "Maestría",
   "/flashcards/review": "Repaso",
+  "/tests/new": "Nueva prueba",
+  "/tests": "Pruebas",
+  "/sessions/new": "Nueva sesión",
+  "/sessions": "Sesiones",
   "/errors": "Errores",
   "/cuenta": "Cuenta",
 };

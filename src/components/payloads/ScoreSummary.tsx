@@ -27,10 +27,10 @@ export function ScoreSummary({ payload }: { payload: ScorePayload }) {
           {payload.breakdown.map((b, i) => (
             <li key={i}>
               <div className="flex items-center justify-between text-sm mb-1">
-                <span>{b.criterion}</span>
+                <span className="text-foreground/90">{b.criterion}</span>
                 <span className="font-mono text-xs text-muted-foreground">{b.value}/100</span>
               </div>
-              <div className="h-1 rounded-full bg-white/[0.06] overflow-hidden">
+              <div className="h-1 rounded-full bg-black/[0.06] overflow-hidden">
                 <div
                   className="h-full bg-spark/70 transition-all"
                   style={{ width: `${b.value}%` }}
@@ -41,11 +41,11 @@ export function ScoreSummary({ payload }: { payload: ScorePayload }) {
         </ul>
       </div>
 
-      <div className="p-4 rounded-md border border-white/[0.06] bg-white/[0.02]">
+      <div className="p-4 rounded-xl border border-black/[0.06] bg-white/60">
         <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground mb-2">
           Devolución
         </div>
-        <p className="text-sm leading-relaxed whitespace-pre-wrap">{payload.feedback}</p>
+        <p className="text-sm leading-relaxed whitespace-pre-wrap text-foreground/90">{payload.feedback}</p>
       </div>
     </div>
   );

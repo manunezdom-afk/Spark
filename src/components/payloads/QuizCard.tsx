@@ -24,8 +24,8 @@ export function QuizCard({ payload }: { payload: QuizPayload }) {
         <Badge>{difficultyLabel}</Badge>
       </div>
 
-      <div className="p-5 rounded-lg border border-white/[0.10] bg-white/[0.03]">
-        <p className="text-base leading-relaxed">{payload.question}</p>
+      <div className="p-5 rounded-xl border border-black/[0.07] bg-white/60">
+        <p className="text-base leading-relaxed text-foreground">{payload.question}</p>
       </div>
 
       {!revealed ? (
@@ -47,11 +47,11 @@ export function QuizCard({ payload }: { payload: QuizPayload }) {
         </>
       ) : (
         <div className="flex flex-col gap-3">
-          <div className="p-4 rounded-md bg-white/[0.02] border border-white/[0.06]">
+          <div className="p-4 rounded-xl bg-black/[0.02] border border-black/[0.06]">
             <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground mb-2">
               Tu respuesta
             </div>
-            <p className="text-sm whitespace-pre-wrap">{answer}</p>
+            <p className="text-sm whitespace-pre-wrap text-foreground/90">{answer}</p>
           </div>
           <div className="flex flex-col gap-2">
             <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-spark">
@@ -59,7 +59,7 @@ export function QuizCard({ payload }: { payload: QuizPayload }) {
             </div>
             <ul className="flex flex-col gap-1.5">
               {payload.expected_concepts.map((c, i) => (
-                <li key={i} className="flex items-center gap-2 text-sm">
+                <li key={i} className="flex items-center gap-2 text-sm text-foreground/90">
                   <Check className="w-3.5 h-3.5 text-spark shrink-0" strokeWidth={2} />
                   <span>{c}</span>
                 </li>

@@ -79,7 +79,7 @@ export default async function ErrorsPage() {
       {isEmpty ? (
         <>
           {/* Demo banner */}
-          <div className="flex flex-col gap-3 rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 mb-6 sm:flex-row sm:items-center sm:gap-4">
+          <div className="flex flex-col gap-3 rounded-xl border border-black/[0.07] bg-white/60 px-4 py-3 mb-6 sm:flex-row sm:items-center sm:gap-4">
             <span className="inline-flex items-center gap-1.5 self-start rounded-full border border-spark/20 bg-spark/[0.08] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-spark">
               <FlaskConical className="h-3 w-3" strokeWidth={1.5} />
               Ejemplos
@@ -90,7 +90,7 @@ export default async function ErrorsPage() {
             </p>
             <Link
               href="/topics"
-              className="shrink-0 rounded-lg border border-white/[0.08] bg-white/[0.04] px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:border-white/[0.14] hover:text-foreground"
+              className="shrink-0 rounded-lg border border-black/[0.08] bg-white/60 px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:border-black/[0.14] hover:text-foreground"
             >
               Ir a Temas →
             </Link>
@@ -101,13 +101,13 @@ export default async function ErrorsPage() {
             {DEMO_ERRORS.map((e) => (
               <li
                 key={e.id}
-                className="flex items-start gap-4 p-4 rounded-md border border-white/[0.06] bg-white/[0.02] opacity-70"
+                className="flex items-start gap-4 p-4 rounded-2xl border border-black/[0.07] bg-white/50"
               >
                 <Badge variant="warning">
                   {ERROR_LABELS[e.type] ?? e.type}
                 </Badge>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm">{e.description}</p>
+                  <p className="text-sm text-foreground/90">{e.description}</p>
                   <div className="text-xs text-muted-foreground mt-1">
                     Tema: {e.topic}
                   </div>
@@ -131,13 +131,13 @@ export default async function ErrorsPage() {
             return (
               <li
                 key={e.id}
-                className="flex items-start gap-4 p-4 rounded-md border border-white/[0.06] bg-white/[0.02]"
+                className="flex items-start gap-4 p-4 rounded-2xl border border-black/[0.07] bg-white/60"
               >
                 <Badge variant="warning">
                   {ERROR_LABELS[e.error_type] ?? e.error_type}
                 </Badge>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm">{e.description}</p>
+                  <p className="text-sm text-foreground/90">{e.description}</p>
                   {topic && (
                     <div className="text-xs text-muted-foreground mt-1">
                       Tema: {topic.title}

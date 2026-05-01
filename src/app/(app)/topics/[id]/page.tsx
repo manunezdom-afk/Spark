@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ChevronLeft, Play, AlertCircle } from "lucide-react";
+import { ChevronLeft, Play, AlertCircle, ClipboardList } from "lucide-react";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import {
   getTopic,
@@ -10,12 +10,13 @@ import {
 } from "@/lib/spark/queries";
 import { MasteryBar } from "@/components/mastery/MasteryBar";
 import { KairosSourceHeader } from "@/components/topics/KairosSourceHeader";
+import { TopicActions } from "@/components/topics/TopicActions";
 import { ENGINE_LABELS, ENGINE_DESCRIPTIONS } from "@/modules/spark/engines";
 import type { LearningEngine } from "@/modules/spark/types";
 
 export const dynamic = "force-dynamic";
 
-const ENGINES: LearningEngine[] = [
+const CHAT_ENGINES: LearningEngine[] = [
   "socratic",
   "debugger",
   "devils_advocate",
@@ -45,13 +46,16 @@ export default async function TopicDetailPage({ params }: RouteParams) {
 
   return (
     <div className="p-6 md:p-10 max-w-4xl">
-      <Link
-        href="/topics"
-        className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6"
-      >
-        <ChevronLeft className="w-4 h-4" strokeWidth={1.5} />
-        Temas
-      </Link>
+      <div className="flex items-center justify-between mb-6">
+        <Link
+          href="/topics"
+          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+        >
+          <ChevronLeft className="w-4 h-4" strokeWidth={1.5} />
+          Temas
+        </Link>
+        <TopicActions topic={topic} />
+      </div>
 
       <header className="flex flex-col gap-3 mb-10">
         {topic.kairos_subject_id && (
@@ -65,55 +69,75 @@ export default async function TopicDetailPage({ params }: RouteParams) {
             {topic.category}
           </span>
         )}
-        <h1 className="text-4xl font-semibold tracking-tight leading-tight">{topic.title}</h1>
+        <h1 className="text-4xl font-semibold tracking-tight leading-tight text-foreground">
+          {topic.title}
+        </h1>
         {topic.summary && (
           <p className="text-muted-foreground leading-relaxed">{topic.summary}</p>
         )}
       </header>
 
       <section className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-10">
-        <div className="p-4 rounded-lg border border-white/[0.06] bg-white/[0.02]">
+        <div className="p-4 rounded-2xl border border-black/[0.06] bg-white/60">
           <div className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground mb-2">
             Maestría
           </div>
           <MasteryBar score={m?.mastery_score ?? 0} size="lg" />
         </div>
-        <div className="p-4 rounded-lg border border-white/[0.06] bg-white/[0.02]">
+        <div className="p-4 rounded-2xl border border-black/[0.06] bg-white/60">
           <div className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground mb-2">
             Sesiones
           </div>
-          <div className="text-2xl font-semibold">{m?.total_sessions ?? 0}</div>
+          <div className="text-2xl font-semibold text-foreground">
+            {m?.total_sessions ?? 0}
+          </div>
         </div>
-        <div className="p-4 rounded-lg border border-white/[0.06] bg-white/[0.02]">
+        <div className="p-4 rounded-2xl border border-black/[0.06] bg-white/60">
           <div className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground mb-2">
             Errores acumulados
           </div>
-          <div className="text-2xl font-semibold">{m?.total_errors ?? 0}</div>
+          <div className="text-2xl font-semibold text-foreground">
+            {m?.total_errors ?? 0}
+          </div>
         </div>
       </section>
 
       <section className="mb-10">
         <h2 className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground mb-4">
-          Empezar entrenamiento
+          Métodos de estudio
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {ENGINES.map((engine) => (
+          {CHAT_ENGINES.map((engine) => (
             <Link
               key={engine}
               href={`/sessions/new?engine=${engine}&topic=${topic.id}`}
-              className="group flex items-center gap-3 p-4 rounded-lg border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] hover:border-spark/30 transition-colors"
+              className="group flex items-center gap-3 p-4 rounded-2xl border border-black/[0.06] bg-white/60 hover:bg-white hover:border-spark/30 hover:shadow-soft transition-all"
             >
-              <div className="w-9 h-9 rounded-md bg-spark/10 border border-spark/20 flex items-center justify-center shrink-0 group-hover:bg-spark/20 transition-colors">
+              <div className="w-9 h-9 rounded-xl bg-spark/10 border border-spark/20 flex items-center justify-center shrink-0 group-hover:bg-spark/20 transition-colors">
                 <Play className="w-3.5 h-3.5 text-spark" strokeWidth={1.5} fill="currentColor" />
               </div>
               <div className="min-w-0">
-                <div className="font-medium text-sm">{ENGINE_LABELS[engine]}</div>
+                <div className="font-medium text-sm text-foreground">{ENGINE_LABELS[engine]}</div>
                 <div className="text-xs text-muted-foreground line-clamp-1">
                   {ENGINE_DESCRIPTIONS[engine]}
                 </div>
               </div>
             </Link>
           ))}
+          <Link
+            href={`/tests/new?topic=${topic.id}`}
+            className="group flex items-center gap-3 p-4 rounded-2xl border border-black/[0.06] bg-white/60 hover:bg-white hover:border-spark/30 hover:shadow-soft transition-all md:col-span-2"
+          >
+            <div className="w-9 h-9 rounded-xl bg-spark/10 border border-spark/20 flex items-center justify-center shrink-0 group-hover:bg-spark/20 transition-colors">
+              <ClipboardList className="w-4 h-4 text-spark" strokeWidth={1.5} />
+            </div>
+            <div className="min-w-0">
+              <div className="font-medium text-sm text-foreground">Generar prueba</div>
+              <div className="text-xs text-muted-foreground line-clamp-1">
+                Alternativas o desarrollo, evaluadas automáticamente.
+              </div>
+            </div>
+          </Link>
         </div>
       </section>
 
@@ -127,12 +151,12 @@ export default async function TopicDetailPage({ params }: RouteParams) {
             {errors.map((e) => (
               <li
                 key={e.id}
-                className="flex items-start gap-3 p-3 rounded-md border border-white/[0.06] bg-white/[0.02]"
+                className="flex items-start gap-3 p-3 rounded-xl border border-black/[0.06] bg-white/60"
               >
                 <span className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground font-mono shrink-0 mt-0.5">
                   {e.error_type}
                 </span>
-                <p className="text-sm flex-1">{e.description}</p>
+                <p className="text-sm flex-1 text-foreground/90">{e.description}</p>
                 <span className="font-mono text-[10px] text-muted-foreground shrink-0 mt-0.5">
                   {e.frequency}×
                 </span>
@@ -148,42 +172,51 @@ export default async function TopicDetailPage({ params }: RouteParams) {
             Historial
           </h2>
           <ul className="flex flex-col gap-2">
-            {sessions.slice(0, 10).map((s) => (
-              <Link
-                key={s.id}
-                href={`/sessions/${s.id}`}
-                className="flex items-center justify-between gap-3 p-3 rounded-md border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] transition-colors text-sm"
-              >
-                <div className="flex items-center gap-3 min-w-0">
-                  <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground shrink-0">
-                    {ENGINE_LABELS[s.engine]}
-                  </span>
-                  <span className="text-xs text-muted-foreground truncate">
-                    {new Date(s.started_at).toLocaleDateString("es", {
-                      day: "2-digit",
-                      month: "short",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </span>
-                </div>
-                <span
-                  className={`text-[10px] uppercase tracking-[0.14em] font-mono shrink-0 ${
-                    s.status === "completed"
-                      ? "text-green-400"
-                      : s.status === "active"
-                      ? "text-spark"
-                      : "text-muted-foreground"
-                  }`}
+            {sessions.slice(0, 10).map((s) => {
+              const isTest =
+                s.engine === "test_alternativas" || s.engine === "test_desarrollo";
+              const href = isTest
+                ? s.status === "completed"
+                  ? `/tests/${s.id}/results`
+                  : `/tests/${s.id}/take`
+                : `/sessions/${s.id}`;
+              return (
+                <Link
+                  key={s.id}
+                  href={href}
+                  className="flex items-center justify-between gap-3 p-3 rounded-xl border border-black/[0.06] bg-white/60 hover:bg-white transition-colors text-sm"
                 >
-                  {s.status === "completed"
-                    ? `${s.score ?? 0}%`
-                    : s.status === "active"
-                    ? "En curso"
-                    : "Abandonada"}
-                </span>
-              </Link>
-            ))}
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground shrink-0">
+                      {ENGINE_LABELS[s.engine]}
+                    </span>
+                    <span className="text-xs text-muted-foreground truncate">
+                      {new Date(s.started_at).toLocaleDateString("es", {
+                        day: "2-digit",
+                        month: "short",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                  </div>
+                  <span
+                    className={`text-[10px] uppercase tracking-[0.14em] font-mono shrink-0 ${
+                      s.status === "completed"
+                        ? "text-emerald-600"
+                        : s.status === "active"
+                        ? "text-spark"
+                        : "text-muted-foreground"
+                    }`}
+                  >
+                    {s.status === "completed"
+                      ? `${s.score ?? 0}%`
+                      : s.status === "active"
+                      ? "En curso"
+                      : "Abandonada"}
+                  </span>
+                </Link>
+              );
+            })}
           </ul>
         </section>
       )}
