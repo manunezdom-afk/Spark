@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { WelcomeTour } from "@/components/onboarding/WelcomeTour";
 import { GradientText } from "@/components/brand/GradientText";
 import { BrandOrb } from "@/components/brand/BrandOrb";
+import { NovaDashboardEntry } from "@/components/nova/NovaDashboardEntry";
 import type { LearningEngine } from "@/modules/spark/types";
 
 export const dynamic = "force-dynamic";
@@ -85,6 +86,8 @@ export default async function DashboardPage() {
             </GradientText>
           </h1>
         </header>
+
+        <NovaDashboardEntry />
 
         {totalDue > 0 && (
           <section className="mb-10">
