@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Toaster } from "sonner";
+import { ServiceWorkerUpdater } from "@/components/ServiceWorkerUpdater";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -28,6 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="es" className="h-full">
       <body className="bg-spark-radial min-h-full antialiased">
         {children}
+        <ServiceWorkerUpdater />
         <Toaster
           position="bottom-right"
           theme="dark"
