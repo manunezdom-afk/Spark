@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { ENGINE_LABELS, ENGINE_DESCRIPTIONS } from "@/modules/spark/engines";
+import { getEngineTheme } from "@/modules/spark/engines/themes";
 import type { LearningEngine, SparkTopic } from "@/modules/spark/types";
 import { toast } from "sonner";
 
@@ -128,38 +129,49 @@ function NewSessionForm() {
         Volver
       </Link>
 
-      <header className="flex flex-col gap-2 mb-8">
-        <span className="font-mono text-xs uppercase tracking-[0.2em] text-spark">
-          Nueva sesión
-        </span>
-        <h1 className="text-3xl font-semibold tracking-tight text-foreground">
-          {ENGINE_LABELS[activeEngine]}
-        </h1>
-        <p className="text-muted-foreground leading-relaxed">
-          {ENGINE_DESCRIPTIONS[activeEngine]}
-        </p>
-      </header>
+      <NewSessionHeader engine={activeEngine} />
 
       <section className="flex flex-col gap-3 mb-6">
         <Label>Método de estudio</Label>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
           {CHAT_ENGINE_OPTIONS.map((opt) => {
             const isActive = opt === activeEngine;
+            const optTheme = getEngineTheme(opt);
+            const OptIcon = optTheme.Icon;
             return (
               <button
                 key={opt}
                 type="button"
                 onClick={() => changeEngine(opt)}
-                className={`text-left p-3 rounded-xl border transition-colors ${
+                className={`group text-left p-3 rounded-xl border transition-all duration-200 ${
                   isActive
-                    ? "border-spark/40 bg-spark/[0.06]"
-                    : "border-black/[0.07] bg-white/60 hover:bg-white"
+                    ? "bg-white shadow-soft scale-[1.01]"
+                    : "border-black/[0.07] bg-white/60 hover:bg-white hover:-translate-y-0.5"
                 }`}
+                style={
+                  isActive
+                    ? {
+                        borderColor: hexToRgba(optTheme.accent, 0.45),
+                        boxShadow: `0 6px 18px ${hexToRgba(optTheme.accent, 0.18)}`,
+                      }
+                    : undefined
+                }
               >
-                <div className="font-medium text-[13px] text-foreground">
-                  {ENGINE_LABELS[opt]}
+                <div className="flex items-center gap-2 mb-1.5">
+                  <span
+                    className="inline-flex items-center justify-center w-6 h-6 rounded-md transition-colors"
+                    style={{
+                      background: hexToRgba(optTheme.accent, isActive ? 0.16 : 0.08),
+                      color: optTheme.accent,
+                    }}
+                  >
+                    <OptIcon className="w-3.5 h-3.5" strokeWidth={1.7} />
+                  </span>
+                  <div className="font-medium text-[13px] text-foreground">
+                    {ENGINE_LABELS[opt]}
+                  </div>
                 </div>
-                <div className="text-[11px] text-muted-foreground line-clamp-2 mt-0.5">
+                <div className="text-[11px] text-muted-foreground line-clamp-2">
                   {ENGINE_DESCRIPTIONS[opt]}
                 </div>
               </button>
@@ -208,11 +220,16 @@ function NewSessionForm() {
                   disabled={disabled}
                   className={`text-left p-3 rounded-xl border transition-colors ${
                     isSelected
-                      ? "border-spark/40 bg-spark/[0.06]"
+                      ? "bg-white shadow-soft"
                       : disabled
                         ? "border-black/[0.05] bg-white/40 opacity-50 cursor-not-allowed"
                         : "border-black/[0.07] bg-white/60 hover:bg-white"
                   }`}
+                  style={
+                    isSelected
+                      ? { borderColor: hexToRgba(getEngineTheme(activeEngine).accent, 0.45) }
+                      : undefined
+                  }
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
@@ -260,14 +277,65 @@ function NewSessionForm() {
           onClick={onStart}
           disabled={busy || selected.size < limits.min || topics.length === 0}
           size="lg"
-          variant="spark"
+          className="text-white border-none"
+          style={{
+            background: getEngineTheme(activeEngine).coachGradient,
+            boxShadow: `0 8px 22px ${hexToRgba(getEngineTheme(activeEngine).accent, 0.32)}`,
+          }}
         >
           {busy ? "Iniciando…" : "Comenzar sesión"}
-          <ArrowRight className="w-4 h-4" strokeWidth={1.5} />
+          <ArrowRight className="w-4 h-4" strokeWidth={1.7} />
         </Button>
       </div>
     </div>
   );
+}
+
+function NewSessionHeader({ engine }: { engine: LearningEngine }) {
+  const theme = getEngineTheme(engine);
+  const Icon = theme.Icon;
+  return (
+    <header
+      className="relative overflow-hidden rounded-2xl border border-black/[0.06] p-6 mb-8"
+      style={{ background: theme.headerGradient }}
+    >
+      <div
+        className="absolute -right-12 -top-12 w-48 h-48 rounded-full blur-3xl pointer-events-none"
+        style={{ background: theme.stageGlow }}
+        aria-hidden
+      />
+      <div className="relative flex items-start gap-4">
+        <span
+          className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-white/85 border shadow-soft"
+          style={{ borderColor: hexToRgba(theme.accent, 0.25), color: theme.accent }}
+        >
+          <Icon className="w-5 h-5" strokeWidth={1.6} />
+        </span>
+        <div className="flex flex-col gap-1.5 min-w-0">
+          <span
+            className="font-mono text-[10px] uppercase tracking-[0.22em]"
+            style={{ color: theme.accent }}
+          >
+            Nueva sesión · {theme.vibe}
+          </span>
+          <h1 className="text-3xl font-semibold tracking-tight text-foreground">
+            {ENGINE_LABELS[engine]}
+          </h1>
+          <p className="text-muted-foreground leading-relaxed text-[14px]">
+            {ENGINE_DESCRIPTIONS[engine]}
+          </p>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+function hexToRgba(hex: string, alpha: number) {
+  const value = hex.replace("#", "");
+  const r = parseInt(value.slice(0, 2), 16);
+  const g = parseInt(value.slice(2, 4), 16);
+  const b = parseInt(value.slice(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
 export default function NewSessionPage() {

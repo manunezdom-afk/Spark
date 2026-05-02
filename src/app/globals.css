@@ -422,3 +422,212 @@
 .spark-welcome-stage-fade {
   animation: spark-welcome-fade-in 380ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
+
+/* ============================================================
+ * Engine session — visuales por motor de aprendizaje
+ * Usado por SessionShell, EngineStageIntro y ChallengeCard.
+ * Cada motor tiene su propio acento, decoración de fondo y
+ * animación introductoria. El color real se inyecta vía
+ * variables CSS en línea (--engine-accent).
+ * ============================================================ */
+
+@keyframes engine-stage-rise {
+  from { opacity: 0; transform: translateY(14px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes engine-glow-pulse {
+  0%, 100% { opacity: 0.55; transform: translate(-50%, -50%) scale(1); }
+  50%      { opacity: 1;    transform: translate(-50%, -50%) scale(1.08); }
+}
+
+@keyframes engine-orbit-a {
+  0%   { transform: rotate(0deg)   translateX(70px) rotate(0deg); }
+  100% { transform: rotate(360deg) translateX(70px) rotate(-360deg); }
+}
+@keyframes engine-orbit-b {
+  0%   { transform: rotate(0deg)   translateX(95px) rotate(0deg); }
+  100% { transform: rotate(-360deg) translateX(95px) rotate(360deg); }
+}
+
+@keyframes engine-scan {
+  0%   { transform: translateY(-100%); opacity: 0; }
+  20%  { opacity: 0.6; }
+  80%  { opacity: 0.6; }
+  100% { transform: translateY(220%); opacity: 0; }
+}
+
+@keyframes engine-network-pulse {
+  0%, 100% { opacity: 0.35; transform: scale(1); }
+  50%      { opacity: 0.85; transform: scale(1.08); }
+}
+
+@keyframes engine-spotlight-sweep {
+  0%, 100% { transform: translateX(-30%) rotate(-12deg); opacity: 0.25; }
+  50%      { transform: translateX(30%) rotate(12deg);   opacity: 0.55; }
+}
+
+@keyframes engine-clash {
+  0%, 100% { transform: rotate(-22deg) translateX(-2px); opacity: 0.55; }
+  50%      { transform: rotate(-22deg) translateX(6px);  opacity: 0.95; }
+}
+@keyframes engine-clash-mirror {
+  0%, 100% { transform: rotate(22deg) translateX(2px);  opacity: 0.55; }
+  50%      { transform: rotate(22deg) translateX(-6px); opacity: 0.95; }
+}
+
+@keyframes engine-progress-bar {
+  from { transform: scaleX(0); transform-origin: left; }
+  to   { transform: scaleX(var(--engine-progress, 0.1)); transform-origin: left; }
+}
+
+@keyframes engine-card-rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes engine-bubble-rise {
+  from { opacity: 0; transform: translateY(6px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.engine-stage {
+  position: relative;
+  border-radius: 20px;
+  padding: 22px 24px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  background: var(--engine-stage-gradient);
+  animation: engine-stage-rise 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.engine-stage-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 240px;
+  height: 240px;
+  border-radius: 9999px;
+  background: var(--engine-stage-glow);
+  filter: blur(22px);
+  pointer-events: none;
+  animation: engine-glow-pulse 3.6s ease-in-out infinite;
+}
+
+.engine-stage-icon {
+  position: relative;
+  z-index: 2;
+  width: 56px;
+  height: 56px;
+  border-radius: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.06);
+}
+
+.engine-orbit-dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: var(--engine-accent);
+  pointer-events: none;
+  transform-origin: 0 0;
+}
+.engine-orbit-dot--a { animation: engine-orbit-a 7s linear infinite; opacity: 0.7; }
+.engine-orbit-dot--b { animation: engine-orbit-b 9s linear infinite; opacity: 0.45; }
+
+.engine-scanline {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.engine-scanline::before {
+  content: "";
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, var(--engine-accent), transparent);
+  animation: engine-scan 3.6s ease-in-out infinite;
+}
+
+.engine-grid-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(var(--engine-accent-soft, rgba(0,0,0,0.04)) 1px, transparent 1px),
+    linear-gradient(90deg, var(--engine-accent-soft, rgba(0,0,0,0.04)) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(circle at 50% 50%, rgba(0,0,0,1) 0%, transparent 70%);
+}
+
+.engine-clash {
+  position: absolute;
+  top: 22%;
+  left: 50%;
+  transform-origin: bottom center;
+  width: 3px;
+  height: 56px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, var(--engine-accent), transparent);
+  pointer-events: none;
+}
+.engine-clash--left  { animation: engine-clash 2.2s ease-in-out infinite; }
+.engine-clash--right { animation: engine-clash-mirror 2.2s ease-in-out infinite; }
+
+.engine-network-node {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 9999px;
+  background: var(--engine-accent);
+  box-shadow: 0 0 0 6px rgba(8, 145, 178, 0.12);
+  animation: engine-network-pulse 2.4s ease-in-out infinite;
+}
+.engine-network-line {
+  position: absolute;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--engine-accent), transparent);
+  opacity: 0.55;
+}
+
+.engine-spotlight {
+  position: absolute;
+  inset: -10% 0 0 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, var(--engine-accent), transparent 70%);
+  opacity: 0.18;
+  filter: blur(40px);
+  animation: engine-spotlight-sweep 6s ease-in-out infinite;
+}
+
+.engine-progress-track {
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+.engine-progress-fill {
+  height: 100%;
+  width: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--engine-accent), transparent);
+  transform-origin: left;
+  transition: transform 540ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.engine-card-rise {
+  animation: engine-card-rise 380ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.engine-bubble-rise {
+  animation: engine-bubble-rise 320ms cubic-bezier(0.34, 1.4, 0.64, 1) both;
+}

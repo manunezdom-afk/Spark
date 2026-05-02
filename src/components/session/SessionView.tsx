@@ -1,16 +1,18 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { SessionShell } from "./SessionShell";
 import { ChallengeCard, StreamingChallengeCard } from "./ChallengeCard";
 import { UserResponseBubble } from "./UserResponseBubble";
 import { UserResponseInput } from "./UserResponseInput";
+import { EngineStageIntro } from "./EngineStageIntro";
 import { ScoreSummary } from "@/components/payloads/ScoreSummary";
 import { Button } from "@/components/ui/button";
 import { useSessionStore } from "@/lib/stores/session";
 import { postSSE } from "@/lib/streaming/client";
+import { getEngineTheme } from "@/modules/spark/engines/themes";
 import type {
   SparkLearningSession,
   SparkSessionTurn,
@@ -44,6 +46,7 @@ export function SessionView({
     applyPayload,
   } = useSessionStore();
 
+  const theme = getEngineTheme(session.engine);
   const [input, setInput] = useState("");
   const [completionScore, setCompletionScore] = useState<ScorePayload | null>(null);
   const transcriptRef = useRef<HTMLDivElement>(null);
@@ -183,15 +186,31 @@ export function SessionView({
       ? "abandoned"
       : "active";
 
+  // Smooth progress: each user turn nudges the bar forward (caps before 1).
+  const progress = useMemo(() => {
+    if (currentStatus === "completed") return 1;
+    const userTurns = turns.filter((t) => t.role === "user").length;
+    return Math.min(0.92, 0.06 + userTurns * 0.16);
+  }, [turns, currentStatus]);
+
   return (
     <>
       <SessionShell
         engine={session.engine}
         topics={topics}
         status={currentStatus}
+        progress={progress}
         onComplete={complete}
       >
-        <div className="flex flex-col gap-8 pb-6">
+        <div className="flex flex-col gap-7 pb-6">
+          <EngineStageIntro
+            engine={session.engine}
+            theme={theme}
+            topics={topics}
+            persona={session.persona}
+            scenario={session.scenario}
+          />
+
           {warning && (
             <div className="text-xs text-amber-700 px-3 py-2 rounded-lg border border-amber-200 bg-amber-50">
               {warning}
@@ -199,26 +218,37 @@ export function SessionView({
           )}
 
           {turns.length === 0 && status !== "streaming" && (
-            <div className="text-sm text-muted-foreground italic">
-              Spark está preparando la sesión…
+            <div className="flex items-center gap-2 text-sm text-muted-foreground italic px-1">
+              <span
+                className="inline-block w-1.5 h-1.5 rounded-full animate-pulse"
+                style={{ background: theme.accent }}
+              />
+              Nova está preparando la sesión…
             </div>
           )}
 
           {turns.map((turn) => {
             if (turn.role === "user") {
-              return <UserResponseBubble key={turn.id} text={turn.content} />;
+              return (
+                <UserResponseBubble
+                  key={turn.id}
+                  text={turn.content}
+                  engine={session.engine}
+                />
+              );
             }
             return (
               <ChallengeCard
                 key={turn.id}
                 text={turn.content}
                 payload={turn.payload}
+                engine={session.engine}
               />
             );
           })}
 
           {status === "streaming" && (
-            <StreamingChallengeCard text={streamingText} />
+            <StreamingChallengeCard text={streamingText} engine={session.engine} />
           )}
 
           {completionScore && (
@@ -248,9 +278,10 @@ export function SessionView({
           onChange={setInput}
           onSubmit={send}
           disabled={status === "streaming" || status === "completing"}
+          engine={session.engine}
           placeholder={
             status === "streaming"
-              ? "Spark está escribiendo…"
+              ? "Nova está escribiendo…"
               : "Tu respuesta…"
           }
         />
