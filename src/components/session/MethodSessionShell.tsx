@@ -6,25 +6,39 @@ import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ENGINE_LABELS } from "@/modules/spark/engines";
 import { getEngineTheme } from "@/modules/spark/engines/themes";
+import { getMethodPersonality } from "@/modules/spark/engines/personalities";
 import type { LearningEngine, SparkTopic } from "@/modules/spark/types";
 
-export function SessionShell({
+import { MethodHUD } from "./MethodHUD";
+
+export interface SessionMeter {
+  /** 0–1 progress through the session — drives the colored top rail */
+  progress: number;
+  /** 0–N current phase index (for the phase pip row) */
+  phase: number;
+  /** 0–1 method-specific meter value (precision, solidez, conexiones, etc.) */
+  meterValue: number;
+  /** "X / Y" badge value, e.g. "2 / 3 errores cazados" */
+  badge?: string;
+}
+
+export function MethodSessionShell({
   engine,
   topics,
   status,
-  progress,
+  meter,
   onComplete,
   children,
 }: {
   engine: LearningEngine;
   topics: SparkTopic[];
   status: "active" | "completed" | "abandoned";
-  /** 0–1 progress through the session — drives the colored top rail */
-  progress?: number;
+  meter: SessionMeter;
   onComplete: () => void;
   children: React.ReactNode;
 }) {
   const theme = getEngineTheme(engine);
+  const personality = getMethodPersonality(engine);
   const Icon = theme.Icon;
 
   const shellStyle = {
@@ -33,7 +47,7 @@ export function SessionShell({
     "--engine-tint": theme.tint,
   } as CSSProperties;
 
-  const fill = clamp(progress ?? 0.04, 0.04, 1);
+  const fill = clamp(meter.progress, 0.04, 1);
 
   return (
     <div className="flex flex-col h-screen md:h-auto md:min-h-screen" style={shellStyle}>
@@ -67,7 +81,7 @@ export function SessionShell({
                 className="font-mono text-[9.5px] uppercase tracking-[0.18em] leading-none"
                 style={{ color: theme.accent }}
               >
-                {theme.vibe}
+                {personality.hudKicker}
               </span>
               <div className="flex items-baseline gap-2 min-w-0">
                 <span className="text-[13px] font-semibold text-foreground leading-tight">
@@ -90,6 +104,14 @@ export function SessionShell({
             </span>
           )}
         </div>
+
+        <MethodHUD
+          engine={engine}
+          phase={meter.phase}
+          meterValue={meter.meterValue}
+          badge={meter.badge}
+        />
+
         <div className="engine-progress-track relative">
           <div
             className="engine-progress-fill"

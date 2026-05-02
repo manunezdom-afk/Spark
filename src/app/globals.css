@@ -631,3 +631,222 @@
 .engine-bubble-rise {
   animation: engine-bubble-rise 320ms cubic-bezier(0.34, 1.4, 0.64, 1) both;
 }
+
+/* ============================================================
+ * Method intro stage scenography — each chat-based method has
+ * its own animated scene that lives inside MethodIntroStage.
+ * Powered by --engine-accent / --engine-stage-* variables set
+ * by the shell.
+ * ============================================================ */
+
+.method-stage {
+  position: relative;
+  border-radius: 22px;
+  padding: 28px 26px 26px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  background: var(--engine-stage-gradient);
+  animation: engine-stage-rise 540ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.04);
+}
+.method-stage::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: var(--engine-stage-glow);
+  opacity: 0.55;
+  filter: blur(40px);
+  z-index: 0;
+}
+
+.method-scene {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 132px;
+  height: 132px;
+  border-radius: 22px;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.3) 60%, transparent 100%);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 0 24px rgba(255, 255, 255, 0.5);
+}
+.method-scene-icon {
+  position: absolute;
+  inset: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+}
+
+/* Mentor / socratic — concentric rings */
+.method-scene-rings {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+.method-scene-rings::before,
+.method-scene-rings::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 9999px;
+  border: 1.5px solid var(--engine-accent);
+  opacity: 0.45;
+  transform: translate(-50%, -50%);
+}
+.method-scene-rings::before {
+  width: 56px; height: 56px;
+  animation: method-ring-pulse 3.4s ease-in-out infinite;
+}
+.method-scene-rings::after {
+  width: 92px; height: 92px;
+  opacity: 0.22;
+  animation: method-ring-pulse 3.4s ease-in-out infinite -1.6s;
+}
+@keyframes method-ring-pulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(0.95); opacity: 0.18; }
+  50%      { transform: translate(-50%, -50%) scale(1.08); opacity: 0.55; }
+}
+
+/* Detective / debugger — grid + scan */
+.method-scene-grid {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background-image:
+    linear-gradient(var(--engine-accent-soft, rgba(0,0,0,0.05)) 1px, transparent 1px),
+    linear-gradient(90deg, var(--engine-accent-soft, rgba(0,0,0,0.05)) 1px, transparent 1px);
+  background-size: 16px 16px;
+  mask-image: radial-gradient(circle at 50% 50%, black 0%, transparent 80%);
+  opacity: 0.7;
+}
+.method-scene-scan {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+}
+.method-scene-scan::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 8%;
+  right: 8%;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, var(--engine-accent), transparent);
+  animation: method-scan 2.6s ease-in-out infinite;
+}
+@keyframes method-scan {
+  0%, 100% { transform: translateY(0); opacity: 0; }
+  20%      { opacity: 0.85; }
+  60%      { opacity: 0.85; }
+  100%     { transform: translateY(120px); opacity: 0; }
+}
+
+/* Rival / devils — striking blades */
+.method-scene-strike {
+  position: absolute;
+  top: 22%;
+  left: 50%;
+  width: 4px;
+  height: 70px;
+  border-radius: 3px;
+  z-index: 2;
+  transform-origin: bottom center;
+  background: linear-gradient(180deg, var(--engine-accent), transparent);
+  pointer-events: none;
+}
+.method-scene-strike--a { animation: method-strike-a 2s ease-in-out infinite; }
+.method-scene-strike--b { animation: method-strike-b 2s ease-in-out infinite; }
+@keyframes method-strike-a {
+  0%, 100% { transform: rotate(-25deg) translateX(-1px); opacity: 0.55; }
+  50%      { transform: rotate(-25deg) translateX(6px);  opacity: 0.95; }
+}
+@keyframes method-strike-b {
+  0%, 100% { transform: rotate(25deg) translateX(1px);   opacity: 0.55; }
+  50%      { transform: rotate(25deg) translateX(-6px);  opacity: 0.95; }
+}
+
+/* Cartographer / bridge — nodes + links */
+.method-scene-node {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 9999px;
+  background: var(--engine-accent);
+  z-index: 2;
+  box-shadow: 0 0 0 5px rgba(8, 145, 178, 0.10);
+  animation: method-node-pulse 2.2s ease-in-out infinite;
+}
+.method-scene-link {
+  position: absolute;
+  height: 1px;
+  z-index: 2;
+  background: linear-gradient(90deg, transparent, var(--engine-accent), transparent);
+  opacity: 0.55;
+}
+@keyframes method-node-pulse {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50%      { opacity: 1;   transform: scale(1.1); }
+}
+
+/* Director / roleplay — spotlight */
+.method-scene-spotlight {
+  position: absolute;
+  inset: -10% 0 0 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(180deg, var(--engine-accent), transparent 70%);
+  opacity: 0.22;
+  filter: blur(32px);
+  animation: method-spotlight 4.5s ease-in-out infinite;
+}
+@keyframes method-spotlight {
+  0%, 100% { transform: translateX(-25%); opacity: 0.18; }
+  50%      { transform: translateX(25%);  opacity: 0.55; }
+}
+
+/* ============================================================
+ * Method picker preview (live mini-card on /sessions/new)
+ * ============================================================ */
+
+.method-pick-preview {
+  position: relative;
+  height: 88px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  background:
+    radial-gradient(circle at 75% 30%, var(--engine-stage-glow, rgba(0,0,0,0.06)) 0%, transparent 70%),
+    var(--engine-stage-gradient, linear-gradient(135deg, rgba(255,255,255,0.5), rgba(255,255,255,0.1)));
+}
+
+.method-pick-card {
+  transition:
+    transform 280ms cubic-bezier(0.34, 1.4, 0.64, 1),
+    border-color 200ms ease,
+    box-shadow 280ms ease;
+}
+.method-pick-card:hover {
+  transform: translateY(-2px);
+}
+.method-pick-card[data-active="true"] {
+  transform: translateY(-1px) scale(1.005);
+}
+
+/* ============================================================
+ * Method card container — enables a richer card-rise sequence
+ * for the conversation cards.
+ * ============================================================ */
+.method-card {
+  background: rgba(255, 255, 255, 0.55);
+}

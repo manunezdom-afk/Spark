@@ -4,26 +4,36 @@ import { useRef, useEffect, useState, type CSSProperties } from "react";
 import { ArrowUp } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { getEngineTheme } from "@/modules/spark/engines/themes";
+import { getMethodPersonality } from "@/modules/spark/engines/personalities";
 import type { LearningEngine } from "@/modules/spark/types";
 
-export function UserResponseInput({
+/**
+ * Response input that adapts its kicker, placeholder, hint and CTA
+ * to the active method. The mechanics (cmd+enter, autosize) are the
+ * same; what changes is the *language* of the box so the user feels
+ * like they're "responding to a teacher" vs. "defending in a debate"
+ * vs. "marking errors" — not just typing into a chat.
+ */
+export function MethodResponseInput({
   value,
   onChange,
   onSubmit,
   disabled,
   engine,
-  placeholder = "Tu respuesta…",
+  overridePlaceholder,
 }: {
   value: string;
   onChange: (v: string) => void;
   onSubmit: () => void;
   disabled?: boolean;
   engine: LearningEngine;
-  placeholder?: string;
+  /** Caller can override the placeholder (e.g. "Nova está escribiendo…"). */
+  overridePlaceholder?: string;
 }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [focused, setFocused] = useState(false);
   const theme = getEngineTheme(engine);
+  const personality = getMethodPersonality(engine);
 
   useEffect(() => {
     const ta = textareaRef.current;
@@ -63,9 +73,9 @@ export function UserResponseInput({
         >
           <span
             className="absolute left-4 top-3 font-mono text-[9px] uppercase tracking-[0.2em]"
-            style={{ color: theme.accent, opacity: 0.65 }}
+            style={{ color: theme.accent, opacity: 0.7 }}
           >
-            Tu respuesta
+            {personality.inputKicker}
           </span>
           <textarea
             ref={textareaRef}
@@ -75,10 +85,10 @@ export function UserResponseInput({
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
             disabled={disabled}
-            placeholder={placeholder}
+            placeholder={overridePlaceholder ?? personality.inputPlaceholder}
             rows={1}
             className={cn(
-              "w-full pr-14 pl-4 pt-7 pb-3 rounded-2xl bg-transparent text-[14px] leading-relaxed",
+              "w-full pr-32 pl-4 pt-7 pb-3 rounded-2xl bg-transparent text-[14px] leading-relaxed",
               "placeholder:text-muted-foreground/65 resize-none scrollbar-thin",
               "focus:outline-none disabled:opacity-50",
             )}
@@ -86,9 +96,9 @@ export function UserResponseInput({
           <button
             onClick={onSubmit}
             disabled={!canSubmit}
-            aria-label="Enviar respuesta"
+            aria-label={personality.inputCta}
             className={cn(
-              "absolute right-2.5 bottom-2.5 w-9 h-9 rounded-xl flex items-center justify-center transition-all",
+              "absolute right-2.5 bottom-2.5 inline-flex items-center gap-1.5 h-9 px-3.5 rounded-xl text-[12px] font-semibold transition-all",
               canSubmit ? "text-white active:scale-95" : "bg-black/[0.06] text-muted-foreground cursor-not-allowed",
             )}
             style={
@@ -100,12 +110,13 @@ export function UserResponseInput({
                 : undefined
             }
           >
+            <span className="hidden sm:inline">{personality.inputCta}</span>
             <ArrowUp className="w-4 h-4" strokeWidth={2.2} />
           </button>
         </div>
         <div className="flex items-center justify-between mt-2 px-1 text-[10px] text-muted-foreground">
-          <span className="opacity-70">
-            {disabled ? "Espera la respuesta de Nova…" : "Sin formulas. Escribe como hablas."}
+          <span className="opacity-80">
+            {disabled ? "Espera la respuesta de Nova…" : personality.inputHint}
           </span>
           <span className="hidden md:inline">Cmd / Ctrl + Enter</span>
         </div>
