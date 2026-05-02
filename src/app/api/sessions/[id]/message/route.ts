@@ -83,6 +83,8 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
     error_patterns: errors,
     days_to_deadline: session.days_to_deadline,
     prior_turns: priorTurns,
+    objective: session.objective,
+    intensity: session.intensity,
   };
 
   // Inject Kairos notes context. If the session has a `selected_note_ids`

@@ -66,6 +66,8 @@ export async function POST(request: NextRequest) {
     status: 'active',
     persona: null,
     scenario: null,
+    objective: null,
+    intensity: null,
     score: null,
     feedback: null,
     errors_found: [],

@@ -16,6 +16,8 @@ ${buildMasteryContext(ctx)}
 
 ${buildCalendarPressure(ctx)}
 
+${buildSessionConfig(ctx)}
+
 ${ENGINE_INSTRUCTIONS[engine]}
 
 ${OUTPUT_FORMAT}
@@ -116,6 +118,48 @@ function buildCalendarPressure(ctx: EngineContext): string {
 Días hasta el próximo evento crítico: **${ctx.days_to_deadline}** — Urgencia: **${urgency}**
 Estrategia recomendada: ${strategy}
 `.trim();
+}
+
+// ─────────────────────────────────────────────────────────────
+// Configuración explícita de la sesión: el usuario eligió un
+// objetivo y una intensidad en /sessions/new. Estas dos señales
+// modulan a Nova SIN cambiar la mecánica del motor — solo el
+// ritmo, el tipo de pregunta y la presión.
+function buildSessionConfig(ctx: EngineContext): string {
+  if (!ctx.objective && !ctx.intensity) return '';
+
+  const objectiveStrategy: Record<string, string> = {
+    comprender:
+      'Prioriza el "por qué" sobre el "qué". No avances hasta que el usuario muestre que entiende el mecanismo, no solo el dato.',
+    memorizar:
+      'Refuerza con repetición espaciada y active recall. Cierra la sesión con flashcards que cubran lo que más le costó al usuario.',
+    practicar:
+      'Empuja al usuario a aplicar el concepto en casos concretos. Cada turno debe terminar con una decisión que él tome con sus palabras.',
+    preparar_prueba:
+      'Modo evaluación: trabaja con el formato y nivel de exigencia esperado en una prueba. Marca claramente qué respondería bien y qué no, y por qué.',
+  };
+
+  const intensityProfile: Record<string, string> = {
+    baja:
+      'Calmo, scaffolded. Da más tiempo, ofrece pistas antes de marcar errores, celebra los aciertos parciales.',
+    media:
+      'Presión sostenida. Avanza al ritmo del usuario pero no le facilites el camino. Cero halagos vacíos.',
+    alta:
+      'Modo combate. Sube exigencia y velocidad. Ataca lo flojo sin contemplaciones, el usuario pidió rigor.',
+  };
+
+  const lines: string[] = ['# CONFIGURACIÓN DE LA SESIÓN'];
+  if (ctx.objective) {
+    lines.push(
+      `- **Objetivo del usuario**: ${ctx.objective.replace('_', ' ')} → ${objectiveStrategy[ctx.objective] ?? ''}`,
+    );
+  }
+  if (ctx.intensity) {
+    lines.push(
+      `- **Intensidad pedida**: ${ctx.intensity} → ${intensityProfile[ctx.intensity] ?? ''}`,
+    );
+  }
+  return lines.join('\n');
 }
 
 // ─────────────────────────────────────────────────────────────

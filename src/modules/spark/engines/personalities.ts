@@ -240,10 +240,49 @@ const PERSONALITIES: Record<ChatEngine, MethodPersonality> = {
   },
 };
 
+/**
+ * Test engines (alternativas + desarrollo) share a single examiner
+ * personality. They have their own /tests/* runtime, but the
+ * /sessions/new picker uses this personality to render the card and
+ * the live summary panel consistently with the chat methods.
+ */
+const TEST_PERSONALITY: MethodPersonality = {
+  shell: 'rounds',
+  intro: 'examiner',
+  challenge: 'plain',
+
+  hudKicker: 'Evaluación',
+  hudTitle: 'Pregunta',
+  hudPhases: ['Planteamiento', 'Respuesta', 'Revisión'],
+  hudMaxPhases: 3,
+
+  introHook:
+    'Spark genera una prueba con IA a partir de tus apuntes. Tú la respondes contra reloj y obtienes nota.',
+  introRules: [
+    'Elige formato: alternativas o preguntas de desarrollo.',
+    'Spark prepara las preguntas con tus apuntes reales.',
+    'Al terminar, ves nota, aciertos y dónde fallaste.',
+  ],
+
+  thinkingLabel: 'preparando preguntas',
+  loadingHint: 'Spark está armando la prueba…',
+
+  inputKicker: 'Tu respuesta',
+  inputPlaceholder: '',
+  inputCta: 'Enviar',
+  inputHint: 'Responde con seguridad: la corrección es automática.',
+
+  meterLabel: 'Aciertos',
+  meterDescription: 'Preguntas resueltas correctamente sobre el total.',
+
+  novaToneTag: 'Examinador estructurado',
+  novaToneDescription:
+    'Tono claro, neutral, evaluativo. Mide aciertos y errores de forma objetiva.',
+};
+
 export function getMethodPersonality(engine: LearningEngine): MethodPersonality {
   if (engine === 'test_alternativas' || engine === 'test_desarrollo') {
-    // Test engines have their own /tests/* flow; keep a sensible default.
-    return PERSONALITIES.socratic;
+    return TEST_PERSONALITY;
   }
   return PERSONALITIES[engine];
 }

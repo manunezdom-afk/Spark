@@ -48,6 +48,18 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  const VALID_OBJECTIVES = new Set([
+    "comprender",
+    "memorizar",
+    "practicar",
+    "preparar_prueba",
+  ]);
+  const VALID_INTENSITIES = new Set(["baja", "media", "alta"]);
+  const objective =
+    body.objective && VALID_OBJECTIVES.has(body.objective) ? body.objective : null;
+  const intensity =
+    body.intensity && VALID_INTENSITIES.has(body.intensity) ? body.intensity : null;
+
   try {
     const [userCtx, topics, mastery, errors, daysToDeadline] = await Promise.all([
       getUserContext(db, user.id),
@@ -97,6 +109,8 @@ export async function POST(request: NextRequest) {
       status: "active",
       persona: body.persona ?? null,
       scenario: body.scenario ?? null,
+      objective,
+      intensity,
       score: null,
       feedback: null,
       errors_found: [],

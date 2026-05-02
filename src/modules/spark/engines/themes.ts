@@ -8,6 +8,7 @@ import {
   Bug,
   Drama,
   HelpCircle,
+  ListChecks,
   Spline,
   Swords,
   type LucideIcon,
@@ -39,7 +40,7 @@ export interface EngineTheme {
   /** Border color used by ChallengeCard left rail */
   borderColor: string;
   /** Decoration motif rendered inside the intro stage */
-  motif: 'rings' | 'scan' | 'crossed' | 'network' | 'spotlight';
+  motif: 'rings' | 'scan' | 'crossed' | 'network' | 'spotlight' | 'checklist';
 }
 
 const THEMES: Record<Exclude<LearningEngine, 'test_alternativas' | 'test_desarrollo'>, EngineTheme> = {
@@ -130,9 +131,25 @@ const THEMES: Record<Exclude<LearningEngine, 'test_alternativas' | 'test_desarro
   },
 };
 
-const FALLBACK: EngineTheme = THEMES.socratic;
+const TEST_THEME: EngineTheme = {
+  Icon: ListChecks,
+  accent: '#16A34A',
+  tint: 'rgba(22, 163, 74, 0.05)',
+  headerGradient:
+    'linear-gradient(120deg, rgba(22,163,74,0.18) 0%, rgba(132,204,22,0.10) 55%, rgba(255,255,255,0) 100%)',
+  stageGradient:
+    'linear-gradient(135deg, rgba(22,163,74,0.10) 0%, rgba(132,204,22,0.06) 45%, rgba(255,255,255,0.02) 100%)',
+  stageGlow:
+    'radial-gradient(circle at 50% 50%, rgba(22,163,74,0.30) 0%, rgba(132,204,22,0.14) 45%, transparent 70%)',
+  coachGradient: 'linear-gradient(90deg, #16A34A, #84CC16)',
+  vibe: 'Evaluación cronometrada',
+  pitch: 'Genera una prueba con IA y revisa tu nota.',
+  streamingLabel: 'preparando preguntas',
+  borderColor: 'rgba(22, 163, 74, 0.55)',
+  motif: 'checklist',
+};
 
 export function getEngineTheme(engine: LearningEngine): EngineTheme {
-  if (engine === 'test_alternativas' || engine === 'test_desarrollo') return FALLBACK;
+  if (engine === 'test_alternativas' || engine === 'test_desarrollo') return TEST_THEME;
   return THEMES[engine];
 }

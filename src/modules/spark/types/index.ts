@@ -61,6 +61,18 @@ export type LearningStyle =
   | 'kinesthetic'
   | 'reading_writing';
 
+/**
+ * Configuración de sesión declarada por el usuario en /sessions/new.
+ * Viaja al master system prompt para modular la actitud de Nova.
+ */
+export type SessionObjective =
+  | 'comprender'
+  | 'memorizar'
+  | 'practicar'
+  | 'preparar_prueba';
+
+export type SessionIntensity = 'baja' | 'media' | 'alta';
+
 // ── Supabase row shapes ──────────────────────────────────────
 
 export interface SparkUserContext {
@@ -133,6 +145,10 @@ export interface SparkLearningSession {
   status: SessionStatus;
   persona: string | null;
   scenario: string | null;
+  /** Objetivo elegido por el usuario al crear la sesión (null = no declarado). */
+  objective: SessionObjective | null;
+  /** Intensidad elegida por el usuario al crear la sesión (null = no declarada). */
+  intensity: SessionIntensity | null;
   score: number | null;
   feedback: string | null;
   errors_found: DebuggerError[];
@@ -276,6 +292,10 @@ export interface CreateSessionRequest {
    * pasa, la sesión usa todo el material del topic.
    */
   selected_note_ids?: string[];
+  /** Objetivo del usuario para esta sesión (modula a Nova). */
+  objective?: SessionObjective;
+  /** Intensidad para esta sesión (modula la presión). */
+  intensity?: SessionIntensity;
 }
 
 // ── Material specificity (Kairos sessions inside a topic) ────
@@ -307,4 +327,7 @@ export interface EngineContext {
   error_patterns: SparkErrorPattern[];
   days_to_deadline: number | null;
   prior_turns: SparkSessionTurn[];
+  /** Configuración declarada por el usuario al crear la sesión. */
+  objective?: SessionObjective | null;
+  intensity?: SessionIntensity | null;
 }
