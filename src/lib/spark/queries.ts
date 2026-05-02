@@ -162,17 +162,42 @@ export async function upsertMasteryState(
 
 // ── Sessions ─────────────────────────────────────────────────
 
+/**
+ * Postgres / PostgREST surfaces "column not found" both as PGRST204
+ * (PostgREST schema cache) and 42703 (Postgres native). We use that
+ * to fall back gracefully when a migration hasn't been applied yet.
+ */
+function isMissingColumnError(err: { message?: string; code?: string } | null): boolean {
+  if (!err) return false;
+  if (err.code === 'PGRST204' || err.code === '42703') return true;
+  return /could not find the .* column|column .* does not exist/i.test(err.message ?? '');
+}
+
 export async function createSession(
   db: Client,
   session: Omit<SparkLearningSession, 'id' | 'created_at' | 'started_at' | 'ended_at'>
 ): Promise<SparkLearningSession> {
-  const { data, error } = await db
-    .from('spark_learning_sessions')
-    .insert(session)
-    .select()
-    .single();
-  if (error) throw new Error(error.message);
-  return data as SparkLearningSession;
+  // Newer columns (selected_note_ids, objective, intensity) live behind
+  // their own migrations. If the deploy hasn't run them yet, we don't
+  // want the whole flow to die — drop the offending column and retry.
+  const optionalColumns = ['objective', 'intensity', 'selected_note_ids'] as const;
+  type Row = Record<string, unknown>;
+  const row: Row = { ...session } as Row;
+  for (let attempt = 0; attempt < 4; attempt += 1) {
+    const { data, error } = await db
+      .from('spark_learning_sessions')
+      .insert(row)
+      .select()
+      .single();
+    if (!error) return data as SparkLearningSession;
+    if (!isMissingColumnError(error)) throw new Error(error.message);
+    // Find which optional column the server complained about and drop it.
+    const message = (error.message ?? '').toLowerCase();
+    const offending = optionalColumns.find((col) => message.includes(col));
+    if (!offending || !(offending in row)) throw new Error(error.message);
+    delete row[offending];
+  }
+  throw new Error('No se pudo crear la sesión: faltan columnas en spark_learning_sessions.');
 }
 
 export async function getSession(

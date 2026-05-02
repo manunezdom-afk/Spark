@@ -61,6 +61,18 @@ export type LearningStyle =
   | 'kinesthetic'
   | 'reading_writing';
 
+/**
+ * Configuración de sesión declarada por el usuario en /sessions/new.
+ * Viaja al master system prompt para modular la actitud de Nova.
+ */
+export type SessionObjective =
+  | 'comprender'
+  | 'memorizar'
+  | 'practicar'
+  | 'preparar_prueba';
+
+export type SessionIntensity = 'baja' | 'media' | 'alta';
+
 // ── Supabase row shapes ──────────────────────────────────────
 
 export interface SparkUserContext {
@@ -123,10 +135,20 @@ export interface SparkLearningSession {
   id: string;
   user_id: string;
   topic_ids: string[];
+  /**
+   * Subset de IDs de Kairos sessions con los que se entrena. Vacío = usa
+   * todo el material disponible en los topics. Permite estudiar una
+   * subpágina/apunte concreto sin abarcar la materia completa.
+   */
+  selected_note_ids: string[];
   engine: LearningEngine;
   status: SessionStatus;
   persona: string | null;
   scenario: string | null;
+  /** Objetivo elegido por el usuario al crear la sesión (null = no declarado). */
+  objective: SessionObjective | null;
+  /** Intensidad elegida por el usuario al crear la sesión (null = no declarada). */
+  intensity: SessionIntensity | null;
   score: number | null;
   feedback: string | null;
   errors_found: DebuggerError[];
@@ -265,6 +287,32 @@ export interface CreateSessionRequest {
   engine: LearningEngine;
   persona?: string;                  // required for roleplay
   scenario?: string;
+  /**
+   * Subset opcional de Kairos session IDs. Si se pasa vacío o no se
+   * pasa, la sesión usa todo el material del topic.
+   */
+  selected_note_ids?: string[];
+  /** Objetivo del usuario para esta sesión (modula a Nova). */
+  objective?: SessionObjective;
+  /** Intensidad para esta sesión (modula la presión). */
+  intensity?: SessionIntensity;
+}
+
+// ── Material specificity (Kairos sessions inside a topic) ────
+/**
+ * A unit of study material that lives inside a Spark topic. Maps 1:1
+ * to a Kairos session — what the user calls an "apunte" or "subpágina".
+ * The picker on /sessions/new shows these so the user can scope the
+ * session to a precise apunte instead of the whole subject.
+ */
+export interface TopicMaterial {
+  id: string;                  // Kairos session id
+  title: string;
+  date: string | null;
+  parent_id: string | null;    // null = top-level apunte; otherwise a subapunte
+  block_count: number;         // number of useful blocks (concepto/def/resumen…)
+  extraction_count: number;    // AI-extracted concepts/summaries
+  has_children: boolean;       // tells the UI whether to show a "incluir subpáginas" hint
 }
 
 export interface SendMessageRequest {
@@ -279,4 +327,7 @@ export interface EngineContext {
   error_patterns: SparkErrorPattern[];
   days_to_deadline: number | null;
   prior_turns: SparkSessionTurn[];
+  /** Configuración declarada por el usuario al crear la sesión. */
+  objective?: SessionObjective | null;
+  intensity?: SessionIntensity | null;
 }

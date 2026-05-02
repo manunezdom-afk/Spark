@@ -61,10 +61,13 @@ export async function POST(request: NextRequest) {
   const session = await createSession(db, {
     user_id: user.id,
     topic_ids: body.topic_ids,
+    selected_note_ids: [],
     engine,
     status: 'active',
     persona: null,
     scenario: null,
+    objective: null,
+    intensity: null,
     score: null,
     feedback: null,
     errors_found: [],
