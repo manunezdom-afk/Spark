@@ -204,7 +204,7 @@ export function TopicMaterialPicker({
                     material={m}
                     accent={theme.accent}
                     selected={selected.has(m.id)}
-                    disabled={useAll}
+                    disabled={false}
                     onToggle={() => toggleMaterial(m.id)}
                   />
                 ))}

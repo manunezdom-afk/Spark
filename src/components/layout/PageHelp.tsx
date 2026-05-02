@@ -132,6 +132,8 @@ export function PageHelp() {
   const [open, setOpen] = useState(false);
   const openWelcome = useTutorialStore((s) => s.openWelcome);
   const ask = useNovaAsk();
+  const isImmersiveSession =
+    pathname.startsWith("/sessions/") && pathname !== "/sessions/new";
 
   // Atajo `?` global para abrir/cerrar el panel.
   useEffect(() => {
@@ -158,6 +160,8 @@ export function PageHelp() {
   const key = Object.keys(HINTS).find((k) => pathname === k || pathname.startsWith(k + "/")) ?? null;
   const hints = key ? HINTS[key] : FALLBACK_HINTS;
 
+  if (isImmersiveSession) return null;
+
   return (
     <>
       <style jsx global>{`
@@ -174,7 +178,7 @@ export function PageHelp() {
       {/* Floating button */}
       <button
         onClick={() => setOpen((v) => !v)}
-        className="fixed bottom-6 right-6 z-40 md:bottom-8 md:right-8 w-10 h-10 rounded-full bg-foreground text-background shadow-lg flex items-center justify-center transition-transform hover:scale-105 active:scale-95"
+        className="fixed bottom-20 right-5 z-40 md:bottom-8 md:right-8 w-10 h-10 rounded-full bg-foreground text-background shadow-lg flex items-center justify-center transition-transform hover:scale-105 active:scale-95"
         aria-label={open ? "Cerrar ayuda" : "Ver ayuda"}
       >
         {open

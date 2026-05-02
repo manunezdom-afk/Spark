@@ -27,6 +27,10 @@ function getTitle(pathname: string): string {
 
 export function MobileTopBar() {
   const pathname = usePathname();
+  const isImmersiveSession =
+    pathname.startsWith("/sessions/") && pathname !== "/sessions/new";
+
+  if (isImmersiveSession) return null;
 
   return (
     <header className="md:hidden fixed top-0 left-0 right-0 z-40 h-14 flex items-center justify-between px-4 bg-white/90 backdrop-blur-xl border-b border-black/[0.06]">

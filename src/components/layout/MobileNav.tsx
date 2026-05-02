@@ -18,6 +18,11 @@ const ITEMS_RIGHT = [
 
 export function MobileNav() {
   const pathname = usePathname();
+  const isImmersiveSession =
+    pathname.startsWith("/sessions/") && pathname !== "/sessions/new";
+
+  if (isImmersiveSession) return null;
+
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-black/[0.06] bg-white/90 backdrop-blur-xl">
       <div

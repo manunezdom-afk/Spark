@@ -87,7 +87,7 @@ export async function buildKairosContext(
   const snapshot = await getKairosSnapshot(db, userId);
   if (!snapshot) return null;
 
-  const sessionSet = new Set(sourceNoteIds);
+  const sessionSet = new Set(expandKairosDescendants(snapshot, sourceNoteIds));
 
   const sessions: KairosSession[] = (snapshot.sessions ?? []).filter(
     (s: KairosSession) => sessionSet.has(s.id)
