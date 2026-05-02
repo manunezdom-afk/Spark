@@ -1,6 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-type KairosBlock = {
+export type KairosBlock = {
   id: string;
   sessionId: string;
   type: string;
@@ -13,7 +13,7 @@ type KairosBlock = {
   content?: string;
 };
 
-type KairosExtraction = {
+export type KairosExtraction = {
   id: string;
   sessionId: string;
   kind: string;
@@ -152,4 +152,142 @@ export async function buildKairosContext(
 
   if (lines.length <= 5) return null;
   return lines.join("\n");
+}
+
+// ─────────────────────────────────────────────────────────────
+// Material picker support
+//
+// `topic.source_note_ids` stores top-level Kairos sessions for that
+// topic. Each of those can have sub-pages (`parentSessionId`). The
+// picker on /sessions/new wants the **flat list** of every apunte
+// the user could pick — roots and descendants — annotated with how
+// many useful blocks each has, so the UI can show "Apunte: Renacimiento
+// (8 conceptos)" etc.
+// ─────────────────────────────────────────────────────────────
+
+import type { TopicMaterial } from "@/modules/spark/types";
+
+/**
+ * Resolve the full set of Kairos session IDs reachable from a list of
+ * roots. Walks the snapshot's `parentSessionId` graph so that selecting
+ * "Apunte: Renacimiento" automatically includes its sub-pages.
+ *
+ * Used both by the materials endpoint (UI) and by the message handler
+ * (so when a parent is in `selected_note_ids` its children are studied
+ * too without forcing the user to tick every box).
+ */
+export function expandKairosDescendants(
+  snapshot: KairosSnapshot,
+  rootIds: string[],
+): string[] {
+  if (!rootIds.length || !snapshot.sessions?.length) return rootIds;
+
+  const childrenByParent = new Map<string, string[]>();
+  for (const s of snapshot.sessions) {
+    if (s.parentSessionId) {
+      const list = childrenByParent.get(s.parentSessionId) ?? [];
+      list.push(s.id);
+      childrenByParent.set(s.parentSessionId, list);
+    }
+  }
+
+  const visited = new Set<string>();
+  const stack = [...rootIds];
+  while (stack.length) {
+    const id = stack.pop()!;
+    if (visited.has(id)) continue;
+    visited.add(id);
+    const kids = childrenByParent.get(id);
+    if (kids) stack.push(...kids);
+  }
+  return Array.from(visited);
+}
+
+/**
+ * Build the flat material list for a topic. Each entry is a Kairos
+ * session (root or sub-page) belonging to that topic, annotated with
+ * useful counters and parent reference. Order follows the natural
+ * Kairos order (roots first, then their children grouped).
+ */
+export async function getTopicMaterials(
+  db: SupabaseClient,
+  userId: string,
+  topicSourceNoteIds: string[],
+): Promise<TopicMaterial[]> {
+  if (!topicSourceNoteIds.length) return [];
+  const snapshot = await getKairosSnapshot(db, userId);
+  if (!snapshot?.sessions?.length) return [];
+
+  const allIds = new Set(
+    expandKairosDescendants(snapshot, topicSourceNoteIds),
+  );
+
+  const sessionsById = new Map<string, KairosSession>();
+  for (const s of snapshot.sessions) sessionsById.set(s.id, s);
+
+  const blocksBySession = new Map<string, number>();
+  for (const b of snapshot.blocks ?? []) {
+    if (USEFUL_BLOCK_TYPES.has(b.type)) {
+      blocksBySession.set(b.sessionId, (blocksBySession.get(b.sessionId) ?? 0) + 1);
+    }
+  }
+
+  const extractionsBySession = new Map<string, number>();
+  for (const e of snapshot.extractions ?? []) {
+    if (USEFUL_EXTRACTION_KINDS.has(e.kind) && e.reviewState !== "rejected") {
+      extractionsBySession.set(
+        e.sessionId,
+        (extractionsBySession.get(e.sessionId) ?? 0) + 1,
+      );
+    }
+  }
+
+  const childCount = new Map<string, number>();
+  for (const s of snapshot.sessions) {
+    if (s.parentSessionId && allIds.has(s.parentSessionId)) {
+      childCount.set(s.parentSessionId, (childCount.get(s.parentSessionId) ?? 0) + 1);
+    }
+  }
+
+  // Stable ordering: roots first (natural snapshot order), then for
+  // each root its descendants in DFS order. This matches how the user
+  // sees them in Kairos.
+  const visited = new Set<string>();
+  const ordered: KairosSession[] = [];
+  const childrenByParent = new Map<string, KairosSession[]>();
+  for (const s of snapshot.sessions) {
+    if (s.parentSessionId) {
+      const list = childrenByParent.get(s.parentSessionId) ?? [];
+      list.push(s);
+      childrenByParent.set(s.parentSessionId, list);
+    }
+  }
+
+  function pushDfs(s: KairosSession) {
+    if (visited.has(s.id) || !allIds.has(s.id)) return;
+    visited.add(s.id);
+    ordered.push(s);
+    const kids = childrenByParent.get(s.id) ?? [];
+    for (const k of kids) pushDfs(k);
+  }
+
+  // Start with the explicit topic roots in declared order
+  for (const rootId of topicSourceNoteIds) {
+    const s = sessionsById.get(rootId);
+    if (s) pushDfs(s);
+  }
+  // Catch any other reachable sessions that weren't roots
+  for (const s of snapshot.sessions) {
+    if (allIds.has(s.id)) pushDfs(s);
+  }
+
+  return ordered.map((s) => ({
+    id: s.id,
+    title: s.title,
+    date: s.date ?? null,
+    parent_id: s.parentSessionId ?? null,
+    block_count: blocksBySession.get(s.id) ?? 0,
+    extraction_count: extractionsBySession.get(s.id) ?? 0,
+    has_children: (childCount.get(s.id) ?? 0) > 0,
+  }));
 }

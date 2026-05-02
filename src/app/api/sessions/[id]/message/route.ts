@@ -85,14 +85,31 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
     prior_turns: priorTurns,
   };
 
-  // Inject Kairos notes context if any topic is linked to Kairos sessions
+  // Inject Kairos notes context. If the session has a `selected_note_ids`
+  // subset, we restrict the context to those apuntes (so Nova studies
+  // only "Arte gótico", not the whole "Artes e ideas" subject). Without
+  // a selection we fall back to every Kairos session linked to the
+  // topics — the legacy "study the whole subject" behavior.
   const allSourceIds = topics.flatMap((t) => t.source_note_ids ?? []);
-  const kairosContext = allSourceIds.length
-    ? await buildKairosContext(db, user.id, allSourceIds)
+  const usingSubset = (session.selected_note_ids?.length ?? 0) > 0;
+  const noteIdsForContext = usingSubset
+    ? session.selected_note_ids
+    : allSourceIds;
+  const kairosContext = noteIdsForContext.length
+    ? await buildKairosContext(db, user.id, noteIdsForContext)
     : null;
+
+  // When the user pinned specific apuntes, tell Nova explicitly: stay
+  // inside this scope and avoid spilling into the rest of the subject.
+  // Without this nudge, the model tends to pull in tangential examples
+  // from the broader topic context.
+  const scopeInstruction = usingSubset
+    ? `\n\n# ALCANCE DE ESTUDIO\n\nEl estudiante eligió enfocarse en un subconjunto específico de su material para esta sesión (ver "Notas de Kairos del estudiante" más abajo). NO uses información del resto de la materia. Si una pregunta del estudiante se sale del alcance, redirige cortésmente al material seleccionado.`
+    : "";
 
   const systemPrompt =
     buildMasterSystemPrompt(session.engine, ctx) +
+    scopeInstruction +
     (kairosContext ? `\n\n${kairosContext}` : "");
 
   // Synthetic kickoff: when the session is empty and the client requests

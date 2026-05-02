@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { ENGINE_LABELS } from "@/modules/spark/engines";
 import { getEngineTheme } from "@/modules/spark/engines/themes";
 import { getMethodPersonality } from "@/modules/spark/engines/personalities";
+import { TopicMaterialPicker } from "@/components/topics/TopicMaterialPicker";
 import type { LearningEngine, SparkTopic } from "@/modules/spark/types";
 import { toast } from "sonner";
 
@@ -48,6 +49,13 @@ function NewSessionForm() {
   const [selected, setSelected] = useState<Set<string>>(
     new Set(presetTopic ? [presetTopic] : []),
   );
+  /**
+   * Kairos session ids the user wants to scope the session to. Empty
+   * set = "use the whole subject" (default). Only meaningful when
+   * exactly one topic is selected; with multiple topics we hide the
+   * picker and treat the request as full-scope.
+   */
+  const [selectedNoteIds, setSelectedNoteIds] = useState<Set<string>>(new Set());
   const [activeEngine, setActiveEngine] = useState<LearningEngine>(engine);
   const [persona, setPersona] = useState("");
   const [scenario, setScenario] = useState("");
@@ -82,6 +90,10 @@ function NewSessionForm() {
       next.add(id);
     }
     setSelected(next);
+    // Clear material picker any time the topic set changes — the
+    // selected_note_ids belong to a specific topic and aren't valid
+    // across topic switches.
+    setSelectedNoteIds(new Set());
   }
 
   function changeEngine(next: LearningEngine) {
@@ -90,6 +102,7 @@ function NewSessionForm() {
     if (selected.size > nextLimits.max) {
       const trimmed = new Set(Array.from(selected).slice(0, nextLimits.max));
       setSelected(trimmed);
+      setSelectedNoteIds(new Set());
     }
   }
 
@@ -104,12 +117,20 @@ function NewSessionForm() {
     }
     setBusy(true);
     try {
+      // Only forward selected_note_ids when the user picked exactly
+      // one topic. With multiple topics the picker is hidden and the
+      // server treats an empty list as "full scope".
+      const noteIds =
+        selected.size === 1 && selectedNoteIds.size > 0
+          ? Array.from(selectedNoteIds)
+          : undefined;
       const res = await fetch("/api/sessions", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           engine: activeEngine,
           topic_ids: Array.from(selected),
+          selected_note_ids: noteIds,
           persona: persona.trim() || undefined,
           scenario: scenario.trim() || undefined,
         }),
@@ -230,6 +251,38 @@ function NewSessionForm() {
           </div>
         )}
       </section>
+
+      {selected.size === 1 && (() => {
+        const onlyTopic = topics.find((t) => selected.has(t.id));
+        if (!onlyTopic) return null;
+        return (
+          <section className="flex flex-col gap-3 mb-8">
+            <div className="flex items-center justify-between">
+              <Label>Material específico</Label>
+              <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+                opcional · acota el alcance
+              </span>
+            </div>
+            <TopicMaterialPicker
+              topic={onlyTopic}
+              engine={activeEngine}
+              selected={selectedNoteIds}
+              onChange={setSelectedNoteIds}
+            />
+          </section>
+        );
+      })()}
+
+      {selected.size > 1 && (
+        <section className="flex flex-col gap-3 mb-8">
+          <Label>Material específico</Label>
+          <div className="rounded-2xl border border-black/[0.06] bg-white/55 px-4 py-3 text-[12.5px] text-muted-foreground">
+            Con varios temas seleccionados, la sesión usa todo el material de
+            cada tema. Para acotar a un apunte concreto, deja un solo tema en
+            el bloque de arriba.
+          </div>
+        </section>
+      )}
 
       {activeEngine === "roleplay" && (
         <>

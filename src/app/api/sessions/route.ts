@@ -9,6 +9,10 @@ import {
   getErrorPatterns,
   getDaysToNearestDeadline,
 } from "@/lib/spark/queries";
+import {
+  getKairosSnapshot,
+  expandKairosDescendants,
+} from "@/lib/spark/kairos-bridge";
 import { buildEngineConfig } from "@/modules/spark/engines";
 import type {
   CreateSessionRequest,
@@ -67,9 +71,28 @@ export async function POST(request: NextRequest) {
       ctx
     );
 
+    // Validate selected_note_ids: the user can pick a top-level apunte
+    // OR any sub-page of those apuntes. We expand the topic roots
+    // through the Kairos parent/child graph so a sub-page id is still
+    // accepted; anything outside that closed set is dropped silently.
+    const requestedSelected = body.selected_note_ids ?? [];
+    let safeSelected: string[] = [];
+    if (requestedSelected.length) {
+      const roots = topics.flatMap((t) => t.source_note_ids ?? []);
+      let universe = new Set(roots);
+      if (roots.length) {
+        const snapshot = await getKairosSnapshot(db, user.id);
+        if (snapshot) {
+          universe = new Set(expandKairosDescendants(snapshot, roots));
+        }
+      }
+      safeSelected = requestedSelected.filter((id) => universe.has(id));
+    }
+
     const session = await createSession(db, {
       user_id: user.id,
       topic_ids: body.topic_ids,
+      selected_note_ids: safeSelected,
       engine: body.engine,
       status: "active",
       persona: body.persona ?? null,

@@ -26,10 +26,13 @@ export function SessionView({
   session,
   topics,
   initialTurns,
+  selectedMaterials = [],
 }: {
   session: SparkLearningSession;
   topics: SparkTopic[];
   initialTurns: SparkSessionTurn[];
+  /** Resolved titles of session.selected_note_ids — empty = full subject. */
+  selectedMaterials?: { id: string; title: string }[];
 }) {
   const router = useRouter();
   const {
@@ -233,6 +236,7 @@ export function SessionView({
             topics={topics}
             persona={session.persona}
             scenario={session.scenario}
+            selectedMaterials={selectedMaterials}
           />
 
           {warning && (

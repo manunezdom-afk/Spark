@@ -22,12 +22,19 @@ export function MethodIntroStage({
   topics,
   persona,
   scenario,
+  selectedMaterials,
 }: {
   engine: LearningEngine;
   theme: EngineTheme;
   topics: SparkTopic[];
   persona?: string | null;
   scenario?: string | null;
+  /**
+   * Optional subset of Kairos sessions the user pinned for this run.
+   * When present, we render them as chips so the user can see at a
+   * glance "Nova is studying just these apuntes, not the whole subject".
+   */
+  selectedMaterials?: { id: string; title: string }[];
 }) {
   const personality = getMethodPersonality(engine);
 
@@ -92,6 +99,19 @@ export function MethodIntroStage({
             )}
           </div>
         )}
+
+        {selectedMaterials && selectedMaterials.length > 0 && (
+          <div className="mt-1 flex flex-wrap gap-2">
+            {selectedMaterials.map((m) => (
+              <Chip
+                key={m.id}
+                accent={theme.accent}
+                label={m.title || "(sin título)"}
+                kind="material"
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -104,10 +124,16 @@ function Chip({
 }: {
   accent: string;
   label: string;
-  kind: "topic" | "persona" | "scenario";
+  kind: "topic" | "persona" | "scenario" | "material";
 }) {
   const kindLabel =
-    kind === "topic" ? "Tema" : kind === "persona" ? "Personaje" : "Escenario";
+    kind === "topic"
+      ? "Tema"
+      : kind === "persona"
+        ? "Personaje"
+        : kind === "scenario"
+          ? "Escenario"
+          : "Apunte";
   return (
     <span
       className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-medium border bg-white/70"
