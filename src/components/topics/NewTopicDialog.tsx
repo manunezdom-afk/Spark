@@ -340,8 +340,14 @@ export function NewTopicDialog() {
             )}
 
             {kairosSubjects !== null && kairosSubjects.length === 0 && (
-              <div className="text-[13px] text-muted-foreground p-5 rounded-2xl border border-black/[0.07] bg-black/[0.02]">
-                No se encontraron materias en Kairos. Crea algunas desde Kairos primero.
+              <div className="flex flex-col gap-2 text-[13px] text-muted-foreground p-5 rounded-2xl border border-black/[0.07] bg-black/[0.02]">
+                <span className="font-medium text-foreground/70">No se encontraron materias en Kairos</span>
+                <span>Para que funcione este puente necesitas:</span>
+                <ul className="list-disc list-inside space-y-1 pl-1">
+                  <li>Iniciar sesión en Kairos con una cuenta real (no modo invitado)</li>
+                  <li>Tener al menos una materia creada en Kairos</li>
+                  <li>Usar la misma cuenta en Kairos y en Spark</li>
+                </ul>
               </div>
             )}
 
