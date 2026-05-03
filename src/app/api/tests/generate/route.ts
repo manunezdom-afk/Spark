@@ -57,7 +57,13 @@ export async function POST(request: NextRequest) {
   const engine: LearningEngine =
     body.test_type === 'alternativas' ? 'test_alternativas' : 'test_desarrollo';
 
-  // Create session first so we have an ID to attach questions to
+  // ⚠️ DB constraint requirement
+  // La tabla `spark_learning_sessions` tiene un CHECK constraint sobre `engine`.
+  // Para que `test_alternativas` y `test_desarrollo` se puedan persistir,
+  // el constraint debe incluir esos valores. Si esta inserción falla con
+  // un 23514 (check_violation), aplicar la migration:
+  //   supabase/migrations/20260502000003_spark_test_engines_constraint.sql
+  // Crear session first so we have an ID to attach questions to.
   const session = await createSession(db, {
     user_id: user.id,
     topic_ids: body.topic_ids,

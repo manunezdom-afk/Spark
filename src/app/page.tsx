@@ -7,6 +7,18 @@ import {
   AlertTriangle,
   KeyRound,
 } from "lucide-react";
+import {
+  ENGINE_LABELS,
+  ENGINE_DESCRIPTIONS,
+  ENGINE_TAGS,
+} from "@/modules/spark/engines";
+import type { LearningEngine } from "@/modules/spark/types";
+
+const PREVIEW_ENGINES: LearningEngine[] = [
+  "socratic",
+  "debugger",
+  "devils_advocate",
+];
 
 export default function LandingPage() {
   const supabaseConfigured =
@@ -112,6 +124,38 @@ ANTHROPIC_API_KEY=sk-ant-...`}
             de punta a punta.
           </p>
         </div>
+
+        {/* Engine preview — what you get before the login wall */}
+        <section className="flex flex-col gap-3">
+          <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted-foreground/70">
+            Así entrena Spark
+          </span>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {PREVIEW_ENGINES.map((engine) => (
+              <article
+                key={engine}
+                className="flex flex-col gap-2.5 p-4 rounded-2xl border border-black/[0.06] bg-white/60 backdrop-blur-sm"
+              >
+                <h3 className="text-[14px] font-semibold tracking-tight text-foreground leading-tight">
+                  {ENGINE_LABELS[engine]}
+                </h3>
+                <p className="text-[12px] leading-relaxed text-muted-foreground">
+                  {ENGINE_DESCRIPTIONS[engine]}
+                </p>
+                <div className="flex flex-wrap gap-1.5 mt-1">
+                  {ENGINE_TAGS[engine].map((tag) => (
+                    <span
+                      key={tag}
+                      className="font-mono text-[9.5px] uppercase tracking-[0.14em] px-2 py-0.5 rounded-full border border-black/[0.07] bg-black/[0.02] text-muted-foreground"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
 
         <div className="flex items-center gap-4">
           <Link

@@ -29,7 +29,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { ENGINE_LABELS } from "@/modules/spark/engines";
+import { ENGINE_LABELS, ENGINE_TAGS } from "@/modules/spark/engines";
 import { getEngineTheme, type EngineTheme } from "@/modules/spark/engines/themes";
 import { getMethodPersonality } from "@/modules/spark/engines/personalities";
 import { TopicMaterialPicker } from "@/components/topics/TopicMaterialPicker";
@@ -79,23 +79,23 @@ const ENGINE_LIMITS: Record<MethodKey, { min: number; max: number }> = {
   test: { min: 1, max: 5 },
 };
 
-// Tag chips per method — give each card its own personality at a
-// glance. Three short verbs that reflect the experience, not the
-// theory.
-const METHOD_TAGS: Record<MethodKey, string[]> = {
-  socratic: ["guiado", "progresivo", "comprensión"],
-  debugger: ["detección", "precisión", "reto"],
-  devils_advocate: ["debate", "objeciones", "rondas"],
-  bridge_builder: ["relaciones", "mapa mental", "síntesis"],
-  roleplay: ["aplicación", "escenario", "decisión"],
-  test: ["evaluación", "nota", "revisión"],
-};
-
 const TEST_THEME_ENGINE: LearningEngine = "test_alternativas";
 
 function methodKeyToThemeEngine(key: MethodKey): LearningEngine {
   return key === "test" ? TEST_THEME_ENGINE : (key as LearningEngine);
 }
+
+// METHOD_TAGS reutiliza ENGINE_TAGS (módulo compartido) — el método
+// "test" es virtual y comparte tags con test_alternativas. Centralizar
+// los tags ahí permite mostrarlos también en el landing público.
+const METHOD_TAGS: Record<MethodKey, string[]> = {
+  socratic: ENGINE_TAGS[methodKeyToThemeEngine("socratic")],
+  debugger: ENGINE_TAGS[methodKeyToThemeEngine("debugger")],
+  devils_advocate: ENGINE_TAGS[methodKeyToThemeEngine("devils_advocate")],
+  bridge_builder: ENGINE_TAGS[methodKeyToThemeEngine("bridge_builder")],
+  roleplay: ENGINE_TAGS[methodKeyToThemeEngine("roleplay")],
+  test: ENGINE_TAGS[methodKeyToThemeEngine("test")],
+};
 
 function getMethodLabel(key: MethodKey): string {
   if (key === "test") return "Generar prueba";

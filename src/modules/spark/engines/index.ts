@@ -85,3 +85,21 @@ export const ENGINE_DESCRIPTIONS: Record<LearningEngine, string> = {
   test_alternativas:  'Preguntas de opción múltiple generadas por IA. Corrección automática.',
   test_desarrollo:    'Preguntas abiertas evaluadas por IA según los conceptos clave del tema.',
 };
+
+/**
+ * Tags cortos por método — tres verbos que reflejan la experiencia,
+ * no la teoría. Se usan en /sessions/new (cards de selección) y en
+ * el landing público de Spark (preview antes del login).
+ *
+ * Las dos pruebas (alternativas/desarrollo) comparten tags porque
+ * en la UI son una sola "card virtual" llamada Generar prueba.
+ */
+export const ENGINE_TAGS: Record<LearningEngine, string[]> = {
+  socratic:           ['guiado', 'progresivo', 'comprensión'],
+  debugger:           ['detección', 'precisión', 'reto'],
+  devils_advocate:    ['debate', 'objeciones', 'rondas'],
+  bridge_builder:     ['relaciones', 'mapa mental', 'síntesis'],
+  roleplay:           ['aplicación', 'escenario', 'decisión'],
+  test_alternativas:  ['evaluación', 'nota', 'revisión'],
+  test_desarrollo:    ['evaluación', 'nota', 'revisión'],
+};

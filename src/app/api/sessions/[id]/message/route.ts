@@ -58,14 +58,19 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
     return NextResponse.json({ error: "La sesión ya finalizó" }, { status: 409 });
   }
 
-  // Rate limit
-  const rate = await checkAndIncrementRateLimit(db, user.id);
+  // Rate limit (default 100/day per user)
+  const RATE_LIMIT_DAILY = 100;
+  const RATE_LIMIT_WARN_AT = 80;
+  const rate = await checkAndIncrementRateLimit(db, user.id, RATE_LIMIT_DAILY);
   if (!rate.allowed) {
     return NextResponse.json(
       { error: "Límite diario de IA alcanzado. Vuelve mañana." },
       { status: 429 }
     );
   }
+  const remaining = RATE_LIMIT_DAILY - rate.current;
+  const shouldWarnRateLimit =
+    rate.current >= RATE_LIMIT_WARN_AT && rate.current < RATE_LIMIT_DAILY;
 
   // Hydrate context
   const [priorTurns, userCtx, topics, mastery, errors] = await Promise.all([
@@ -144,6 +149,15 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
 
   return sseStream(async (push, close) => {
     if (userTurn) push({ event: "user-turn", data: userTurn });
+
+    if (shouldWarnRateLimit) {
+      push({
+        event: "warning",
+        data: {
+          message: `Llevas ${rate.current} de ${RATE_LIMIT_DAILY} mensajes hoy. Te quedan ${remaining}.`,
+        },
+      });
+    }
 
     const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! });
 

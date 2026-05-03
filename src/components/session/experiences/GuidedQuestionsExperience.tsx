@@ -81,9 +81,6 @@ export function GuidedQuestionsExperience({
   );
 
   const currentEntry = layerEntries.find((l) => !l.closed && l.question);
-  const currentLayerIdx = currentEntry
-    ? layerEntries.indexOf(currentEntry)
-    : layerEntries.length - 1;
   const closedEntries = layerEntries.filter((l) => l.closed);
   const lastAssistant = engine.turns[engine.turns.length - 1];
   const lastPayload =

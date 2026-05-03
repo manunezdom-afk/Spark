@@ -1,10 +1,13 @@
 import { BookMarked } from "lucide-react";
+import { cookies } from "next/headers";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import { getTopics, getAllMastery } from "@/lib/spark/queries";
+import { getKairosSnapshot } from "@/lib/spark/kairos-bridge";
 import { redirect } from "next/navigation";
 import { TopicCard } from "@/components/topics/TopicCard";
 import { NewTopicDialog } from "@/components/topics/NewTopicDialog";
 import { ClearDemoBanner } from "@/components/topics/ClearDemoBanner";
+import { KairosConnectBanner } from "@/components/topics/KairosConnectBanner";
 import { GradientText } from "@/components/brand/GradientText";
 import { seedDemoData } from "@/lib/spark/seed-demo";
 
@@ -36,6 +39,20 @@ export default async function TopicsPage() {
   const hasReal = topics.some((t) => !t.is_demo);
   const showDemoBanner = hasDemo && !hasReal;
 
+  // Kairos connect banner: only show if the user signaled intent
+  // (opened the "Desde Kairos" tab in NewTopicDialog at least once,
+  // tracked via cookie set by /api/bridge/kairos), AND there's no
+  // snapshot in Supabase, AND no topic is linked to Kairos. This
+  // avoids showing the banner to users who never tried to connect.
+  const kairosAttempted =
+    (await cookies()).get("spark_kairos_attempted")?.value === "1";
+  const hasKairosTopics = topics.some((t) => t.kairos_subject_id);
+  let showKairosBanner = false;
+  if (kairosAttempted && !hasKairosTopics) {
+    const snapshot = await getKairosSnapshot(db, user.id);
+    showKairosBanner = !snapshot;
+  }
+
   return (
     <div className="p-6 md:p-12 max-w-6xl animate-fade-up">
       <header className="flex items-end justify-between flex-wrap gap-4 mb-10">
@@ -54,6 +71,7 @@ export default async function TopicsPage() {
       </header>
 
       {showDemoBanner && <ClearDemoBanner />}
+      {showKairosBanner && <KairosConnectBanner />}
 
       {topics.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

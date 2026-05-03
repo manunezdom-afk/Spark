@@ -79,6 +79,10 @@ export function useSessionEngine({
           },
           warning: (data) => {
             setWarning(data.message);
+            // Surface as toast too so the user sees it regardless of
+            // whether the active experience renders the warning state.
+            // Used for rate-limit alerts and JSON parse warnings.
+            toast.warning(data.message, { duration: 6000 });
           },
           done: (data) => {
             const turn = (data as { turn: SparkSessionTurn }).turn;
