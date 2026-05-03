@@ -8,7 +8,7 @@ import { NovaPill } from "@/components/nova/NovaPill";
 const TITLES: Record<string, string> = {
   "/dashboard": "Hoy",
   "/topics": "Temas",
-  "/mastery": "Maestría",
+  "/mastery": "Progreso",
   "/flashcards/review": "Repaso",
   "/tests/new": "Nueva prueba",
   "/tests": "Pruebas",

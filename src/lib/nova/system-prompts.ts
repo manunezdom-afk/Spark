@@ -47,7 +47,7 @@ NAVEGACIÓN:
 - /sessions: historial agrupado por estado (abiertas, completadas, abandonadas). Click reabre la sesión o muestra el resultado.
 - /sessions/new: crear nueva sesión con método + temas.
 - /tests/new: crear prueba simulada.
-- /mastery: tu nivel por tema con SM-2.
+- /mastery ("Progreso"): vista accionable con 4 secciones — Atención prioritaria (temas que vencen hoy), En riesgo (mastery < 40%), Avanzando (mastery >= 70%), Sin entrenar.
 - /flashcards/review: cola de tarjetas que vencen hoy.
 - /errors: patrones recurrentes detectados.
 - /cuenta: identidad, perfil, instalación PWA, botón "Ver tour".

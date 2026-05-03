@@ -26,7 +26,7 @@ import { IOSFocusBanner } from "@/components/layout/IOSFocusBanner";
 const NAV: { href: string; label: string; icon: typeof Home }[] = [
   { href: "/dashboard", label: "Hoy", icon: Home },
   { href: "/topics", label: "Temas", icon: BookMarked },
-  { href: "/mastery", label: "Maestría", icon: Activity },
+  { href: "/mastery", label: "Progreso", icon: Activity },
   { href: "/flashcards/review", label: "Repaso", icon: Layers },
   { href: "/tests/new", label: "Pruebas", icon: ClipboardList },
   { href: "/sessions", label: "Sesiones", icon: History },

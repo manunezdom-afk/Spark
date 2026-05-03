@@ -111,7 +111,7 @@ export default async function DashboardPage() {
                   </div>
                 </div>
                 <Button variant="spark" className="rounded-full">
-                  {flashcardsDue > 0 ? "Repasar tarjetas" : "Ver temas"}
+                  {flashcardsDue > 0 ? "Repasar tarjetas" : "Ver progreso"}
                   <Play className="w-3.5 h-3.5" strokeWidth={1.5} fill="currentColor" />
                 </Button>
               </div>

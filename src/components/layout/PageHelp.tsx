@@ -52,13 +52,13 @@ const HINTS: Record<string, PageHints> = {
     ],
   },
   "/mastery": {
-    title: "Maestría",
-    subtitle: "Tu avance real por tema",
+    title: "Progreso",
+    subtitle: "Qué hacer ahora · qué está en riesgo · qué avanza",
     items: [
-      { icon: Activity, label: "Barra de maestría", desc: "Calcula el promedio ponderado de tus últimas sesiones con SM-2." },
-      { icon: Zap, label: "Próxima revisión", desc: "SM-2 decide cuándo vuelve a aparecer cada tema según qué tan bien lo dominas." },
-      { icon: AlertCircle, label: "Temas urgentes", desc: "Los que dicen 'Hoy' llevan más tiempo sin repasar — empieza por ellos." },
-      { icon: Play, label: "Entrenar tema", desc: "Haz click en cualquier item para ir al tema y lanzar una sesión." },
+      { icon: AlertCircle, label: "Atención prioritaria", desc: "Temas que vencen hoy según el repaso espaciado SM-2. Empezá por estos." },
+      { icon: Activity, label: "En riesgo", desc: "Temas con maestría menor al 40%. Necesitan scaffolding antes de subir el rigor." },
+      { icon: Zap, label: "Avanzando", desc: "Temas con maestría sobre 70%. Subí la dificultad o usá Defender postura." },
+      { icon: Play, label: "Sin entrenar", desc: "Temas creados que aún no entrenaste. Cero sesiones registradas." },
     ],
   },
   "/flashcards/review": {
