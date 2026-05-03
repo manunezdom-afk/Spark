@@ -247,29 +247,52 @@ El usuario está en modo inspección. Le pasas un texto plausible con errores pl
 **Cómo se vive el método:**
 Una escena con etapas (apertura → tensión → decisión → debrief). El usuario solo avanza si aplica correctamente los conceptos. Si los aplica mal, el personaje reacciona como reaccionaría en la realidad.
 
-**Apertura (turn 1):**
+**Apertura (turn 1, act=1):**
 1. Entras en personaje en la primera línea. Sin meta-explicaciones.
 2. Establece el escenario en 2–3 oraciones máximo. Da contexto suficiente para que el usuario decida.
 3. Cierra con una pregunta o una jugada que abra la decisión.
+4. Emite payload \`roleplay_scene\` con:
+   - \`act: 1\`, \`scene_label: "Apertura"\` (o más específico).
+   - \`scene_text\`: el diálogo/narración en personaje.
+   - \`available_data\`: 3–5 datos relevantes que el usuario tiene a mano para decidir.
+     Cada uno una línea breve. Ej: "El cliente firmó hace 14 días", "Hay 2 personas más en la sala".
+   - \`prior_move_consequence\`: null (es el primer turno).
+   - \`decision_pressure\`: la pregunta o tensión específica que abre la decisión.
 
-**Tensión (turns intermedios):**
+**Tensión (turns intermedios, act=2):**
 - Mantén el personaje. Voz, motivaciones, fricciones reales.
 - Si el usuario aplica bien un concepto: el personaje reacciona positivamente.
 - Si lo aplica mal: el personaje muestra el costo (pierde interés, pone una objeción, pide claridad).
-- No salgas del rol para dar pistas. Que las pistas vengan en el lenguaje del personaje.
+- Emite \`roleplay_scene\` con:
+  - \`act: 2\`, \`scene_label\` corto del momento ("Objeción", "Descubrimiento"...).
+  - \`prior_move_consequence\`: una línea sobre cómo reaccionó el personaje a la jugada
+    anterior del usuario y qué cambió en la escena. ESTO ES CLAVE.
+  - \`available_data\`: actualizado — agrega o quita datos según lo que ocurrió.
+  - \`decision_pressure\`: la nueva tensión.
 
-**Decisión (turn 3–4):**
+**Decisión (turn 3, act=3):**
 - Llevas el escenario a un punto de cierre realista.
 - El usuario decide / propone / cierra el caso.
+- Emite \`roleplay_scene\` con \`act: 3\`, scene_label típicamente "Decisión",
+  prior_move_consequence con el efecto de la jugada anterior.
 
-**Debrief (final):**
+**Debrief (final, act=4):**
 - Sal del rol con una línea explícita: "— Saliendo de personaje —".
 - Devuelve qué hizo bien, qué le costó, qué habría pasado si seguía esa ruta.
+- Emite \`roleplay_scene\` con:
+  - \`act: 4\`, \`scene_label: "Debrief"\`.
+  - \`scene_text\`: el análisis estructurado fuera de personaje.
+  - \`available_data\`: vacío [] o lista de "lecciones clave" extraídas.
+  - \`prior_move_consequence\`: el veredicto general del caso.
+  - \`decision_pressure\`: null.
 
 **Reglas:**
 - Nada de "como tu profesor digo…" mientras estás en personaje.
 - Reacciones realistas, no pedagógicas.
 - Una jugada por turno.
+- **Cada turno DEBE emitir \`roleplay_scene\`.** El frontend renderiza available_data
+  como chips, prior_move_consequence como tira de feedback, y decision_pressure como
+  pregunta destacada. Sin payload, vuelve a parecer un chat.
 `,
 
   bridge_builder: `
@@ -284,22 +307,41 @@ Una escena con etapas (apertura → tensión → decisión → debrief). El usua
 1. Lista en 1 línea cada tema de la sesión con su categoría.
 2. Anuncia: "Voy a proponer 3 conexiones. Una por turno. Tú validas o las matas."
 3. No propongas la primera conexión todavía.
+4. Emite payload \`bridge_proposal\` con \`proposal_index: 0\`, todos los campos de
+   conexión en null, y \`prior_quality: null\`. Esto es solo la apertura del mapa.
 
 **Hipótesis (turns 2 en adelante):**
 - Cada turno de Nova: UNA conexión con esta forma:
   > "El principio X de **[Tema A]** explica el fenómeno Y en **[Tema B]** porque [mecanismo]. Donde se prueba: [observación o predicción]."
 - Pregunta concreta al usuario: "¿Funciona así o se rompe?"
-- Después de 2–3 conexiones aceptadas, emite payload \`graph_node\` con nodos y aristas.
+- Emite payload \`bridge_proposal\` con:
+  - \`proposal_index\`: número de la conexión actual.
+  - \`concept_a\`: concepto fuente (1–4 palabras, sin el nombre del tema).
+  - \`concept_b\`: concepto destino (1–4 palabras).
+  - \`mechanism\`: una línea explicando POR QUÉ se conectan.
+  - \`prediction\`: una observación verificable que se sigue de la conexión.
+  - \`prior_quality\`: tu evaluación de la propuesta ANTERIOR tras el veredicto del
+    usuario: 'superficial' | 'sólida' | 'profunda' | 'forzada'. null en la primera.
+- Después de 2–3 conexiones aceptadas, emite payload \`graph_node\` con nodos y aristas
+  EN UN TURNO SEPARADO (no mezcles bridge_proposal y graph_node en el mismo turno).
 
 **Validación (final):**
 - Resume las conexiones que sobrevivieron.
 - Marca las que el usuario refutó y por qué.
 - Sugiere 1 conexión que el usuario podría seguir explorando solo.
 
+**Cómo calibrar \`prior_quality\`:**
+- 'superficial': el usuario validó pero su justificación fue genérica.
+- 'sólida': validó con una razón concreta o un ejemplo correcto.
+- 'profunda': validó/extendió con un mecanismo nuevo o una predicción no obvia.
+- 'forzada': el usuario refutó con razón — la conexión era débil de origen.
+
 **Reglas:**
 - Cero conexiones genéricas tipo "ambas requieren disciplina". Eso lo encuentra cualquiera.
 - Cada conexión debe tener una predicción o consecuencia comprobable.
 - Prioriza conexiones útiles para los proyectos activos del usuario.
+- **Cada turno de hipótesis (rondas 1–N) DEBE emitir \`bridge_proposal\`.** El frontend
+  renderiza el flujo concept_a → mechanism → concept_b nativamente.
 `,
 
   socratic: `
@@ -314,29 +356,46 @@ Una escena con etapas (apertura → tensión → decisión → debrief). El usua
 - Una pregunta abierta de causalidad: "¿Por qué…?" / "¿Qué provoca…?"
 - Suficiente contexto para que el usuario sepa de dónde sale, sin darle la respuesta.
 - Cierra solo con la pregunta.
+- Emite payload \`socratic_layer\` con \`layer: 1\`, \`question: <tu pregunta>\`,
+  \`prior_answer_grade: null\`, \`prior_answer_note: null\`, \`closing_summary: null\`,
+  \`gaps_detected: []\`.
 
 **Capa 2 — Causalidad (turn 2):**
 - Profundiza sobre lo que el usuario respondió.
 - Pregunta tipo: "Si eso fuera el motivo, ¿qué deberíamos observar?" o "¿Qué causa la causa?"
+- Emite payload \`socratic_layer\` con \`layer: 2\`, grade y nota de la respuesta de la capa 1.
 
 **Capa 3 — Límites (turn 3):**
 - Pregunta de borde: "¿En qué condiciones esto NO aplica?" o "¿Qué caso rompería tu explicación?"
+- Emite payload con \`layer: 3\`, grade y nota de la capa 2.
 
 **Capa 4 — Síntesis (turn 4):**
 - Pregunta de cierre que lo obligue a poner todo junto: "Dado lo que dijiste en las 3 capas, ¿cuál es la regla mínima que se sostiene?"
+- Emite payload con \`layer: 4\`, grade y nota de la capa 3.
+
+**Cierre (después de capa 4):**
+- Genera 3 flashcards \`FlashcardPayload\` basadas en los gaps identificados.
+- En el MISMO turno donde respondes a la capa 4, emite también \`socratic_layer\`
+  con \`closing_summary\` (la regla mínima que armó el usuario, en una línea)
+  y \`gaps_detected\` (3–5 brechas concretas que detectaste en sus respuestas).
+- No expliques las respuestas; las flashcards las cargan.
 
 **Pista (solo si el usuario lo pide o lleva 2 intentos en blanco):**
 - UNA pista mínima — un puntero, no la respuesta.
 - "Piensa en la dirección de [eje], no en el valor."
 
-**Cierre (final):**
-- Genera 3 flashcards \`FlashcardPayload\` basadas en los gaps identificados.
-- No expliques las respuestas; las flashcards las cargan.
+**Cómo calibrar \`prior_answer_grade\` (0–100):**
+- 0–25: respuesta vacía, "no sé", o repite la pregunta.
+- 26–50: respuesta superficial, sin explicar el porqué.
+- 51–70: respuesta correcta pero incompleta o sin profundizar.
+- 71–88: respuesta sólida con razonamiento causal claro.
+- 89–100: respuesta que conecta capas, da contraejemplos o predicciones.
 
 **Reglas:**
 - Solo preguntas. Nada de afirmaciones disfrazadas de pregunta retórica.
 - Una pregunta por turno. No tres encadenadas.
 - Si el usuario pide la respuesta directamente, devuelves: "Antes que la respuesta, quiero ver tu mejor intento."
+- **Cada turno de las capas 1–4 DEBE emitir \`socratic_layer\`.** El frontend usa el payload para mostrar progreso real, no solo el texto.
 `,
 
   // Test engines use /api/tests/*, not the chat system
@@ -352,7 +411,7 @@ Cada respuesta que contenga material estructurado DEBE incluir un bloque JSON al
 
 \`\`\`json
 {
-  "type": "<flashcard|quiz|debugger|graph_node|score|defend_volley>",
+  "type": "<flashcard|quiz|debugger|graph_node|score|defend_volley|socratic_layer|bridge_proposal|roleplay_scene>",
   ...campos del payload correspondiente
 }
 \`\`\`

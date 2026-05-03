@@ -214,7 +214,101 @@ export type TurnPayload =
   | ScorePayload
   | TestQuestionsPayload
   | TestResultPayload
-  | DefendVolleyPayload;
+  | DefendVolleyPayload
+  | SocraticLayerPayload
+  | BridgeProposalPayload
+  | RoleplayScenePayload;
+
+/**
+ * Preguntas guiadas (socratic) — una "capa" del camino de profundidad.
+ * Cada turno de Nova emite este payload con la pregunta de la capa
+ * actual y, si corresponde, el grade de la respuesta anterior y las
+ * brechas detectadas en la capa final (síntesis).
+ */
+export interface SocraticLayerPayload {
+  type: 'socratic_layer';
+  /** 1=Superficie · 2=Causalidad · 3=Límites · 4=Síntesis */
+  layer: 1 | 2 | 3 | 4;
+  /** Pregunta de esta capa, sola, sin contexto extra ni JSON. */
+  question: string;
+  /** Grade 0–100 de la respuesta anterior. null en la primera capa. */
+  prior_answer_grade: number | null;
+  /** Una línea sobre qué le faltó / qué resistió en la respuesta anterior. */
+  prior_answer_note: string | null;
+  /**
+   * Solo en la capa 4 (Síntesis) — resumen de la regla mínima que el
+   * usuario logró articular a través de las 4 capas.
+   */
+  closing_summary: string | null;
+  /**
+   * Solo en la capa 4 — brechas detectadas que el usuario debería
+   * trabajar (cada una en una línea, máx 5).
+   */
+  gaps_detected: string[];
+}
+
+/**
+ * Conectar temas (bridge_builder) — una propuesta de conexión entre
+ * dos conceptos con mecanismo y predicción comprobable. Cada turno
+ * de Nova lanza UNA propuesta; el usuario la valida/matiza/refuta/extiende.
+ */
+export interface BridgeProposalPayload {
+  type: 'bridge_proposal';
+  /** Número de la propuesta. 0 = mapa inicial (sin conexión todavía). */
+  proposal_index: number;
+  /** Concepto fuente (típicamente del Tema A). null en el mapa inicial. */
+  concept_a: string | null;
+  /** Concepto destino (típicamente del Tema B). null en el mapa inicial. */
+  concept_b: string | null;
+  /** Mecanismo que conecta ambos conceptos. null en el mapa inicial. */
+  mechanism: string | null;
+  /**
+   * Predicción / observación comprobable que valida la conexión.
+   * Si la propuesta es correcta, esto debería poder verse en la realidad.
+   */
+  prediction: string | null;
+  /**
+   * Calidad de la propuesta anterior tras el veredicto del usuario:
+   * 'superficial' | 'sólida' | 'profunda' | 'forzada' | null
+   * (null en la primera propuesta porque aún no hay veredicto previo).
+   */
+  prior_quality:
+    | 'superficial'
+    | 'sólida'
+    | 'profunda'
+    | 'forzada'
+    | null;
+}
+
+/**
+ * Caso real (roleplay) — una "escena" del caso. Cada turno de Nova
+ * emite el contexto en personaje + datos relevantes + presión de
+ * decisión + (si aplica) la consecuencia de la jugada anterior.
+ */
+export interface RoleplayScenePayload {
+  type: 'roleplay_scene';
+  /** Acto del caso: 1=Apertura · 2=Tensión · 3=Decisión · 4=Debrief */
+  act: 1 | 2 | 3 | 4;
+  /** Etiqueta corta de la escena: "Llegada", "Descubrimiento", "Quiebre"... */
+  scene_label: string;
+  /** Texto de la escena en personaje. La UI lo muestra como diálogo. */
+  scene_text: string;
+  /**
+   * Datos relevantes que el usuario tiene a mano para decidir.
+   * Cada uno como un chip/dato. Ej: "El cliente firmó hace 2 semanas".
+   * En el debrief (act=4), se vacía o se llena con un análisis estructurado.
+   */
+  available_data: string[];
+  /**
+   * Consecuencia de la jugada anterior del usuario (cómo reaccionó el
+   * personaje). null en la apertura. En el debrief, contiene el veredicto.
+   */
+  prior_move_consequence: string | null;
+  /**
+   * Pregunta o tensión específica que abre la decisión. Vacío en debrief.
+   */
+  decision_pressure: string | null;
+}
 
 /**
  * Devils-advocate ataque por ronda. Cada turn de Nova durante un

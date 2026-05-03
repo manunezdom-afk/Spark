@@ -1,7 +1,16 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Lightbulb, ArrowRight, Check, Layers, BookOpenCheck } from "lucide-react";
+import {
+  Lightbulb,
+  ArrowRight,
+  Check,
+  Layers,
+  BookOpenCheck,
+  Activity,
+  Compass,
+  AlertCircle,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { SessionShell } from "../SessionShell";
@@ -11,6 +20,7 @@ import { CompletionPanel } from "./shared/CompletionPanel";
 import { useSessionEngine } from "../useSessionEngine";
 import { getEngineTheme } from "@/modules/spark/engines/themes";
 import type {
+  SocraticLayerPayload,
   SparkLearningSession,
   SparkSessionTurn,
   SparkTopic,
@@ -24,17 +34,32 @@ const LAYER_HINTS: Record<(typeof LAYER_LABELS)[number], string> = {
   Síntesis: "Pone todas las capas en una regla mínima.",
 };
 
+interface LayerEntry {
+  /** 1..4 cuando viene del payload; -1 si es desconocida (legacy turn). */
+  layer: number;
+  question: string;
+  payload: SocraticLayerPayload | null;
+  answer?: string;
+  /** Grade que Nova le puso a esta respuesta en el TURNO SIGUIENTE. */
+  grade?: number | null;
+  /** Nota inline sobre la respuesta. */
+  gradeNote?: string | null;
+  /** Si esta capa ya se cerró con un grade. */
+  closed: boolean;
+}
+
 /**
- * Preguntas guiadas — ya no es chat. Es un camino por capas.
+ * Preguntas guiadas — camino por capas de comprensión.
  *
- * Layout:
- *   - HUD: capa actual (1..4) con nombre.
- *   - Tarjeta principal: la pregunta de la capa, grande, sola en pantalla.
- *   - Acciones: pedir pista (un click) + responder (textarea + botón).
- *   - Sidebar/abajo: las capas anteriores ya cerradas con un mini-resumen.
+ * Mecánica:
+ *   - Cada turno de Nova emite payload `socratic_layer` con la
+ *     pregunta de la capa y, desde la capa 2, el grade real (0–100)
+ *     de la respuesta anterior.
+ *   - La capa 4 (Síntesis) trae además `closing_summary` y
+ *     `gaps_detected`, que la UI muestra como cierre estructurado.
  *
- * No hay timeline tipo chat: cada pregunta es una "pantalla" propia. Las
- * respuestas anteriores quedan archivadas como "lo que ya entendiste".
+ * El medidor de capas cerradas y el promedio de grade ya no son
+ * decorativos: vienen del payload por turno.
  */
 export function GuidedQuestionsExperience({
   session,
@@ -50,39 +75,27 @@ export function GuidedQuestionsExperience({
   const [draft, setDraft] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Build the layer history from turns. Each assistant turn = a layer
-  // question; each user turn = the user's answer to the previous layer.
-  const layers = useMemo(() => {
-    const acc: { question: string; answer?: string }[] = [];
-    let pending: string | null = null;
-    for (const t of engine.turns) {
-      if (t.role === "assistant") {
-        if (pending !== null) acc.push({ question: pending });
-        pending = stripHints(t.content);
-      } else if (t.role === "user") {
-        if (pending !== null) {
-          acc.push({ question: pending, answer: t.content });
-          pending = null;
-        } else if (acc.length > 0) {
-          // user answered before next assistant; attach to last
-          acc[acc.length - 1].answer = t.content;
-        }
-      }
-    }
-    if (pending !== null) acc.push({ question: pending });
-    return acc;
-  }, [engine.turns]);
+  const layerEntries = useMemo(
+    () => buildLayerEntries(engine.turns),
+    [engine.turns],
+  );
 
-  // The current layer is the one with no answer yet.
-  const currentIdx = layers.findIndex((l) => !l.answer);
-  const currentLayerIdx = currentIdx === -1 ? layers.length - 1 : currentIdx;
-  const currentLayer = currentLayerIdx >= 0 ? layers[currentLayerIdx] : null;
+  const currentEntry = layerEntries.find((l) => !l.closed && l.question);
+  const currentLayerIdx = currentEntry
+    ? layerEntries.indexOf(currentEntry)
+    : layerEntries.length - 1;
+  const closedEntries = layerEntries.filter((l) => l.closed);
+  const lastAssistant = engine.turns[engine.turns.length - 1];
+  const lastPayload =
+    lastAssistant?.role === "assistant" && lastAssistant.payload?.type === "socratic_layer"
+      ? (lastAssistant.payload as SocraticLayerPayload)
+      : null;
 
   // Reset textarea when layer changes
   useEffect(() => {
     setDraft("");
     if (textareaRef.current) textareaRef.current.focus();
-  }, [currentLayerIdx]);
+  }, [currentEntry?.question]);
 
   async function submitAnswer() {
     if (!draft.trim() || engine.status !== "idle") return;
@@ -96,15 +109,26 @@ export function GuidedQuestionsExperience({
     await engine.send("Pista, por favor. Una sola, mínima.");
   }
 
-  const layerNumber = Math.min(layers.length, LAYER_LABELS.length);
-  const phaseIdx = Math.max(0, layerNumber - 1);
-  const meterValue = engine.isCompleted
-    ? 1
-    : Math.min(1, layers.filter((l) => l.answer).length / 4);
+  // Real progress: count of closed layers / 4
+  const closedCount = Math.min(4, closedEntries.length);
+  const meterValue = engine.isCompleted ? 1 : closedCount / 4;
+  const grades = closedEntries
+    .map((e) => e.grade)
+    .filter((g): g is number => typeof g === "number");
+  const avgGrade =
+    grades.length > 0 ? grades.reduce((a, b) => a + b, 0) / grades.length : null;
 
-  const closedLayers = layers
-    .filter((l) => l.answer)
-    .slice(0, currentLayer && !currentLayer.answer ? layerNumber - 1 : layerNumber);
+  // Layer number for display: prefer payload's `layer` if available, else
+  // fall back to position in the list.
+  const displayLayer = currentEntry?.payload?.layer ?? Math.min(4, layerEntries.length);
+  const phaseIdx = Math.max(0, Math.min(3, displayLayer - 1));
+  const layerLabel = LAYER_LABELS[phaseIdx];
+
+  const closingSummary = lastPayload?.closing_summary ?? null;
+  const gapsDetected = lastPayload?.gaps_detected ?? [];
+  const showClosingPanel =
+    (closingSummary || gapsDetected.length > 0) &&
+    !engine.completionScore;
 
   return (
     <SessionShell
@@ -119,9 +143,13 @@ export function GuidedQuestionsExperience({
           kicker="Profundidad"
           phaseLabels={[...LAYER_LABELS]}
           currentPhase={phaseIdx}
-          meterLabel="Capas cerradas"
+          meterLabel={avgGrade !== null ? "Profundidad" : "Capas cerradas"}
           meterValue={meterValue}
-          badge={`${closedLayers.length} / 4`}
+          badge={
+            avgGrade !== null
+              ? `${closedCount} / 4 · ø ${Math.round(avgGrade)}`
+              : `${closedCount} / 4`
+          }
         />
       }
     >
@@ -132,9 +160,9 @@ export function GuidedQuestionsExperience({
               score={engine.completionScore}
               topicId={session.topic_ids[0]}
             />
-          ) : currentLayer && currentLayer.question ? (
+          ) : currentEntry && currentEntry.question ? (
             <article
-              key={currentLayerIdx}
+              key={currentEntry.question}
               className="rounded-3xl border bg-white/85 p-7 md:p-9 engine-card-rise shadow-soft"
               style={{
                 borderColor: hexToRgba(theme.accent, 0.22),
@@ -151,25 +179,54 @@ export function GuidedQuestionsExperience({
                       border: `1px solid ${hexToRgba(theme.accent, 0.28)}`,
                     }}
                   >
-                    {layerNumber}
+                    {displayLayer}
                   </span>
                   <div className="flex flex-col leading-tight">
                     <span
                       className="font-mono text-[10px] uppercase tracking-[0.18em]"
                       style={{ color: theme.accent }}
                     >
-                      Capa {layerNumber} · {LAYER_LABELS[phaseIdx]}
+                      Capa {displayLayer} · {layerLabel}
                     </span>
                     <span className="text-[11px] text-muted-foreground">
-                      {LAYER_HINTS[LAYER_LABELS[phaseIdx]]}
+                      {LAYER_HINTS[layerLabel]}
                     </span>
                   </div>
                 </div>
-                <NovaCoachRibbon engine={session.engine} label="Pregunta de Nova" />
+                {currentEntry.payload?.prior_answer_grade !== null &&
+                currentEntry.payload?.prior_answer_grade !== undefined ? (
+                  <GradeChip
+                    score={currentEntry.payload.prior_answer_grade}
+                    accent={theme.accent}
+                  />
+                ) : (
+                  <NovaCoachRibbon engine={session.engine} label="Pregunta de Nova" />
+                )}
               </header>
 
+              {currentEntry.payload?.prior_answer_note && (
+                <div
+                  className="mb-5 rounded-xl border p-3 text-[12.5px] text-foreground/80 italic flex gap-2"
+                  style={{
+                    background: "rgb(254 252 232 / 0.5)",
+                    borderColor: "rgba(245, 158, 11, 0.25)",
+                  }}
+                >
+                  <Activity
+                    className="w-3.5 h-3.5 mt-0.5 shrink-0 text-amber-600"
+                    strokeWidth={1.7}
+                  />
+                  <span>
+                    <span className="font-medium not-italic text-amber-700">
+                      Sobre tu capa anterior:{" "}
+                    </span>
+                    {currentEntry.payload.prior_answer_note}
+                  </span>
+                </div>
+              )}
+
               <p className="text-[20px] md:text-[22px] leading-snug font-medium tracking-tight text-foreground">
-                {currentLayer.question}
+                {currentEntry.question}
               </p>
 
               <div className="mt-7 flex flex-col gap-3">
@@ -218,7 +275,9 @@ export function GuidedQuestionsExperience({
                       background: theme.coachGradient,
                     }}
                   >
-                    Avanzar a la siguiente capa
+                    {displayLayer >= 4
+                      ? "Cerrar la síntesis"
+                      : "Avanzar a la siguiente capa"}
                     <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.7} />
                   </Button>
                 </div>
@@ -240,54 +299,63 @@ export function GuidedQuestionsExperience({
             </div>
           )}
 
-          {engine.status === "streaming" && currentLayer?.question && (
-            <div
-              className="rounded-2xl border p-4 bg-white/60"
-              style={{ borderColor: hexToRgba(theme.accent, 0.14) }}
-            >
-              <NovaThinking engine={session.engine} text={engine.streamingText} fullText />
-            </div>
+          {showClosingPanel && (
+            <ClosingSynthesisPanel
+              summary={closingSummary}
+              gaps={gapsDetected}
+              accent={theme.accent}
+            />
           )}
         </div>
 
         <aside className="lg:sticky lg:top-32 lg:self-start flex flex-col gap-3">
-          <header className="flex items-center gap-2">
-            <BookOpenCheck className="w-4 h-4" strokeWidth={1.6} style={{ color: theme.accent }} />
-            <span
-              className="font-mono text-[10px] uppercase tracking-[0.18em]"
-              style={{ color: theme.accent }}
-            >
-              Lo que ya entendiste
-            </span>
+          <header className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <BookOpenCheck
+                className="w-4 h-4"
+                strokeWidth={1.6}
+                style={{ color: theme.accent }}
+              />
+              <span
+                className="font-mono text-[10px] uppercase tracking-[0.18em]"
+                style={{ color: theme.accent }}
+              >
+                Lo que ya entendiste
+              </span>
+            </div>
+            {avgGrade !== null && (
+              <span
+                className="font-mono text-[10px] tracking-[0.14em] px-2 py-0.5 rounded-full"
+                style={{
+                  background: hexToRgba(theme.accent, 0.10),
+                  color: theme.accent,
+                }}
+              >
+                ø {Math.round(avgGrade)}
+              </span>
+            )}
           </header>
-          {closedLayers.length === 0 ? (
+          {closedEntries.length === 0 ? (
             <p className="text-[12.5px] text-muted-foreground italic">
-              Aún no cierras ninguna capa. Cada respuesta queda registrada aquí.
+              Aún no cierras ninguna capa. Cada respuesta queda registrada con su
+              evaluación.
             </p>
           ) : (
             <ul className="flex flex-col gap-2.5">
-              {closedLayers.map((l, i) => (
-                <li
-                  key={i}
-                  className="rounded-xl border bg-white/80 p-3"
-                  style={{ borderColor: hexToRgba(theme.accent, 0.14) }}
-                >
-                  <div className="flex items-center justify-between gap-2 mb-1.5">
-                    <span
-                      className="font-mono text-[9.5px] uppercase tracking-[0.16em]"
-                      style={{ color: theme.accent }}
-                    >
-                      <Layers className="w-3 h-3 inline-block mr-1" strokeWidth={1.7} />
-                      {LAYER_LABELS[Math.min(i, LAYER_LABELS.length - 1)]}
-                    </span>
-                    <Check className="w-3.5 h-3.5 text-emerald-600" strokeWidth={2} />
-                  </div>
-                  <p className="text-[12px] text-muted-foreground line-clamp-2 mb-1.5">
-                    {l.question}
-                  </p>
-                  <p className="text-[12.5px] text-foreground/85 line-clamp-3">{l.answer}</p>
-                </li>
-              ))}
+              {closedEntries.map((l, i) => {
+                const layerNum = l.payload?.layer ?? Math.min(i + 1, 4);
+                const labelIdx = Math.min(layerNum - 1, LAYER_LABELS.length - 1);
+                return (
+                  <ClosedLayerRow
+                    key={i}
+                    label={LAYER_LABELS[labelIdx]}
+                    question={l.question}
+                    answer={l.answer ?? ""}
+                    grade={l.grade ?? null}
+                    accent={theme.accent}
+                  />
+                );
+              })}
             </ul>
           )}
         </aside>
@@ -296,9 +364,222 @@ export function GuidedQuestionsExperience({
   );
 }
 
-/** Strip "Pista:" or "💡" tails from question text so the question stays clean. */
-function stripHints(text: string): string {
-  // Remove any inline JSON code block remnants that may have leaked
+// ─────────────────────────────────────────────────────────────
+// Closed layer row in side panel — shows grade per layer.
+
+function ClosedLayerRow({
+  label,
+  question,
+  answer,
+  grade,
+  accent,
+}: {
+  label: string;
+  question: string;
+  answer: string;
+  grade: number | null;
+  accent: string;
+}) {
+  return (
+    <li
+      className="rounded-xl border bg-white/80 p-3"
+      style={{ borderColor: hexToRgba(accent, 0.14) }}
+    >
+      <div className="flex items-center justify-between gap-2 mb-1.5">
+        <span
+          className="font-mono text-[9.5px] uppercase tracking-[0.16em] flex items-center gap-1"
+          style={{ color: accent }}
+        >
+          <Layers className="w-3 h-3" strokeWidth={1.7} />
+          {label}
+        </span>
+        {grade !== null ? (
+          <span
+            className="font-mono text-[10px] tabular-nums px-2 py-0.5 rounded-full"
+            style={{
+              background:
+                grade >= 70
+                  ? "rgb(209 250 229 / 0.7)"
+                  : grade >= 45
+                    ? "rgb(254 243 199 / 0.7)"
+                    : "rgb(254 215 170 / 0.6)",
+              color:
+                grade >= 70
+                  ? "rgb(5 150 105)"
+                  : grade >= 45
+                    ? "rgb(217 119 6)"
+                    : "rgb(234 88 12)",
+            }}
+          >
+            {Math.round(grade)}
+          </span>
+        ) : (
+          <Check className="w-3.5 h-3.5 text-emerald-600" strokeWidth={2} />
+        )}
+      </div>
+      <p className="text-[12px] text-muted-foreground line-clamp-2 mb-1.5">
+        {question}
+      </p>
+      <p className="text-[12.5px] text-foreground/85 line-clamp-3">{answer}</p>
+    </li>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// Closing synthesis panel — appears after layer 4 with gaps.
+
+function ClosingSynthesisPanel({
+  summary,
+  gaps,
+  accent,
+}: {
+  summary: string | null;
+  gaps: string[];
+  accent: string;
+}) {
+  return (
+    <article
+      className="rounded-3xl border bg-white/90 p-6 md:p-8 engine-card-rise"
+      style={{ borderColor: hexToRgba(accent, 0.22) }}
+    >
+      <header className="flex items-center gap-2 mb-4">
+        <Compass className="w-4 h-4" strokeWidth={1.7} style={{ color: accent }} />
+        <span
+          className="font-mono text-[10px] uppercase tracking-[0.18em]"
+          style={{ color: accent }}
+        >
+          Síntesis · regla mínima
+        </span>
+      </header>
+      {summary && (
+        <div
+          className="rounded-2xl border p-4 mb-4 bg-emerald-50/40"
+          style={{ borderColor: "rgba(16, 185, 129, 0.25)" }}
+        >
+          <p className="text-[15px] leading-relaxed text-foreground/90 italic">
+            “{summary}”
+          </p>
+        </div>
+      )}
+      {gaps.length > 0 && (
+        <div>
+          <header className="flex items-center gap-2 mb-2">
+            <AlertCircle className="w-3.5 h-3.5" strokeWidth={1.7} style={{ color: accent }} />
+            <span
+              className="font-mono text-[9.5px] uppercase tracking-[0.16em]"
+              style={{ color: accent }}
+            >
+              Brechas detectadas — repasar
+            </span>
+          </header>
+          <ul className="flex flex-col gap-2">
+            {gaps.map((g, i) => (
+              <li
+                key={i}
+                className="text-[13px] text-foreground/85 leading-relaxed border-l-2 pl-3 py-0.5"
+                style={{ borderColor: hexToRgba(accent, 0.4) }}
+              >
+                {g}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </article>
+  );
+}
+
+function GradeChip({ score, accent }: { score: number; accent: string }) {
+  const tone =
+    score >= 70
+      ? { fg: "rgb(5 150 105)", bg: "rgb(209 250 229 / 0.6)", label: "sólida" }
+      : score >= 45
+        ? { fg: "rgb(217 119 6)", bg: "rgb(254 243 199 / 0.6)", label: "ok" }
+        : { fg: "rgb(234 88 12)", bg: "rgb(254 215 170 / 0.5)", label: "frágil" };
+  return (
+    <div
+      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border"
+      style={{
+        background: tone.bg,
+        borderColor: hexToRgba(accent, 0.18),
+      }}
+    >
+      <Activity className="w-3 h-3" strokeWidth={1.7} style={{ color: tone.fg }} />
+      <span
+        className="font-mono text-[10px] uppercase tracking-[0.14em]"
+        style={{ color: tone.fg }}
+      >
+        Capa anterior · {Math.round(score)} {tone.label}
+      </span>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// Build layer entries from turns, marrying assistant questions
+// (with their payload) and user answers (graded by the NEXT
+// assistant payload).
+
+function buildLayerEntries(turns: SparkSessionTurn[]): LayerEntry[] {
+  const out: LayerEntry[] = [];
+  let pendingQ: { text: string; payload: SocraticLayerPayload | null } | null = null;
+  for (const t of turns) {
+    if (t.role === "assistant") {
+      const payload =
+        t.payload?.type === "socratic_layer"
+          ? (t.payload as SocraticLayerPayload)
+          : null;
+      // The grade in this payload refers to the PREVIOUS user answer
+      if (
+        payload &&
+        payload.prior_answer_grade !== null &&
+        out.length > 0 &&
+        out[out.length - 1].answer
+      ) {
+        out[out.length - 1].grade = payload.prior_answer_grade;
+        out[out.length - 1].gradeNote = payload.prior_answer_note;
+        out[out.length - 1].closed = true;
+      }
+      if (pendingQ !== null) {
+        // Previous question never got an answer; promote anyway.
+        out.push({
+          layer: pendingQ.payload?.layer ?? -1,
+          question: pendingQ.text,
+          payload: pendingQ.payload,
+          closed: false,
+        });
+      }
+      const questionText = payload?.question
+        ? payload.question
+        : stripJson(t.content);
+      pendingQ = { text: questionText, payload };
+    } else if (t.role === "user") {
+      if (pendingQ !== null) {
+        out.push({
+          layer: pendingQ.payload?.layer ?? -1,
+          question: pendingQ.text,
+          payload: pendingQ.payload,
+          answer: t.content,
+          closed: false, // becomes closed when next assistant grades it
+        });
+        pendingQ = null;
+      } else if (out.length > 0) {
+        out[out.length - 1].answer = t.content;
+      }
+    }
+  }
+  if (pendingQ !== null) {
+    out.push({
+      layer: pendingQ.payload?.layer ?? -1,
+      question: pendingQ.text,
+      payload: pendingQ.payload,
+      closed: false,
+    });
+  }
+  return out;
+}
+
+function stripJson(text: string): string {
   return text.replace(/```json[\s\S]*?```/g, "").trim();
 }
 

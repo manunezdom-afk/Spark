@@ -24,6 +24,11 @@ export function PayloadRenderer({ payload }: { payload: TurnPayload }) {
     // Defend volley payloads are rendered inline by DefendPostureExperience
     case "defend_volley":
       return null;
+    // The remaining method-specific payloads render inline within their experience
+    case "socratic_layer":
+    case "bridge_proposal":
+    case "roleplay_scene":
+      return null;
     default: {
       const exhaustive: never = payload;
       void exhaustive;
