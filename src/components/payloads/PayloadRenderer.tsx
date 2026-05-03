@@ -21,6 +21,9 @@ export function PayloadRenderer({ payload }: { payload: TurnPayload }) {
     case "test_questions":
     case "test_result":
       return null;
+    // Defend volley payloads are rendered inline by DefendPostureExperience
+    case "defend_volley":
+      return null;
     default: {
       const exhaustive: never = payload;
       void exhaustive;

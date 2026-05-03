@@ -213,7 +213,33 @@ export type TurnPayload =
   | GraphNodePayload
   | ScorePayload
   | TestQuestionsPayload
-  | TestResultPayload;
+  | TestResultPayload
+  | DefendVolleyPayload;
+
+/**
+ * Devils-advocate ataque por ronda. Cada turn de Nova durante un
+ * duelo de "Defender postura" emite este payload para que la UI
+ * pueda renderizar una tarjeta de ataque estructurada (en vez de
+ * markdown libre) y registrar la solidez real por ronda.
+ */
+export interface DefendVolleyPayload {
+  type: 'defend_volley';
+  /** Número de la ronda. 0 = recolección de postura, 1+ = embates. */
+  round: number;
+  /** Etiqueta corta del flanco atacado: "premisa central", "consecuencia", "evidencia"... */
+  attack_label: string;
+  /** Texto del ataque/objeción (1–3 oraciones). UI lo muestra como tarjeta. */
+  objection: string;
+  /** Pregunta puntual al final del ataque que el usuario debe responder. */
+  closing_question: string;
+  /**
+   * Solidez de la última defensa del usuario, medida por Nova: 0–100.
+   * En la ronda 0 (apertura) puede ser null porque aún no defendió nada.
+   */
+  solidity_score: number | null;
+  /** Una línea de feedback sobre la defensa anterior (qué resistió, qué cedió). */
+  prior_defense_note: string | null;
+}
 
 export interface TestQuestionsPayload {
   type: 'test_questions';

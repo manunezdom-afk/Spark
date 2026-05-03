@@ -1,6 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
-import { CheckCircle2, XCircle, RefreshCw, Home } from "lucide-react";
+import { CheckCircle2, XCircle, RefreshCw, Home, Brain } from "lucide-react";
 
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import { getSession, getSessionTurns, getTopicsByIds } from "@/lib/spark/queries";
@@ -160,19 +160,31 @@ export default async function TestResultsPage({ params }: RouteParams) {
       </section>
 
       {/* Actions */}
-      <div className="flex gap-3">
-        <Button asChild variant="outline" className="flex-1 gap-2">
-          <Link href="/tests/new">
-            <RefreshCw className="w-4 h-4" strokeWidth={1.5} />
-            Nueva prueba
-          </Link>
-        </Button>
-        <Button asChild variant="spark" className="flex-1 gap-2">
-          <Link href="/dashboard">
-            <Home className="w-4 h-4" strokeWidth={1.5} />
-            Inicio
-          </Link>
-        </Button>
+      <div className="flex flex-col gap-3">
+        {correctCount < total && (
+          <Button asChild variant="spark" className="gap-2 w-full">
+            <Link
+              href={`/sessions/new?topic_ids=${session.topic_ids.join(",")}&engine=socratic`}
+            >
+              <Brain className="w-4 h-4" strokeWidth={1.5} />
+              Repasar errores con preguntas guiadas
+            </Link>
+          </Button>
+        )}
+        <div className="flex gap-3">
+          <Button asChild variant="outline" className="flex-1 gap-2">
+            <Link href="/tests/new">
+              <RefreshCw className="w-4 h-4" strokeWidth={1.5} />
+              Nueva prueba
+            </Link>
+          </Button>
+          <Button asChild variant="outline" className="flex-1 gap-2">
+            <Link href="/dashboard">
+              <Home className="w-4 h-4" strokeWidth={1.5} />
+              Inicio
+            </Link>
+          </Button>
+        </div>
       </div>
     </div>
   );

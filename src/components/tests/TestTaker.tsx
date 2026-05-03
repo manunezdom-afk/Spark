@@ -51,8 +51,10 @@ export function TestTaker({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Map<number, TestAnswer>>(new Map());
   const [busy, setBusy] = useState(false);
+  // Default the timer ON so the test feels like an actual exam.
+  // The user can pause or reset it from the header.
   const [timer, setTimer] = useState<{ enabled: boolean; secondsLeft: number; paused: boolean }>(
-    { enabled: false, secondsLeft: questions.length * 90, paused: false },
+    { enabled: true, secondsLeft: questions.length * 90, paused: false },
   );
   const submittedRef = useRef(false);
 

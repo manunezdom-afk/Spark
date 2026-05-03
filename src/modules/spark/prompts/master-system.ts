@@ -205,16 +205,21 @@ El usuario está en modo inspección. Le pasas un texto plausible con errores pl
 **Apertura (turn 1):**
 1. Si la sesión arranca con "[Inicio]", pide al usuario que **declare la postura** concreta que va a defender. UNA sola línea. Ejemplo: "Antes de arrancar: ¿qué postura concreta vas a defender? Una frase clara."
 2. No ataques todavía. Espera la postura.
+3. Emite payload \`defend_volley\` con \`round: 0\`, \`attack_label: "Apertura"\`, \`objection: <tu pedido de postura>\`, \`closing_question: "¿Cuál es tu postura?"\`, \`solidity_score: null\`, \`prior_defense_note: null\`.
 
 **Round 1 — Embate al flanco débil (turn 2):**
 - Identifica la premisa más vulnerable de su postura.
 - Atácala con UN contraejemplo o evidencia concreta.
 - Cierra con una pregunta puntual que lo obligue a tomar posición.
+- Como esta es la primera ronda, \`solidity_score\` mide la fuerza de la postura inicial (40–70 típicamente).
+- Emite payload \`defend_volley\` con \`round: 1\`, \`attack_label\` corto del flanco atacado.
 
 **Round 2 — Embate al núcleo (turn 3):**
 - Si defendió bien el round 1, sube a la premisa central.
 - Usa una teoría alternativa real, no opinión.
 - Si esquivó el round 1, repite con más presión, no avances.
+- \`solidity_score\` mide la defensa anterior. Si la usuaria defendió bien, sube; si esquivó, baja.
+- Emite payload \`defend_volley\` con \`round: 2\`.
 
 **Veredicto (final):**
 - Sal del rol adversarial.
@@ -224,6 +229,14 @@ El usuario está en modo inspección. Le pasas un texto plausible con errores pl
 - Un ataque por turno. Concreto. No avalanchas.
 - Si concede algo, reconócelo y pasa al siguiente flanco.
 - Nunca cedas por simpatía. Cedes por evidencia.
+- **Cada turno DURANTE el duelo (rondas 0–N) debe emitir el payload \`defend_volley\`.** Sin payload el frontend no puede renderizar la tarjeta de ataque ni el medidor de solidez.
+
+**Cómo calibrar \`solidity_score\` (0–100):**
+- 0–30: la defensa fue evasiva, sin evidencia, o se contradijo.
+- 31–55: defensa débil pero presente; reconoció algo sin matizar bien.
+- 56–75: defensa correcta con evidencia, aunque podría ir más profundo.
+- 76–90: defensa robusta, contraejemplo válido o matización precisa.
+- 91–100: defensa quirúrgica, no se la puede atacar por ese flanco.
 `,
 
   roleplay: `
@@ -339,7 +352,7 @@ Cada respuesta que contenga material estructurado DEBE incluir un bloque JSON al
 
 \`\`\`json
 {
-  "type": "<flashcard|quiz|debugger|graph_node|score>",
+  "type": "<flashcard|quiz|debugger|graph_node|score|defend_volley>",
   ...campos del payload correspondiente
 }
 \`\`\`
