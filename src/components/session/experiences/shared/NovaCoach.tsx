@@ -57,6 +57,7 @@ export function NovaThinking({
   fullText?: boolean; // when true, render the streaming text below the ribbon
 }) {
   const theme = getEngineTheme(engine);
+  const displayText = stripInternalJson(text);
   return (
     <div className="flex flex-col gap-2">
       <span
@@ -70,9 +71,9 @@ export function NovaThinking({
         <Sparkles className="w-3 h-3 animate-pulse" strokeWidth={1.7} />
         <span>{text ? "Nova respondiendo…" : `Nova ${theme.streamingLabel}…`}</span>
       </span>
-      {fullText && text && (
+      {fullText && displayText && (
         <p className="text-[14px] leading-relaxed text-foreground/80 whitespace-pre-wrap">
-          {text}
+          {displayText}
           <span
             className="inline-block w-1.5 h-4 ml-0.5 align-middle animate-spark-cursor"
             style={{ background: theme.accent, opacity: 0.7 }}
@@ -81,6 +82,10 @@ export function NovaThinking({
       )}
     </div>
   );
+}
+
+function stripInternalJson(text: string) {
+  return text.replace(/```json[\s\S]*?(?:```|$)/gi, "").trim();
 }
 
 function hexToRgba(hex: string, alpha: number) {
