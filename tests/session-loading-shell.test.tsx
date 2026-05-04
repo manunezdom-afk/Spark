@@ -129,6 +129,17 @@ describe("SessionLoadingShell", () => {
     expect(matches.length).toBeGreaterThanOrEqual(1);
   });
 
+  it("no marca como abandonada una sesión activa mientras carga", () => {
+    render(
+      <SessionLoadingShell
+        session={buildSession("socratic")}
+        topics={topics}
+      />,
+    );
+
+    expect(screen.queryByText(/abandonada/i)).toBeNull();
+  });
+
   it("NUNCA muestra el streamingText vivo (no debe parecer que la actividad se construye)", () => {
     // El componente ya no acepta streamingText. Aunque le pasemos uno via
     // any-cast, no debe rendear texto de Nova en pantalla. Renderizamos solo

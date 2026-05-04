@@ -58,7 +58,7 @@ const TACTIC_LABELS: Record<
     label: "Contraatacar",
     verb: "Te respondo con mi propio ataque",
     icon: Sword,
-    placeholder: "Atacá la premisa de Nova con un contraejemplo concreto.",
+    placeholder: "Ataca la premisa de Nova con un contraejemplo concreto.",
   },
 };
 

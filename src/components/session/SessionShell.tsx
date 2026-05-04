@@ -49,6 +49,12 @@ export function SessionShell({
 
   const showFinalize = status === "active" && Boolean(onComplete);
   const finalizeDisabled = canComplete === false;
+  const statusLabel =
+    status === "completed"
+      ? "Completada"
+      : status === "abandoned"
+        ? "Abandonada"
+        : "En curso";
 
   return (
     <div
@@ -110,7 +116,7 @@ export function SessionShell({
             </Button>
           ) : (
             <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
-              {status === "completed" ? "Completada" : "Abandonada"}
+              {statusLabel}
             </span>
           )}
         </div>

@@ -34,6 +34,10 @@ import { getEngineTheme, type EngineTheme } from "@/modules/spark/engines/themes
 import { getMethodPersonality } from "@/modules/spark/engines/personalities";
 import { TopicMaterialPicker } from "@/components/topics/TopicMaterialPicker";
 import { cn } from "@/lib/utils/cn";
+import {
+  getInitialSelectedTopicIds,
+  getNewSessionStepCount,
+} from "@/lib/spark/new-session-query";
 import type {
   LearningEngine,
   SessionIntensity,
@@ -192,10 +196,16 @@ function NewSessionForm() {
         ? (requestedEngine as MethodKey)
         : "socratic";
   const presetTopic = params.get("topic");
+  const presetTopicIds = params.get("topic_ids");
+  const initialSelectedTopicIds = getInitialSelectedTopicIds({
+    topic: presetTopic,
+    topicIds: presetTopicIds,
+    max: ENGINE_LIMITS[initialMethod].max,
+  });
 
   const [topics, setTopics] = useState<SparkTopic[]>([]);
   const [selected, setSelected] = useState<Set<string>>(
-    new Set(presetTopic ? [presetTopic] : []),
+    new Set(initialSelectedTopicIds),
   );
   const [selectedNoteIds, setSelectedNoteIds] = useState<Set<string>>(new Set());
   const [methodKey, setMethodKey] = useState<MethodKey>(initialMethod);
@@ -275,10 +285,7 @@ function NewSessionForm() {
   );
   const onlyTopic = selectedTopics.length === 1 ? selectedTopics[0] : null;
 
-  // Step numbering: step 4 (ajustes) only counts if there's anything
-  // configurable for the method. That's always true for chat methods
-  // (objective + intensity) and for test (test type + count).
-  const stepCount = onlyTopic ? 4 : 3;
+  const stepCount = getNewSessionStepCount(selected.size);
 
   function canStart(): { ok: boolean; reason?: string } {
     if (loading) return { ok: false, reason: "Cargando temas…" };

@@ -48,3 +48,6 @@ next-env.d.ts
 
 # old project (kept as backup until verified)
 spark.old/
+
+# claude code worktree management
+/.claude/

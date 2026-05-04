@@ -106,8 +106,10 @@ export function ConnectThemesExperience({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const proposals = useMemo(() => buildProposals(engine.turns), [engine.turns]);
-  const openProposal = proposals.find((p) => !p.verdict);
-  const lastClosed = [...proposals].reverse().find((p) => p.verdict !== undefined);
+  const openProposal = proposals.find((p) => !p.verdict && !isAnsweredOpening(p));
+  const lastClosed = [...proposals]
+    .reverse()
+    .find((p) => !isOpeningProposal(p) && p.verdict !== undefined);
 
   // Final graph payload (if Nova has emitted one)
   const finalGraph = useMemo<GraphNodePayload | null>(() => {
@@ -144,7 +146,7 @@ export function ConnectThemesExperience({
 
   const userCount = engine.userTurnsCount;
   const validatedCount = proposals.filter(
-    (p) => p.verdict === "valida" || p.verdict === "extiende",
+    (p) => !isOpeningProposal(p) && (p.verdict === "valida" || p.verdict === "extiende"),
   ).length;
   const phaseIdx =
     userCount === 0 ? 0 : Math.min(PHASES.length - 1, 1 + Math.min(2, validatedCount));
@@ -164,6 +166,11 @@ export function ConnectThemesExperience({
     const text = `${tag} ${body}`;
     setDraft("");
     await engine.send(text);
+  }
+
+  async function continueFromOpening() {
+    if (engine.status !== "idle") return;
+    await engine.send("adelante");
   }
 
   return (
@@ -200,6 +207,7 @@ export function ConnectThemesExperience({
               text={openProposal.payload?.mechanism || openProposal.rawText || ""}
               accent={theme.accent}
               status={engine.status}
+              onContinue={continueFromOpening}
             />
           ) : openProposal ? (
             <ActiveProposalPanel
@@ -242,16 +250,18 @@ export function ConnectThemesExperience({
 }
 
 // ─────────────────────────────────────────────────────────────
-// Opening map: just shows the topic list announcement, no inputs.
+// Opening map: shows the topic list announcement and lets the user start round 1.
 
 function OpeningMapPanel({
   text,
   accent,
   status,
+  onContinue,
 }: {
   text: string;
   accent: string;
   status: string;
+  onContinue: () => void;
 }) {
   return (
     <article
@@ -273,11 +283,27 @@ function OpeningMapPanel({
       <p className="text-[15.5px] leading-relaxed text-foreground/85 whitespace-pre-wrap">
         {text || "Listando los temas y preparando las conexiones…"}
       </p>
-      {status === "streaming" && (
-        <div className="mt-4">
-          <Loader2 className="w-4 h-4 animate-spin" strokeWidth={1.7} style={{ color: accent }} />
-        </div>
-      )}
+      <div className="mt-5 flex justify-end">
+        <Button
+          size="sm"
+          onClick={onContinue}
+          disabled={status !== "idle"}
+          className="text-white gap-1.5"
+          style={{ background: accent }}
+        >
+          {status === "streaming" ? (
+            <>
+              <Loader2 className="w-3.5 h-3.5 animate-spin" strokeWidth={1.7} />
+              Preparando puente…
+            </>
+          ) : (
+            <>
+              Empezar conexiones
+              <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.7} />
+            </>
+          )}
+        </Button>
+      </div>
     </article>
   );
 }
@@ -876,6 +902,14 @@ function inferVerdict(text: string): Verdict | undefined {
 
 function stripVerdictTag(text: string): string {
   return text.replace(/^\[(Valida|Matiza|Refuta|Extiende)\]\s*/i, "").trim();
+}
+
+function isOpeningProposal(proposal: Proposal): boolean {
+  return proposal.payload?.proposal_index === 0 || proposal.index === 0;
+}
+
+function isAnsweredOpening(proposal: Proposal): boolean {
+  return isOpeningProposal(proposal) && Boolean(proposal.userRationale);
 }
 
 function stripJson(text: string) {
