@@ -20,14 +20,12 @@ import {
   getAllMastery,
   getErrorPatterns,
 } from "@/lib/spark/queries";
-import {
-  ENGINE_LABELS,
-  ENGINE_TAGS,
-} from "@/modules/spark/engines";
+import { ENGINE_LABELS } from "@/modules/spark/engines";
 import { getEngineTheme } from "@/modules/spark/engines/themes";
 import { GradientText } from "@/components/brand/GradientText";
 import { HeroActions } from "@/components/dashboard/HeroActions";
 import { EmptySessionsState } from "@/components/dashboard/EmptySessionsState";
+import { MethodQuickCard } from "@/components/methods/MethodQuickCard";
 import type {
   LearningEngine,
   SparkLearningSession,
@@ -40,14 +38,13 @@ export const dynamic = "force-dynamic";
 const METHODS: Array<{
   key: LearningEngine | "test";
   href: string;
-  themeEngine: LearningEngine;
 }> = [
-  { key: "socratic", href: "/sessions/new?engine=socratic", themeEngine: "socratic" },
-  { key: "debugger", href: "/sessions/new?engine=debugger", themeEngine: "debugger" },
-  { key: "devils_advocate", href: "/sessions/new?engine=devils_advocate", themeEngine: "devils_advocate" },
-  { key: "bridge_builder", href: "/sessions/new?engine=bridge_builder", themeEngine: "bridge_builder" },
-  { key: "roleplay", href: "/sessions/new?engine=roleplay", themeEngine: "roleplay" },
-  { key: "test", href: "/tests/new", themeEngine: "test_alternativas" },
+  { key: "socratic", href: "/sessions/new?engine=socratic" },
+  { key: "debugger", href: "/sessions/new?engine=debugger" },
+  { key: "devils_advocate", href: "/sessions/new?engine=devils_advocate" },
+  { key: "bridge_builder", href: "/sessions/new?engine=bridge_builder" },
+  { key: "roleplay", href: "/sessions/new?engine=roleplay" },
+  { key: "test", href: "/tests/new" },
 ];
 
 export default async function DashboardPage() {
@@ -129,6 +126,12 @@ export default async function DashboardPage() {
       )}
 
       {/* ── Hero ─────────────────────────────────────────────── */}
+      {/*
+        Two-line hierarchy: kicker (date) + greeting + question. La
+        pregunta nunca debe cortarse: usamos break-words y un cap de
+        text-4xl en desktop (no text-5xl) para que la línea entera
+        quepa cómoda incluso con sidebar de 228px y viewport de 1024px.
+      */}
       <header className="mb-10">
         <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted-foreground/70 mb-3">
           {new Date().toLocaleDateString("es", {
@@ -137,10 +140,13 @@ export default async function DashboardPage() {
             month: "long",
           })}
         </div>
-        <h1 className="text-3xl md:text-4xl lg:text-5xl leading-[1.1] tracking-tight text-foreground mb-5">
-          <span className="font-light">{greeting}</span>{" "}
+        <p className="text-sm md:text-base text-muted-foreground mb-2">
+          {greeting}
+        </p>
+        <h1 className="text-[26px] sm:text-3xl md:text-4xl leading-[1.15] tracking-tight text-foreground mb-5 break-words max-w-3xl">
+          <span className="font-light">¿Qué quieres entrenar </span>
           <GradientText italic className="font-light">
-            ¿qué quieres entrenar hoy?
+            hoy?
           </GradientText>
         </h1>
         <HeroActions canCreateSession={hasTopics} />
@@ -170,10 +176,9 @@ export default async function DashboardPage() {
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           {METHODS.map((m, i) => (
-            <MethodCard
+            <MethodQuickCard
               key={m.key}
               methodKey={m.key}
-              themeEngine={m.themeEngine}
               href={hasTopics ? m.href : "/topics"}
               animationIndex={i}
               disabled={!hasTopics}
@@ -465,74 +470,6 @@ function RecommendedCard({ recommendation: r }: { recommendation: Recommendation
           </span>
         </div>
       </div>
-    </Link>
-  );
-}
-
-// ──────────────────────────────────────────────────────────────
-// Method quick-access card. 6 of these in a 3×2 grid (or 2×3 mobile).
-
-function MethodCard({
-  methodKey,
-  themeEngine,
-  href,
-  animationIndex,
-  disabled,
-}: {
-  methodKey: LearningEngine | "test";
-  themeEngine: LearningEngine;
-  href: string;
-  animationIndex: number;
-  disabled: boolean;
-}) {
-  const theme = getEngineTheme(themeEngine);
-  const label =
-    methodKey === "test" ? "Generar prueba" : ENGINE_LABELS[methodKey as LearningEngine];
-  const tag = ENGINE_TAGS[themeEngine][0];
-  const pitch = theme.pitch;
-  const Icon = theme.Icon;
-
-  return (
-    <Link
-      href={href}
-      className="group relative flex flex-col gap-2.5 p-4 rounded-2xl border border-black/[0.06] bg-white/60 backdrop-blur-sm hover:bg-white hover:shadow-soft transition-all duration-300 ease-spring"
-      style={{
-        animation: `fade-up 360ms ${animationIndex * 60}ms cubic-bezier(0.34, 1.4, 0.64, 1) both`,
-      }}
-    >
-      <div className="flex items-center justify-between gap-2">
-        <span
-          className="inline-flex items-center justify-center w-8 h-8 rounded-lg shrink-0 transition-transform group-hover:scale-105"
-          style={{
-            background: hexToRgba(theme.accent, 0.1),
-            color: theme.accent,
-            border: `1px solid ${hexToRgba(theme.accent, 0.22)}`,
-          }}
-        >
-          <Icon className="w-3.5 h-3.5" strokeWidth={1.7} />
-        </span>
-        <span
-          className="font-mono text-[9px] uppercase tracking-[0.14em] px-1.5 py-0.5 rounded-full border opacity-80"
-          style={{
-            background: hexToRgba(theme.accent, 0.06),
-            borderColor: hexToRgba(theme.accent, 0.15),
-            color: theme.accent,
-          }}
-        >
-          {tag}
-        </span>
-      </div>
-      <div className="text-[14px] font-semibold tracking-tight text-foreground leading-tight">
-        {label}
-      </div>
-      <p className="text-[11.5px] text-muted-foreground leading-relaxed line-clamp-2">
-        {pitch}
-      </p>
-      {disabled && (
-        <span className="text-[10px] font-medium text-muted-foreground/70 mt-0.5">
-          Crea un tema para activar →
-        </span>
-      )}
     </Link>
   );
 }
