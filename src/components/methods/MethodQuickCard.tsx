@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { ENGINE_LABELS, ENGINE_TAGS } from "@/modules/spark/engines";
+import { ArrowUpRight } from "lucide-react";
+import { ENGINE_LABELS } from "@/modules/spark/engines";
 import { getEngineTheme } from "@/modules/spark/engines/themes";
 import type { LearningEngine } from "@/modules/spark/types";
 
@@ -13,8 +14,9 @@ import type { LearningEngine } from "@/modules/spark/types";
  *   - "quick": grid de 6 en dashboard, cada una abre /sessions/new?engine=X
  *   - "recommendation": 2 cards en topic page con `reason` contextual
  *
- * El styling usa el accent del engine theme — mismo color que la
- * sesión activa de ese método. Identidad consistente entre pantallas.
+ * Diseño minimalista: icon + título + descripción de una línea.
+ * El accent del engine theme se aplica solo al icon, dejando la card
+ * neutra para reducir saturación visual cuando se ven 6 juntas.
  */
 export type MethodKey = LearningEngine | "test";
 
@@ -50,62 +52,60 @@ export function MethodQuickCard(props: MethodQuickCardProps) {
     (methodKey === "test"
       ? "Generar prueba"
       : ENGINE_LABELS[methodKey as LearningEngine]);
-  const tag = ENGINE_TAGS[themeEngine][0];
   const Icon = theme.Icon;
 
-  // Variant-specific layout
   const isRecommendation = props.variant === "recommendation";
   const subtitle = isRecommendation ? props.reason : theme.pitch;
 
   return (
     <Link
       href={href}
-      className={`group relative flex flex-col gap-2.5 ${
+      className={`group relative flex flex-col gap-3 ${
         isRecommendation ? "p-5" : "p-4"
-      } rounded-2xl border border-black/[0.06] bg-white/60 backdrop-blur-sm hover:bg-white hover:shadow-soft transition-all duration-300 ease-spring`}
+      } rounded-2xl border border-black/[0.06] bg-white/70 hover:bg-white hover:border-black/[0.12] transition-colors duration-200`}
       style={{
-        animation: `fade-up 360ms ${animationIndex * 60}ms cubic-bezier(0.34, 1.4, 0.64, 1) both`,
+        animation: `fade-up 320ms ${animationIndex * 40}ms ease-out both`,
       }}
     >
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex items-start justify-between gap-3">
         <span
-          className="inline-flex items-center justify-center w-8 h-8 rounded-lg shrink-0 transition-transform group-hover:scale-105"
+          className={`inline-flex items-center justify-center ${
+            isRecommendation ? "w-10 h-10" : "w-9 h-9"
+          } rounded-xl shrink-0`}
           style={{
-            background: hexToRgba(theme.accent, 0.1),
-            color: theme.accent,
-            border: `1px solid ${hexToRgba(theme.accent, 0.22)}`,
-          }}
-        >
-          <Icon className="w-3.5 h-3.5" strokeWidth={1.7} />
-        </span>
-        <span
-          className="font-mono text-[9px] uppercase tracking-[0.14em] px-1.5 py-0.5 rounded-full border opacity-80"
-          style={{
-            background: hexToRgba(theme.accent, 0.06),
-            borderColor: hexToRgba(theme.accent, 0.15),
+            background: hexToRgba(theme.accent, 0.08),
             color: theme.accent,
           }}
         >
-          {tag}
+          <Icon
+            className={isRecommendation ? "w-[18px] h-[18px]" : "w-4 h-4"}
+            strokeWidth={1.6}
+          />
         </span>
+        <ArrowUpRight
+          className="w-3.5 h-3.5 text-muted-foreground/30 group-hover:text-foreground/60 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-all"
+          strokeWidth={1.75}
+        />
       </div>
-      <div
-        className={`${
-          isRecommendation ? "text-[15px]" : "text-[14px]"
-        } font-semibold tracking-tight text-foreground leading-tight`}
-      >
-        {label}
+      <div className="flex flex-col gap-1">
+        <div
+          className={`${
+            isRecommendation ? "text-[15px]" : "text-[14px]"
+          } font-semibold tracking-tight text-foreground leading-tight`}
+        >
+          {label}
+        </div>
+        <p
+          className={`${
+            isRecommendation ? "text-[12.5px]" : "text-[11.5px]"
+          } text-muted-foreground leading-relaxed line-clamp-1`}
+        >
+          {subtitle}
+        </p>
       </div>
-      <p
-        className={`${
-          isRecommendation ? "text-[12.5px]" : "text-[11.5px]"
-        } text-muted-foreground leading-relaxed line-clamp-2`}
-      >
-        {subtitle}
-      </p>
       {disabled && (
-        <span className="text-[10px] font-medium text-muted-foreground/70 mt-0.5">
-          Crea un tema para activar →
+        <span className="text-[10.5px] font-medium text-muted-foreground/60">
+          Crea un tema para activar
         </span>
       )}
     </Link>

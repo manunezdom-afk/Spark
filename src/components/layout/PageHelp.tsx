@@ -52,13 +52,13 @@ const HINTS: Record<string, PageHints> = {
     ],
   },
   "/mastery": {
-    title: "Progreso",
-    subtitle: "Qué hacer ahora · qué está en riesgo · qué avanza",
+    title: "Mapa",
+    subtitle: "Qué vence hoy · qué está flojo · qué avanza",
     items: [
-      { icon: AlertCircle, label: "Atención prioritaria", desc: "Temas que vencen hoy según el repaso espaciado SM-2. Empieza por estos." },
-      { icon: Activity, label: "En riesgo", desc: "Temas con maestría menor al 40%. Necesitan scaffolding antes de subir el rigor." },
-      { icon: Zap, label: "Avanzando", desc: "Temas con maestría sobre 70%. Sube la dificultad o usa Defender postura." },
-      { icon: Play, label: "Sin entrenar", desc: "Temas creados que aún no entrenaste. Cero sesiones registradas." },
+      { icon: AlertCircle, label: "Vencen hoy", desc: "Temas que tocan repasar hoy según SM-2. Empieza por estos." },
+      { icon: Activity, label: "Por reforzar", desc: "Temas con maestría menor al 40%. Necesitan base antes de subir el rigor." },
+      { icon: Zap, label: "Sólidos", desc: "Temas con maestría sobre 70%. Sube la dificultad o usa Defender postura." },
+      { icon: Play, label: "Resto", desc: "Sin entrenar e intermedios viven en una sección colapsada." },
     ],
   },
   "/flashcards/review": {

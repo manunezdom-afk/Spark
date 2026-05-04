@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import {
   createSession,
+  deleteAllSessions,
   getSessions,
   getUserContext,
   getTopicsByIds,
@@ -141,4 +142,31 @@ export async function GET(request: NextRequest) {
 
   const sessions = await getSessions(db, user.id, status ?? undefined);
   return NextResponse.json({ sessions });
+}
+
+// Bulk delete: borra TODAS las sesiones del usuario actual. Por seguridad,
+// requiere el header `x-confirm: clear-all-sessions` para evitar disparos
+// accidentales (CSRF defense in depth además del cookie de auth).
+export async function DELETE(request: NextRequest) {
+  const db = await getSupabaseServerClient();
+  const { data: { user } } = await db.auth.getUser();
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const confirm = request.headers.get("x-confirm");
+  if (confirm !== "clear-all-sessions") {
+    return NextResponse.json(
+      { error: "Falta header de confirmación" },
+      { status: 400 },
+    );
+  }
+
+  try {
+    const removed = await deleteAllSessions(db, user.id);
+    return NextResponse.json({ ok: true, removed });
+  } catch (err) {
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : "Error desconocido" },
+      { status: 400 },
+    );
+  }
 }

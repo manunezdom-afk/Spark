@@ -17,7 +17,6 @@ import {
   getSessions,
   getDaysToNearestDeadline,
   getTopics,
-  getAllMastery,
   getErrorPatterns,
 } from "@/lib/spark/queries";
 import { ENGINE_LABELS } from "@/modules/spark/engines";
@@ -58,33 +57,21 @@ export default async function DashboardPage() {
     flashcardsDue,
     masteryDue,
     activeSessions,
-    completedSessions,
     daysToDeadline,
     topics,
-    mastery,
     errorPatterns,
   ] = await Promise.all([
     getDueFlashcardsCount(db, user.id),
     getDueMasteryCount(db, user.id),
     getSessions(db, user.id, "active"),
-    getSessions(db, user.id, "completed"),
     getDaysToNearestDeadline(db, user.id),
     getTopics(db, user.id),
-    getAllMastery(db, user.id),
     getErrorPatterns(db, user.id),
   ]);
 
   const hasTopics = topics.length > 0;
   const kairosTopics = topics.filter((t) => t.kairos_subject_id);
-  const totalDue = flashcardsDue + masteryDue;
-  const completedCount = completedSessions.length;
   const errorsCount = errorPatterns.length;
-  const avgMastery =
-    mastery.length > 0
-      ? Math.round(
-          mastery.reduce((sum, m) => sum + m.mastery_score, 0) / mastery.length,
-        )
-      : null;
 
   const recommendation = buildRecommendation({
     activeSessions,
@@ -184,59 +171,6 @@ export default async function DashboardPage() {
               disabled={!hasTopics}
             />
           ))}
-        </div>
-      </section>
-
-      {/* ── Tu progreso (mini-strip) ─────────────────────────── */}
-      <section className="mb-10">
-        <h2 className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted-foreground/70 mb-4">
-          Tu progreso
-        </h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <MiniMetric
-            label="Por repasar"
-            value={totalDue}
-            tone={totalDue > 0 ? "warm" : "neutral"}
-            sub={totalDue > 0 ? "elementos hoy" : "al día"}
-          />
-          <MiniMetric
-            label="Sesiones"
-            value={completedCount}
-            tone="neutral"
-            sub={
-              completedCount === 0
-                ? "ninguna aún"
-                : completedCount === 1
-                  ? "completada"
-                  : "completadas"
-            }
-          />
-          <MiniMetric
-            label="Errores"
-            value={errorsCount}
-            tone={errorsCount > 0 ? "alert" : "neutral"}
-            sub={
-              errorsCount === 0
-                ? "sin patrones"
-                : errorsCount === 1
-                  ? "patrón abierto"
-                  : "patrones abiertos"
-            }
-          />
-          <MiniMetric
-            label="Maestría"
-            value={avgMastery !== null ? `${avgMastery}%` : "—"}
-            tone={
-              avgMastery === null
-                ? "neutral"
-                : avgMastery >= 70
-                  ? "success"
-                  : avgMastery >= 40
-                    ? "neutral"
-                    : "warm"
-            }
-            sub={avgMastery === null ? "sin datos" : "promedio"}
-          />
         </div>
       </section>
 
@@ -359,7 +293,7 @@ function buildRecommendation(args: {
       title: `${masteryDue} ${masteryDue === 1 ? "tema" : "temas"} para revisitar`,
       body: "Conceptos que ya entrenaste y toca refrescar antes de que se enfríen.",
       href: "/mastery",
-      cta: "Ver progreso",
+      cta: "Ver mapa",
       tone: "warm",
       Icon: Activity,
     };
@@ -471,44 +405,6 @@ function RecommendedCard({ recommendation: r }: { recommendation: Recommendation
         </div>
       </div>
     </Link>
-  );
-}
-
-// ──────────────────────────────────────────────────────────────
-// Mini metric tile (used in the progress strip).
-
-function MiniMetric({
-  label,
-  value,
-  sub,
-  tone,
-}: {
-  label: string;
-  value: number | string;
-  sub: string;
-  tone: "warm" | "neutral" | "alert" | "success";
-}) {
-  const colors =
-    tone === "warm"
-      ? { fg: "text-spark", chip: "bg-spark/10 border-spark/20" }
-      : tone === "alert"
-        ? { fg: "text-orange-600", chip: "bg-orange-50 border-orange-200/60" }
-        : tone === "success"
-          ? { fg: "text-emerald-600", chip: "bg-emerald-50 border-emerald-200/60" }
-          : { fg: "text-foreground/80", chip: "bg-white/60 border-black/[0.06]" };
-
-  return (
-    <div
-      className={`rounded-2xl border ${colors.chip} backdrop-blur-sm p-4 flex flex-col gap-1`}
-    >
-      <span className="font-mono text-[9.5px] uppercase tracking-[0.16em] text-muted-foreground/70">
-        {label}
-      </span>
-      <div className={`text-2xl font-semibold tabular-nums leading-none ${colors.fg}`}>
-        {value}
-      </div>
-      <span className="text-[11px] text-muted-foreground leading-tight">{sub}</span>
-    </div>
   );
 }
 

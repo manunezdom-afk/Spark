@@ -14,11 +14,11 @@ import { getSupabaseServerClient } from "@/lib/supabase/server";
 import { getAllMastery, getTopics } from "@/lib/spark/queries";
 import { MasteryBar } from "@/components/mastery/MasteryBar";
 import { GradientText } from "@/components/brand/GradientText";
+import { CollapsibleSecondary } from "@/components/mastery/CollapsibleSecondary";
 import type { SparkMasteryState, SparkTopic } from "@/modules/spark/types";
 
 export const dynamic = "force-dynamic";
 
-// ── Demo data shown when the user has zero topics + zero mastery ──────────
 const DEMO_TOPICS = [
   {
     id: "demo-1",
@@ -47,7 +47,7 @@ interface TopicSummary {
   dueIn: number | null;
 }
 
-export default async function ProgressPage() {
+export default async function MapPage() {
   const db = await getSupabaseServerClient();
   const {
     data: { user },
@@ -67,12 +67,9 @@ export default async function ProgressPage() {
     return { topic: t, mastery: m, dueIn };
   });
 
-  // Buckets — mutually exclusive, prioritized in this order:
-  //   1. Vencidos hoy (dueIn <= 0) → "Atención prioritaria"
-  //   2. mastery_score < 40 (entrenado pero débil) → "En riesgo"
-  //   3. mastery_score >= 70 (sólido) → "Avanzando"
-  //   4. Sin sesiones (mastery null o total_sessions === 0) → "Sin entrenar"
-  //   5. Resto → "Otros temas"
+  // Tres buckets primarios + dos secundarios colapsables.
+  // Primarios = lo accionable: vencidos hoy, en riesgo, sólidos.
+  // Secundarios = contexto: sin entrenar, intermedios.
   const dueToday: TopicSummary[] = [];
   const atRisk: TopicSummary[] = [];
   const advancing: TopicSummary[] = [];
@@ -97,8 +94,7 @@ export default async function ProgressPage() {
     }
   }
 
-  // Sort buckets meaningfully
-  dueToday.sort((a, b) => (a.dueIn ?? 0) - (b.dueIn ?? 0)); // más viejos primero
+  dueToday.sort((a, b) => (a.dueIn ?? 0) - (b.dueIn ?? 0));
   atRisk.sort(
     (a, b) => (a.mastery?.mastery_score ?? 0) - (b.mastery?.mastery_score ?? 0),
   );
@@ -108,16 +104,13 @@ export default async function ProgressPage() {
   untouched.sort((a, b) => a.topic.title.localeCompare(b.topic.title));
 
   const isCompletelyEmpty = topics.length === 0;
-  const isFreshAccount = mastery.length === 0; // tiene topics pero ningún entreno
+  const isFreshAccount = mastery.length === 0;
 
-  // Global metrics for the header strip
-  const totalTrained = mastery.length;
   const totalDueToday = dueToday.length;
   const avgMastery =
     mastery.length > 0
       ? Math.round(
-          mastery.reduce((acc, m) => acc + m.mastery_score, 0) /
-            mastery.length,
+          mastery.reduce((acc, m) => acc + m.mastery_score, 0) / mastery.length,
         )
       : null;
 
@@ -125,74 +118,61 @@ export default async function ProgressPage() {
     <div className="w-full max-w-3xl mx-auto p-6 md:p-12 animate-fade-up">
       <header className="flex flex-col gap-2 mb-8">
         <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted-foreground/70">
-          Spark · Progreso
+          Spark · Mapa
         </span>
         <h1 className="text-display-md md:text-display-lg text-foreground">
-          <span className="font-light">Qué entrenar</span>{" "}
+          <span className="font-light">Tu mapa</span>{" "}
           <GradientText italic className="font-light">
-            ahora.
+            de temas.
           </GradientText>
         </h1>
         <p className="text-sm text-muted-foreground mt-1 max-w-xl leading-relaxed">
-          Cuatro secciones accionables: lo que vence hoy, lo que está flojo, lo
-          que ya tienes sólido, y lo que aún no entrenaste.
+          Vence hoy, está flojo, ya está sólido. Lo demás se ve cuando lo
+          necesites.
         </p>
       </header>
 
-      {/* Empty state — no topics at all */}
       {isCompletelyEmpty ? (
         <DemoSection />
       ) : isFreshAccount ? (
         <FreshAccountState topics={topics} />
       ) : (
         <>
-          {/* Global metrics strip */}
-          <div className="grid grid-cols-3 gap-3 mb-10">
-            <MetricTile
-              label="Vencen hoy"
-              value={totalDueToday}
-              tone={totalDueToday > 0 ? "warning" : "neutral"}
-              hint={totalDueToday > 0 ? "Empieza por estos" : "Nada urgente"}
-            />
-            <MetricTile
-              label="Entrenados"
-              value={`${totalTrained} / ${topics.length}`}
-              tone="neutral"
-              hint={
-                totalTrained === topics.length
-                  ? "Todos en juego"
-                  : `${topics.length - totalTrained} sin entrenar`
-              }
-            />
-            <MetricTile
-              label="Promedio"
-              value={avgMastery !== null ? `${avgMastery}%` : "—"}
-              tone={
-                avgMastery === null
-                  ? "neutral"
-                  : avgMastery >= 70
-                    ? "success"
-                    : avgMastery >= 40
-                      ? "neutral"
-                      : "warning"
-              }
-              hint={
-                avgMastery === null
-                  ? "Sin datos aún"
-                  : avgMastery >= 70
-                    ? "Vas sólido"
-                    : avgMastery >= 40
-                      ? "En construcción"
-                      : "Necesita base"
-              }
-            />
+          {/* Resumen sutil — sin chips, dos métricas relevantes */}
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mb-8 text-[12.5px] text-muted-foreground">
+            {totalDueToday > 0 ? (
+              <span className="inline-flex items-center gap-1.5">
+                <Flame className="w-3.5 h-3.5 text-orange-500" strokeWidth={1.75} />
+                <span className="text-foreground/80 font-medium">
+                  {totalDueToday}
+                </span>{" "}
+                {totalDueToday === 1 ? "tema" : "temas"} para hoy
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1.5">
+                <CheckCircle2
+                  className="w-3.5 h-3.5 text-emerald-500"
+                  strokeWidth={1.75}
+                />
+                Nada urgente hoy
+              </span>
+            )}
+            {avgMastery !== null && (
+              <span className="inline-flex items-center gap-1.5">
+                <Activity className="w-3.5 h-3.5" strokeWidth={1.75} />
+                Promedio{" "}
+                <span className="text-foreground/80 font-medium tabular-nums">
+                  {avgMastery}%
+                </span>
+              </span>
+            )}
           </div>
 
-          {/* Buckets */}
+          {/* Bucket primarios */}
           {dueToday.length > 0 && (
             <BucketSection
-              title="Atención prioritaria"
-              kicker="Vencen hoy según tu repaso espaciado"
+              title="Vencen hoy"
+              kicker="Empieza por estos según tu repaso espaciado"
               icon={Flame}
               tone="urgent"
               items={dueToday}
@@ -201,8 +181,8 @@ export default async function ProgressPage() {
 
           {atRisk.length > 0 && (
             <BucketSection
-              title="En riesgo"
-              kicker="Maestría menor al 40% — necesita base"
+              title="Por reforzar"
+              kicker="Maestría menor al 40% — necesitan base"
               icon={AlertCircle}
               tone="warning"
               items={atRisk}
@@ -211,7 +191,7 @@ export default async function ProgressPage() {
 
           {advancing.length > 0 && (
             <BucketSection
-              title="Avanzando"
+              title="Sólidos"
               kicker="Maestría sobre 70% — sube la dificultad"
               icon={TrendingUp}
               tone="success"
@@ -219,66 +199,35 @@ export default async function ProgressPage() {
             />
           )}
 
-          {untouched.length > 0 && (
-            <BucketSection
-              title="Sin entrenar"
-              kicker="Temas que aún no llevan ninguna sesión"
-              icon={Sparkles}
-              tone="neutral"
-              items={untouched}
-            />
-          )}
-
-          {others.length > 0 && (
-            <BucketSection
-              title="Otros temas"
-              kicker="Maestría intermedia (40–70%)"
-              icon={Activity}
-              tone="neutral"
-              items={others}
-            />
+          {/* Buckets secundarios — colapsables */}
+          {(untouched.length > 0 || others.length > 0) && (
+            <CollapsibleSecondary
+              count={untouched.length + others.length}
+            >
+              {untouched.length > 0 && (
+                <BucketSection
+                  title="Sin entrenar"
+                  kicker="Aún no llevan ninguna sesión"
+                  icon={Sparkles}
+                  tone="neutral"
+                  items={untouched}
+                  compact
+                />
+              )}
+              {others.length > 0 && (
+                <BucketSection
+                  title="En construcción"
+                  kicker="Maestría intermedia (40–70%)"
+                  icon={Activity}
+                  tone="neutral"
+                  items={others}
+                  compact
+                />
+              )}
+            </CollapsibleSecondary>
           )}
         </>
       )}
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────
-// Header metric tile.
-
-function MetricTile({
-  label,
-  value,
-  tone,
-  hint,
-}: {
-  label: string;
-  value: string | number;
-  tone: "success" | "warning" | "urgent" | "neutral";
-  hint: string;
-}) {
-  const colors = {
-    success: { fg: "rgb(5 150 105)", bg: "rgb(209 250 229 / 0.5)" },
-    warning: { fg: "rgb(217 119 6)", bg: "rgb(254 243 199 / 0.5)" },
-    urgent: { fg: "rgb(234 88 12)", bg: "rgb(254 215 170 / 0.4)" },
-    neutral: { fg: "rgb(64 64 64)", bg: "rgb(245 245 245 / 0.5)" },
-  }[tone];
-  return (
-    <div
-      className="rounded-2xl border border-black/[0.07] p-4 flex flex-col gap-1"
-      style={{ background: colors.bg }}
-    >
-      <span className="font-mono text-[9.5px] uppercase tracking-[0.16em] text-muted-foreground">
-        {label}
-      </span>
-      <span
-        className="text-[26px] font-semibold leading-none tabular-nums"
-        style={{ color: colors.fg }}
-      >
-        {value}
-      </span>
-      <span className="text-[10.5px] text-muted-foreground mt-0.5">{hint}</span>
     </div>
   );
 }
@@ -288,15 +237,15 @@ function MetricTile({
 
 const TONE_STYLES = {
   urgent: {
-    badge: "bg-orange-50 border-orange-200 text-orange-700",
+    badge: "bg-orange-50 border-orange-200/60 text-orange-700",
     accent: "rgb(234 88 12)",
   },
   warning: {
-    badge: "bg-amber-50 border-amber-200 text-amber-700",
+    badge: "bg-amber-50 border-amber-200/60 text-amber-700",
     accent: "rgb(217 119 6)",
   },
   success: {
-    badge: "bg-emerald-50 border-emerald-200 text-emerald-700",
+    badge: "bg-emerald-50 border-emerald-200/60 text-emerald-700",
     accent: "rgb(5 150 105)",
   },
   neutral: {
@@ -311,33 +260,33 @@ function BucketSection({
   icon: Icon,
   tone,
   items,
+  compact = false,
 }: {
   title: string;
   kicker: string;
   icon: typeof AlertCircle;
   tone: keyof typeof TONE_STYLES;
   items: TopicSummary[];
+  compact?: boolean;
 }) {
   const style = TONE_STYLES[tone];
   return (
-    <section className="mb-10">
-      <header className="flex items-center justify-between gap-3 mb-4 flex-wrap">
+    <section className={compact ? "mb-6" : "mb-10"}>
+      <header className="flex items-center justify-between gap-3 mb-3 flex-wrap">
         <div className="flex items-center gap-2.5">
           <span
-            className={`inline-flex items-center justify-center w-9 h-9 rounded-xl border ${style.badge}`}
+            className={`inline-flex items-center justify-center w-8 h-8 rounded-lg border ${style.badge}`}
           >
-            <Icon className="w-4 h-4" strokeWidth={1.7} />
+            <Icon className="w-3.5 h-3.5" strokeWidth={1.75} />
           </span>
           <div className="flex flex-col leading-tight">
-            <span className="text-[15px] font-semibold tracking-tight">
+            <span className="text-[14px] font-semibold tracking-tight">
               {title}
             </span>
             <span className="text-[11.5px] text-muted-foreground">{kicker}</span>
           </div>
         </div>
-        <span
-          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full border text-[10px] font-mono uppercase tracking-[0.14em] ${style.badge}`}
-        >
+        <span className="text-[11px] text-muted-foreground tabular-nums">
           {items.length} {items.length === 1 ? "tema" : "temas"}
         </span>
       </header>
@@ -381,7 +330,7 @@ function TopicRow({
             ? `/sessions/new?topic_ids=${topic.id}`
             : `/topics/${topic.id}`
         }
-        className="group flex items-center gap-4 p-4 rounded-2xl border border-black/[0.06] bg-white/60 hover:bg-white hover:border-black/[0.12] hover:shadow-soft transition-all duration-200"
+        className="group flex items-center gap-4 p-4 rounded-2xl border border-black/[0.06] bg-white/60 hover:bg-white hover:border-black/[0.12] transition-all duration-200"
       >
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-3 mb-1.5 flex-wrap">
@@ -442,7 +391,7 @@ function DemoSection() {
           Ejemplos
         </span>
         <p className="flex-1 text-xs leading-relaxed text-muted-foreground">
-          Así se ve tu progreso después de entrenar. Crea tu primer tema para
+          Así se ve tu mapa después de entrenar. Crea tu primer tema para
           empezar a medir el tuyo.
         </p>
         <Link

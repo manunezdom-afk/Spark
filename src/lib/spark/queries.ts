@@ -245,6 +245,33 @@ export async function completeSession(
   if (error) throw new Error(error.message);
 }
 
+export async function deleteSession(
+  db: Client,
+  userId: string,
+  sessionId: string
+): Promise<void> {
+  // RLS protege contra cross-user delete; el filtro user_id es defensa en
+  // profundidad. Los turns y flashcards asociados borran en cascada vía FK.
+  const { error } = await db
+    .from('spark_learning_sessions')
+    .delete()
+    .eq('id', sessionId)
+    .eq('user_id', userId);
+  if (error) throw new Error(error.message);
+}
+
+export async function deleteAllSessions(
+  db: Client,
+  userId: string
+): Promise<number> {
+  const { error, count } = await db
+    .from('spark_learning_sessions')
+    .delete({ count: 'exact' })
+    .eq('user_id', userId);
+  if (error) throw new Error(error.message);
+  return count ?? 0;
+}
+
 // ── Session Turns ────────────────────────────────────────────
 
 export async function getSessionTurns(

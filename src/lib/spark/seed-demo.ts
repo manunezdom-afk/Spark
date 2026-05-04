@@ -1,6 +1,25 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-export async function seedDemoData(db: SupabaseClient, userId: string) {
+/**
+ * Idempotente. Si ya existen 2 topics demo para el usuario, no hace nada
+ * y devuelve sus IDs. Si faltan, completa los que falten. Esto permite
+ * llamar al seeder desde múltiples puntos (auto-arranque sin topics, botón
+ * "Probar con ejemplo") sin duplicar contenido.
+ */
+export async function seedDemoData(
+  db: SupabaseClient,
+  userId: string,
+): Promise<{ topicIds: string[] }> {
+  const { data: existing } = await db
+    .from("spark_topics")
+    .select("id")
+    .eq("user_id", userId)
+    .eq("is_demo", true);
+
+  if (existing && existing.length >= 2) {
+    return { topicIds: existing.map((t) => t.id) };
+  }
+
   // Topic 1: Marketing Digital
   const { data: t1 } = await db
     .from("spark_topics")
@@ -31,7 +50,7 @@ export async function seedDemoData(db: SupabaseClient, userId: string) {
     .select("id")
     .single();
 
-  if (!t1 || !t2) return;
+  if (!t1 || !t2) return { topicIds: [] };
 
   // Demo mastery states
   await db.from("spark_mastery_states").insert([
@@ -76,7 +95,7 @@ export async function seedDemoData(db: SupabaseClient, userId: string) {
     .select("id")
     .single();
 
-  if (!session) return;
+  if (!session) return { topicIds: [t1.id, t2.id] };
 
   // Pre-written demo turns
   await db.from("spark_session_turns").insert([
@@ -135,6 +154,8 @@ export async function seedDemoData(db: SupabaseClient, userId: string) {
       turn_index: 4,
     },
   ]);
+
+  return { topicIds: [t1.id, t2.id] };
 }
 
 export async function clearDemoData(db: SupabaseClient, userId: string) {

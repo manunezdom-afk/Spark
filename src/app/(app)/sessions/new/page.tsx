@@ -17,6 +17,7 @@ import {
   CheckSquare,
   ChevronLeft,
   Flame,
+  FlaskConical,
   Gauge,
   Layers,
   Sparkles,
@@ -210,6 +211,13 @@ function NewSessionForm() {
   const [selectedNoteIds, setSelectedNoteIds] = useState<Set<string>>(new Set());
   const [methodKey, setMethodKey] = useState<MethodKey>(initialMethod);
 
+  // ── Modo demo ──────────────────────────────────────────────────
+  // Permite al usuario probar cualquier método sin tener temas reales.
+  // Cuando activo, el selector solo muestra topics is_demo y se
+  // pre-seleccionan automáticamente según los límites del método.
+  const [demoMode, setDemoMode] = useState(false);
+  const [demoSeeding, setDemoSeeding] = useState(false);
+
   // Test-only state
   const [testType, setTestType] = useState<TestType>(
     requestedEngine === "test_desarrollo" ? "desarrollo" : "alternativas",
@@ -244,6 +252,69 @@ function NewSessionForm() {
       })
       .catch(() => setLoading(false));
   }, []);
+
+  const realTopics = useMemo(
+    () => topics.filter((t) => !t.is_demo),
+    [topics],
+  );
+  const demoTopics = useMemo(
+    () => topics.filter((t) => t.is_demo),
+    [topics],
+  );
+
+  /**
+   * Topics visibles en el selector según el modo. En modo demo solo
+   * mostramos los topics is_demo (creándolos si hace falta vía el POST
+   * de activación). Fuera de modo demo, mostramos los reales — y solo
+   * caemos a los demo si el usuario no tiene ningún tema real (mejor
+   * que un selector vacío).
+   */
+  const visibleTopics = useMemo(() => {
+    if (demoMode) return demoTopics;
+    return realTopics.length > 0 ? realTopics : demoTopics;
+  }, [demoMode, realTopics, demoTopics]);
+
+  async function activateDemoMode() {
+    if (demoSeeding) return;
+    setDemoSeeding(true);
+    try {
+      const res = await fetch("/api/topics/demo", { method: "POST" });
+      const body = await res.json();
+      if (!res.ok) throw new Error(body.error ?? "No se pudo cargar material demo");
+      const ids: string[] = body.topicIds ?? [];
+
+      // Refresca el listado para incluir los topics demo recién creados.
+      const fresh = await fetch("/api/topics").then((r) => r.json());
+      const freshTopics: SparkTopic[] = fresh.topics ?? [];
+      setTopics(freshTopics);
+
+      // Pre-selecciona según el método: bridge_builder necesita 2,
+      // los demás 1. Si quedan más demos disponibles, igual el toggle
+      // del usuario sigue funcionando.
+      const limits = ENGINE_LIMITS[methodKey];
+      const sliced = ids.slice(0, Math.max(limits.min, 1));
+      setSelected(new Set(sliced));
+      setSelectedNoteIds(new Set());
+
+      // Auto-completa persona en roleplay para que el usuario pueda
+      // arrancar sin trabarse en el campo obligatorio.
+      if (methodKey === "roleplay" && !persona.trim()) {
+        setPersona("Cliente potencial escéptico que pregunta por qué debería confiar en una marca digital.");
+      }
+
+      setDemoMode(true);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Error");
+    } finally {
+      setDemoSeeding(false);
+    }
+  }
+
+  function deactivateDemoMode() {
+    setDemoMode(false);
+    setSelected(new Set());
+    setSelectedNoteIds(new Set());
+  }
 
   function toggleTopic(id: string) {
     const next = new Set(selected);
@@ -289,8 +360,11 @@ function NewSessionForm() {
 
   function canStart(): { ok: boolean; reason?: string } {
     if (loading) return { ok: false, reason: "Cargando temas…" };
-    if (topics.length === 0)
-      return { ok: false, reason: "Crea o importa un tema antes de empezar." };
+    if (visibleTopics.length === 0)
+      return {
+        ok: false,
+        reason: "Activa el material de ejemplo o crea un tema.",
+      };
     if (selected.size < limits.min)
       return {
         ok: false,
@@ -408,13 +482,21 @@ function NewSessionForm() {
                 : undefined
             }
           >
+            <DemoModePanel
+              demoMode={demoMode}
+              demoSeeding={demoSeeding}
+              hasRealTopics={realTopics.length > 0}
+              onActivate={activateDemoMode}
+              onDeactivate={deactivateDemoMode}
+            />
             <TopicSelector
-              topics={topics}
+              topics={visibleTopics}
               loading={loading}
               selected={selected}
               theme={theme}
               limits={limits}
               onToggle={toggleTopic}
+              demoMode={demoMode}
             />
           </Step>
 
@@ -778,6 +860,7 @@ function TopicSelector({
   theme,
   limits,
   onToggle,
+  demoMode,
 }: {
   topics: SparkTopic[];
   loading: boolean;
@@ -785,6 +868,7 @@ function TopicSelector({
   theme: EngineTheme;
   limits: { min: number; max: number };
   onToggle: (id: string) => void;
+  demoMode?: boolean;
 }) {
   if (loading) {
     return <div className="text-sm text-muted-foreground">Cargando materias…</div>;
@@ -797,7 +881,8 @@ function TopicSelector({
           Aún no tienes materias guardadas.
         </div>
         <p className="text-[12px] text-muted-foreground">
-          Crea o importa una materia antes de iniciar una sesión.
+          Crea o importa una materia, o activa el modo de ejemplo arriba para
+          probar el método sin material propio.
         </p>
         <Link
           href="/topics"
@@ -815,6 +900,7 @@ function TopicSelector({
       {topics.map((t) => {
         const isSelected = selected.has(t.id);
         const disabled = !isSelected && selected.size >= limits.max;
+        const showDemoBadge = !!t.is_demo && !demoMode;
         return (
           <button
             key={t.id}
@@ -842,8 +928,13 @@ function TopicSelector({
                     {t.category}
                   </span>
                 )}
-                <span className="font-medium text-sm text-foreground">
+                <span className="font-medium text-sm text-foreground inline-flex items-center gap-2">
                   {t.title}
+                  {showDemoBadge && (
+                    <span className="inline-flex items-center gap-1 rounded-full border border-spark/20 bg-spark/[0.08] px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-[0.14em] text-spark">
+                      Demo
+                    </span>
+                  )}
                 </span>
               </div>
               {isSelected && (
@@ -858,6 +949,82 @@ function TopicSelector({
           </button>
         );
       })}
+    </div>
+  );
+}
+
+/**
+ * Banner que invita al usuario a probar el método con material de ejemplo
+ * pre-seedeado. Útil cuando no tiene contenido real, o cuando quiere
+ * explorar un método sin contaminar sus materias reales con sesiones de
+ * prueba.
+ */
+function DemoModePanel({
+  demoMode,
+  demoSeeding,
+  hasRealTopics,
+  onActivate,
+  onDeactivate,
+}: {
+  demoMode: boolean;
+  demoSeeding: boolean;
+  hasRealTopics: boolean;
+  onActivate: () => void;
+  onDeactivate: () => void;
+}) {
+  if (demoMode) {
+    return (
+      <div className="mb-3 flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between rounded-xl border border-spark/25 bg-spark/[0.06] px-4 py-3">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-spark/15 text-spark shrink-0">
+            <FlaskConical className="w-3.5 h-3.5" strokeWidth={1.7} />
+          </span>
+          <div className="min-w-0">
+            <div className="text-[12.5px] font-semibold text-foreground">
+              Material de ejemplo activo
+            </div>
+            <p className="text-[11.5px] text-muted-foreground leading-snug">
+              Usando dos materias demo. Tus datos reales no se mezclan.
+            </p>
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={onDeactivate}
+          className="text-[11.5px] font-medium text-muted-foreground hover:text-foreground transition-colors shrink-0"
+        >
+          Volver a mis materias
+        </button>
+      </div>
+    );
+  }
+  return (
+    <div className="mb-3 flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between rounded-xl border border-dashed border-spark/30 bg-spark/[0.03] px-4 py-3">
+      <div className="flex items-start gap-2.5 min-w-0">
+        <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-white/80 border border-spark/20 text-spark shrink-0">
+          <FlaskConical className="w-3.5 h-3.5" strokeWidth={1.7} />
+        </span>
+        <div className="min-w-0">
+          <div className="text-[12.5px] font-semibold text-foreground">
+            {hasRealTopics
+              ? "¿Quieres probar este método sin tu material?"
+              : "¿No tienes material todavía?"}
+          </div>
+          <p className="text-[11.5px] text-muted-foreground leading-snug">
+            Carga dos materias de ejemplo (Marketing) para probar cualquier
+            método al instante.
+          </p>
+        </div>
+      </div>
+      <button
+        type="button"
+        onClick={onActivate}
+        disabled={demoSeeding}
+        className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-spark px-3.5 py-1.5 text-[12px] font-semibold text-white hover:opacity-90 transition-opacity disabled:opacity-50"
+      >
+        {demoSeeding ? "Cargando…" : "Probar con ejemplo"}
+        {!demoSeeding && <ArrowRight className="w-3 h-3" strokeWidth={2} />}
+      </button>
     </div>
   );
 }
