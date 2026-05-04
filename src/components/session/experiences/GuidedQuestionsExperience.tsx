@@ -17,6 +17,7 @@ import { SessionShell } from "../SessionShell";
 import { PhaseHUD } from "./shared/PhaseHUD";
 import { NovaThinking, NovaCoachRibbon } from "./shared/NovaCoach";
 import { CompletionPanel } from "./shared/CompletionPanel";
+import { SessionLoadingShell } from "./shared/SessionLoadingShell";
 import { useSessionEngine } from "../useSessionEngine";
 import { getEngineTheme } from "@/modules/spark/engines/themes";
 import type {
@@ -93,6 +94,25 @@ export function GuidedQuestionsExperience({
     setDraft("");
     if (textareaRef.current) textareaRef.current.focus();
   }, [currentEntry?.question]);
+
+  // Loading guard: hasta que llegue la primera pregunta de Nova,
+  // mostramos el SessionLoadingShell premium en vez del article del
+  // método. Evita que el usuario vea el panel principal vacío de
+  // contenido durante los segundos iniciales del kickoff. DEBE ir
+  // después de TODOS los hooks para no violar las rules-of-hooks.
+  const isInitialLoading =
+    engine.assistantTurnsCount === 0 &&
+    session.status === "active" &&
+    !engine.completionScore;
+  if (isInitialLoading) {
+    return (
+      <SessionLoadingShell
+        session={session}
+        topics={topics}
+        streamingText={engine.streamingText}
+      />
+    );
+  }
 
   async function submitAnswer() {
     if (!draft.trim() || engine.status !== "idle") return;

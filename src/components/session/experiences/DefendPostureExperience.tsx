@@ -18,6 +18,7 @@ import { SessionShell } from "../SessionShell";
 import { PhaseHUD } from "./shared/PhaseHUD";
 import { NovaThinking } from "./shared/NovaCoach";
 import { CompletionPanel } from "./shared/CompletionPanel";
+import { SessionLoadingShell } from "./shared/SessionLoadingShell";
 import { useSessionEngine } from "../useSessionEngine";
 import { getEngineTheme } from "@/modules/spark/engines/themes";
 import type {
@@ -120,6 +121,25 @@ export function DefendPostureExperience({
     setTactic("defender");
     if (textareaRef.current) textareaRef.current.focus();
   }, [openRound?.objection]);
+
+  // Loading guard CRÍTICO (después de TODOS los hooks): este método
+  // mostraba el PosturePanel con "Pedido de Nova" vacío durante
+  // varios segundos en cada nueva sesión, porque la fase Postura se
+  // rendea mientras userCount===0 sin esperar al primer turno de
+  // Nova. Bloqueamos el render hasta que llegue el ataque/pedido inicial.
+  const isInitialLoading =
+    engine.assistantTurnsCount === 0 &&
+    session.status === "active" &&
+    !engine.completionScore;
+  if (isInitialLoading) {
+    return (
+      <SessionLoadingShell
+        session={session}
+        topics={topics}
+        streamingText={engine.streamingText}
+      />
+    );
+  }
 
   const phaseIdx = Math.min(userCount, PHASES.length - 1);
 

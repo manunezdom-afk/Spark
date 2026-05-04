@@ -15,6 +15,7 @@ import { SessionShell } from "../SessionShell";
 import { PhaseHUD } from "./shared/PhaseHUD";
 import { NovaThinking, NovaCoachRibbon } from "./shared/NovaCoach";
 import { CompletionPanel } from "./shared/CompletionPanel";
+import { SessionLoadingShell } from "./shared/SessionLoadingShell";
 import { useSessionEngine } from "../useSessionEngine";
 import { getEngineTheme } from "@/modules/spark/engines/themes";
 import type {
@@ -139,6 +140,23 @@ export function HuntErrorsExperience({
   const meterValue = !hasReport
     ? Math.min(0.5, marked.size > 0 ? 0.4 : 0.1)
     : precisionRaw;
+
+  // Loading guard (después de TODOS los hooks): en Cazar errores la
+  // actividad real depende del payload `debugger` con el texto plantado.
+  // Hasta que llegue, no renderizamos el article del briefing.
+  const isInitialLoading =
+    engine.assistantTurnsCount === 0 &&
+    session.status === "active" &&
+    !engine.completionScore;
+  if (isInitialLoading) {
+    return (
+      <SessionLoadingShell
+        session={session}
+        topics={topics}
+        streamingText={engine.streamingText}
+      />
+    );
+  }
 
   function toggle(i: number) {
     if (hasReport) return;

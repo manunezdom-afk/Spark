@@ -18,6 +18,7 @@ import { SessionShell } from "../SessionShell";
 import { PhaseHUD } from "./shared/PhaseHUD";
 import { NovaThinking, NovaCoachRibbon } from "./shared/NovaCoach";
 import { CompletionPanel } from "./shared/CompletionPanel";
+import { SessionLoadingShell } from "./shared/SessionLoadingShell";
 import { useSessionEngine } from "../useSessionEngine";
 import { getEngineTheme } from "@/modules/spark/engines/themes";
 import type {
@@ -124,6 +125,23 @@ export function ConnectThemesExperience({
     setVerdict("valida");
     if (textareaRef.current) textareaRef.current.focus();
   }, [openProposal?.payload?.proposal_index, openProposal?.rawText]);
+
+  // Loading guard (después de TODOS los hooks): hasta que llegue el
+  // mapa inicial de Nova con los conceptos, no renderizamos paneles
+  // de propuesta. La constellation de topics se ve desde el shell.
+  const isInitialLoading =
+    engine.assistantTurnsCount === 0 &&
+    session.status === "active" &&
+    !engine.completionScore;
+  if (isInitialLoading) {
+    return (
+      <SessionLoadingShell
+        session={session}
+        topics={topics}
+        streamingText={engine.streamingText}
+      />
+    );
+  }
 
   const userCount = engine.userTurnsCount;
   const validatedCount = proposals.filter(
