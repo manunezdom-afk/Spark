@@ -15,8 +15,14 @@ export function KairosBridgeProvider() {
     async function sync() {
       const res = await fetch("/api/bridge/kairos/sync", { method: "POST" });
       if (!res.ok) return;
-      const body = (await res.json()) as { created: number; updated: number };
-      if (body.created > 0 || body.updated > 0) router.refresh();
+      const body = (await res.json()) as {
+        created: number;
+        updated: number;
+        deleted?: number;
+      };
+      if (body.created > 0 || body.updated > 0 || (body.deleted ?? 0) > 0) {
+        router.refresh();
+      }
     }
 
     async function setup() {

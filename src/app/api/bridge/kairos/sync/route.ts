@@ -8,6 +8,21 @@ import {
   type KairosSubject,
 } from "@/lib/spark/kairos-bridge";
 
+/**
+ * Sincroniza topics de Spark con el snapshot de Kairos del usuario.
+ *
+ * Tres acciones:
+ *   - INSERT: subjects nuevos en Kairos crean topics nuevos en Spark.
+ *   - UPDATE: si los source_note_ids del subject cambiaron, se actualizan.
+ *   - DELETE: topics con `kairos_subject_id` que ya no existe en el
+ *     snapshot se borran como huérfanos (junto con sus mastery_states).
+ *
+ * Nota sobre snapshot vacío: si `getKairosSnapshot` devuelve null,
+ * el usuario nunca tuvo Kairos sincronizado a Supabase — no tocamos
+ * nada. Pero si el snapshot existe y tiene subjects: [], significa
+ * que el usuario VACIÓ Kairos, y los topics existentes con
+ * kairos_subject_id deben limpiarse.
+ */
 export async function POST() {
   const db = await getSupabaseServerClient();
   const {
@@ -16,14 +31,17 @@ export async function POST() {
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const snapshot = await getKairosSnapshot(db, user.id);
-  if (!snapshot) return NextResponse.json({ created: 0, updated: 0 });
+
+  // Sin snapshot: el usuario nunca conectó Kairos vía Supabase. No
+  // tocamos topics existentes (podrían venir de imports manuales
+  // anteriores que ahora son "huérfanos legítimos" para el usuario).
+  if (!snapshot) return NextResponse.json({ created: 0, updated: 0, deleted: 0 });
 
   const kairosSubjects = (snapshot.subjects ?? []).filter(
     (s: KairosSubject) => !s.archived && !s.demo,
   );
-  if (!kairosSubjects.length) return NextResponse.json({ created: 0, updated: 0 });
 
-  // Load existing Kairos-sourced topics for this user
+  // Cargar todos los topics existentes anclados a Kairos para este user
   const { data: existingTopics } = await db
     .from("spark_topics")
     .select("id, kairos_subject_id, source_note_ids")
@@ -36,7 +54,9 @@ export async function POST() {
 
   let created = 0;
   let updated = 0;
+  let deleted = 0;
 
+  // INSERT/UPDATE
   for (const subject of kairosSubjects) {
     const sessions = (snapshot.sessions ?? []).filter(
       (sess: KairosSession) =>
@@ -62,7 +82,7 @@ export async function POST() {
       });
       created++;
     } else {
-      // Update source_note_ids when Kairos sessions were added/removed
+      // Update source_note_ids cuando cambian las sessions de Kairos
       const current = [...(existing.source_note_ids ?? [])].sort().join(",");
       const next = [...sessionIds].sort().join(",");
       if (current !== next) {
@@ -78,5 +98,29 @@ export async function POST() {
     }
   }
 
-  return NextResponse.json({ created, updated });
+  // DELETE huérfanos: topics cuyo kairos_subject_id ya no existe en
+  // el snapshot. Esto ocurre cuando el usuario borra una materia (o
+  // todas) en Kairos. Sin esta limpieza, Spark queda mostrando
+  // topics fantasma con badge "KAIROS" que no apuntan a nada.
+  const currentSubjectIds = new Set(kairosSubjects.map((s: KairosSubject) => s.id));
+  const orphanTopics = (existingTopics ?? []).filter(
+    (t) => !currentSubjectIds.has(t.kairos_subject_id as string),
+  );
+  if (orphanTopics.length > 0) {
+    const orphanIds = orphanTopics.map((t) => t.id);
+    // mastery_states no tienen ON DELETE CASCADE — borrar explícito
+    await db
+      .from("spark_mastery_states")
+      .delete()
+      .eq("user_id", user.id)
+      .in("topic_id", orphanIds);
+    await db
+      .from("spark_topics")
+      .delete()
+      .eq("user_id", user.id)
+      .in("id", orphanIds);
+    deleted = orphanTopics.length;
+  }
+
+  return NextResponse.json({ created, updated, deleted });
 }
