@@ -26,8 +26,8 @@ export function KairosConnectBanner() {
         <BookOpen className="w-3.5 h-3.5 text-nova-mid" strokeWidth={1.7} />
       </span>
       <p className="flex-1 text-[12px] leading-relaxed text-muted-foreground">
-        Tus notas de Kairos no están disponibles aquí. Si usás Kairos sin
-        cuenta, creá una con el mismo email para sincronizar tus materias.
+        Tus notas de Kairos no están disponibles aquí. Si usas Kairos sin
+        cuenta, crea una con el mismo email para sincronizar tus materias.
       </p>
       <Link
         href={kairosUrl}

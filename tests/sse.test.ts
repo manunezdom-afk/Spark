@@ -9,7 +9,7 @@ describe("extractJsonPayload", () => {
   });
 
   it("returns null on missing block", () => {
-    expect(extractJsonPayload("Sin JSON acá.")).toBeNull();
+    expect(extractJsonPayload("Sin JSON aquí.")).toBeNull();
   });
 
   it("returns null on malformed JSON", () => {

@@ -55,9 +55,9 @@ const HINTS: Record<string, PageHints> = {
     title: "Progreso",
     subtitle: "Qué hacer ahora · qué está en riesgo · qué avanza",
     items: [
-      { icon: AlertCircle, label: "Atención prioritaria", desc: "Temas que vencen hoy según el repaso espaciado SM-2. Empezá por estos." },
+      { icon: AlertCircle, label: "Atención prioritaria", desc: "Temas que vencen hoy según el repaso espaciado SM-2. Empieza por estos." },
       { icon: Activity, label: "En riesgo", desc: "Temas con maestría menor al 40%. Necesitan scaffolding antes de subir el rigor." },
-      { icon: Zap, label: "Avanzando", desc: "Temas con maestría sobre 70%. Subí la dificultad o usá Defender postura." },
+      { icon: Zap, label: "Avanzando", desc: "Temas con maestría sobre 70%. Sube la dificultad o usa Defender postura." },
       { icon: Play, label: "Sin entrenar", desc: "Temas creados que aún no entrenaste. Cero sesiones registradas." },
     ],
   },

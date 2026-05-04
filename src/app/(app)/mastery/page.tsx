@@ -135,7 +135,7 @@ export default async function ProgressPage() {
         </h1>
         <p className="text-sm text-muted-foreground mt-1 max-w-xl leading-relaxed">
           Cuatro secciones accionables: lo que vence hoy, lo que está flojo, lo
-          que ya tenés sólido, y lo que aún no entrenaste.
+          que ya tienes sólido, y lo que aún no entrenaste.
         </p>
       </header>
 
@@ -152,7 +152,7 @@ export default async function ProgressPage() {
               label="Vencen hoy"
               value={totalDueToday}
               tone={totalDueToday > 0 ? "warning" : "neutral"}
-              hint={totalDueToday > 0 ? "Empezá por estos" : "Nada urgente"}
+              hint={totalDueToday > 0 ? "Empieza por estos" : "Nada urgente"}
             />
             <MetricTile
               label="Entrenados"
@@ -212,7 +212,7 @@ export default async function ProgressPage() {
           {advancing.length > 0 && (
             <BucketSection
               title="Avanzando"
-              kicker="Maestría sobre 70% — subí la dificultad"
+              kicker="Maestría sobre 70% — sube la dificultad"
               icon={TrendingUp}
               tone="success"
               items={advancing}
@@ -442,7 +442,7 @@ function DemoSection() {
           Ejemplos
         </span>
         <p className="flex-1 text-xs leading-relaxed text-muted-foreground">
-          Así se ve tu progreso después de entrenar. Creá tu primer tema para
+          Así se ve tu progreso después de entrenar. Crea tu primer tema para
           empezar a medir el tuyo.
         </p>
         <Link
@@ -493,11 +493,11 @@ function FreshAccountState({ topics }: { topics: SparkTopic[] }) {
         <CheckCircle2 className="w-5 h-5 text-spark" strokeWidth={1.7} />
       </div>
       <h2 className="text-lg font-semibold tracking-tight mb-2">
-        Tenés {topics.length} {topics.length === 1 ? "tema creado" : "temas creados"}
+        Tienes {topics.length} {topics.length === 1 ? "tema creado" : "temas creados"}
       </h2>
       <p className="text-sm text-muted-foreground max-w-md mx-auto leading-relaxed mb-5">
         Aún no has entrenado ninguno. Cuando hagas tu primera sesión, vas a ver
-        acá lo que vence, lo que está flojo y lo que ya tenés sólido.
+        aquí lo que vence, lo que está flojo y lo que ya tienes sólido.
       </p>
       <Link
         href={`/sessions/new?topic_ids=${topics[0].id}`}
