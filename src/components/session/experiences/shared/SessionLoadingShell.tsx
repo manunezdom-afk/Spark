@@ -18,19 +18,21 @@ import type {
  * Usa el mismo SessionShell que la experiencia final, así no hay
  * salto de chrome entre loading y contenido. Solo cambia el cuerpo:
  * un hero centrado con el icono del método, un texto de "Preparando…"
- * con copy por engine, indicador de progreso (3 dots animados o el
- * streamingText si ya está llegando), y un par de skeleton cards
- * que insinúan el layout final sin mostrar contenido falso.
+ * con copy por engine, 3 dots animados como progress, y un par de
+ * skeleton cards que insinúan el layout final.
+ *
+ * IMPORTANTE: deliberadamente NO mostramos el streamingText vivo de
+ * Nova. Aunque era un nice-to-have, en la práctica el usuario lo
+ * percibe como "la actividad se está construyendo a la vista", que
+ * es exactamente lo que queremos evitar. Mejor mostrar un loading
+ * limpio que la cocina abierta.
  */
 export function SessionLoadingShell({
   session,
   topics,
-  streamingText,
 }: {
   session: SparkLearningSession;
   topics: SparkTopic[];
-  /** Tokens vivos del primer turno de Nova si ya están llegando */
-  streamingText?: string;
 }) {
   const theme = getEngineTheme(session.engine);
   const Icon = theme.Icon;
@@ -88,32 +90,21 @@ export function SessionLoadingShell({
           {copy}
         </p>
 
-        {/* Stream preview (si ya hay tokens) o 3 dots animados */}
-        {streamingText && streamingText.trim().length > 0 ? (
-          <div
-            className="text-[12.5px] text-foreground/60 italic max-w-md text-center mb-8 px-4"
-            aria-live="polite"
-          >
-            <span aria-hidden>“</span>
-            {streamingText.replace(/```json[\s\S]*$/g, "").trim().slice(-180)}
-            <span aria-hidden>”</span>
-          </div>
-        ) : (
-          <div className="flex items-center gap-2 mb-8" aria-label="Cargando">
-            <span
-              className="w-2 h-2 rounded-full spark-loading-dot"
-              style={{ background: theme.accent }}
-            />
-            <span
-              className="w-2 h-2 rounded-full spark-loading-dot"
-              style={{ background: theme.accent, animationDelay: "0.2s" }}
-            />
-            <span
-              className="w-2 h-2 rounded-full spark-loading-dot"
-              style={{ background: theme.accent, animationDelay: "0.4s" }}
-            />
-          </div>
-        )}
+        {/* 3 dots animados — sin preview del stream */}
+        <div className="flex items-center gap-2 mb-8" aria-label="Cargando">
+          <span
+            className="w-2 h-2 rounded-full spark-loading-dot"
+            style={{ background: theme.accent }}
+          />
+          <span
+            className="w-2 h-2 rounded-full spark-loading-dot"
+            style={{ background: theme.accent, animationDelay: "0.2s" }}
+          />
+          <span
+            className="w-2 h-2 rounded-full spark-loading-dot"
+            style={{ background: theme.accent, animationDelay: "0.4s" }}
+          />
+        </div>
 
         {/* Skeleton: 1 card grande + 1 lateral angosto, alusivo al layout final */}
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-4 w-full">

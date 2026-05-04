@@ -129,31 +129,21 @@ describe("SessionLoadingShell", () => {
     expect(matches.length).toBeGreaterThanOrEqual(1);
   });
 
-  it("muestra streamingText cuando ya están llegando tokens", () => {
+  it("NUNCA muestra el streamingText vivo (no debe parecer que la actividad se construye)", () => {
+    // El componente ya no acepta streamingText. Aunque le pasemos uno via
+    // any-cast, no debe rendear texto de Nova en pantalla. Renderizamos solo
+    // el prop API actual y verificamos que el fragmento típico de un
+    // primer turno NO aparece — es decir, no hay leak de streaming.
     render(
       <SessionLoadingShell
         session={buildSession("devils_advocate")}
         topics={topics}
-        streamingText="Antes de arrancar: declara tu postura concreta."
       />,
     );
-    // El stream preview debe aparecer con el texto recibido
+    // Cualquier frase típica de un primer turno NO debe aparecer
     expect(
-      screen.getByText(/declara tu postura concreta/i),
-    ).toBeTruthy();
-  });
-
-  it("strippea el bloque ```json del streamingText (no debe leakear JSON)", () => {
-    render(
-      <SessionLoadingShell
-        session={buildSession("debugger")}
-        topics={topics}
-        streamingText='Texto válido aquí. ```json {"type": "debugger"'
-      />,
-    );
-    // El texto válido queda
-    expect(screen.getByText(/texto válido aquí/i)).toBeTruthy();
-    // El JSON parcial no debe aparecer crudo
-    expect(screen.queryByText(/"type": "debugger"/)).toBeNull();
+      screen.queryByText(/declara tu postura concreta/i),
+    ).toBeNull();
+    expect(screen.queryByText(/```json/)).toBeNull();
   });
 });

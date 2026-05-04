@@ -109,7 +109,6 @@ export function GuidedQuestionsExperience({
       <SessionLoadingShell
         session={session}
         topics={topics}
-        streamingText={engine.streamingText}
       />
     );
   }

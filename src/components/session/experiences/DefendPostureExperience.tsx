@@ -136,7 +136,6 @@ export function DefendPostureExperience({
       <SessionLoadingShell
         session={session}
         topics={topics}
-        streamingText={engine.streamingText}
       />
     );
   }

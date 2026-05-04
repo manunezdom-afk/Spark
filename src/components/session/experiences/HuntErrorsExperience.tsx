@@ -153,7 +153,6 @@ export function HuntErrorsExperience({
       <SessionLoadingShell
         session={session}
         topics={topics}
-        streamingText={engine.streamingText}
       />
     );
   }

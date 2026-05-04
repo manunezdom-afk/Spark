@@ -115,7 +115,6 @@ export function RealCaseExperience({
       <SessionLoadingShell
         session={session}
         topics={topics}
-        streamingText={engine.streamingText}
       />
     );
   }

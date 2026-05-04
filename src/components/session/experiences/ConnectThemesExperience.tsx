@@ -138,7 +138,6 @@ export function ConnectThemesExperience({
       <SessionLoadingShell
         session={session}
         topics={topics}
-        streamingText={engine.streamingText}
       />
     );
   }
