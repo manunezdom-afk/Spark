@@ -208,6 +208,7 @@ export function HuntErrorsExperience({
           {engine.completionScore ? (
             <CompletionPanel
               score={engine.completionScore}
+              sessionId={session.id}
               topicId={session.topic_ids[0]}
             />
           ) : briefingPayload ? (
@@ -228,7 +229,7 @@ export function HuntErrorsExperience({
                       border: `1px solid ${hexToRgba(theme.accent, 0.28)}`,
                     }}
                   >
-                    <Bug className="w-4 h-4" strokeWidth={1.7} />
+                    <Bug className="w-4 h-4" strokeWidth={1.5} />
                   </span>
                   <div className="flex flex-col leading-tight">
                     <span
@@ -293,12 +294,12 @@ export function HuntErrorsExperience({
                     >
                       {engine.status === "streaming" ? (
                         <>
-                          <Loader2 className="w-3.5 h-3.5 animate-spin" strokeWidth={1.7} />
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" strokeWidth={1.5} />
                           Procesando…
                         </>
                       ) : (
                         <>
-                          <Eye className="w-3.5 h-3.5" strokeWidth={1.7} />
+                          <Eye className="w-3.5 h-3.5" strokeWidth={1.5} />
                           Enviar reporte
                         </>
                       )}
@@ -331,7 +332,7 @@ export function HuntErrorsExperience({
                 <div className="flex items-center gap-2">
                   <Target
                     className="w-4 h-4"
-                    strokeWidth={1.7}
+                    strokeWidth={1.5}
                     style={{ color: theme.accent }}
                   />
                   <span
@@ -387,7 +388,7 @@ export function HuntErrorsExperience({
 
         <aside className="lg:sticky lg:top-32 lg:self-start flex flex-col gap-3">
           <header className="flex items-center gap-2">
-            <Sparkles className="w-4 h-4" strokeWidth={1.6} style={{ color: theme.accent }} />
+            <Sparkles className="w-4 h-4" strokeWidth={1.5} style={{ color: theme.accent }} />
             <span
               className="font-mono text-[10px] uppercase tracking-[0.18em]"
               style={{ color: theme.accent }}
@@ -440,7 +441,7 @@ export function HuntErrorsExperience({
                           className="text-muted-foreground hover:text-foreground"
                           aria-label="Quitar marca"
                         >
-                          <X className="w-3.5 h-3.5" strokeWidth={1.7} />
+                          <X className="w-3.5 h-3.5" strokeWidth={1.5} />
                         </button>
                       )}
                     </div>
@@ -655,7 +656,7 @@ function ErrorVerdictRow({
         </span>
       </div>
       <div className="flex items-start gap-2">
-        <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" strokeWidth={2} />
+        <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" strokeWidth={1.5} />
         <div className="text-[14px] text-foreground/90">{err.correct_version}</div>
       </div>
       <div className="text-[12.5px] text-muted-foreground leading-relaxed pl-5">

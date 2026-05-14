@@ -473,6 +473,110 @@ export async function getDueFlashcardsCount(
   return count ?? 0;
 }
 
+// ── Session debrief helpers (Pilar A: post-session summary) ──
+
+/**
+ * Para una sesión completed, devuelve el delta de mastery por topic
+ * derivado matemáticamente desde el estado actual (sin necesidad de
+ * persistir el "before"). Funciona porque mastery_score es un
+ * promedio aritmético: prev = (current * total - score) / (total - 1).
+ */
+export async function getMasteryDeltasForSession(
+  db: Client,
+  userId: string,
+  session: SparkLearningSession
+): Promise<{ topic_id: string; before: number; after: number; delta: number }[]> {
+  if (session.status !== 'completed' || session.score === null) return [];
+  const states = await getMasteryStates(db, userId, session.topic_ids);
+  const score = session.score;
+  return session.topic_ids.map((topicId) => {
+    const state = states.find((s) => s.topic_id === topicId);
+    if (!state) return { topic_id: topicId, before: 0, after: 0, delta: 0 };
+    const total = state.total_sessions;
+    const after = state.mastery_score;
+    let before: number;
+    if (total <= 1) {
+      before = 0;
+    } else {
+      const raw = (after * total - score) / (total - 1);
+      before = Math.max(0, Math.min(100, Math.round(raw)));
+    }
+    return { topic_id: topicId, before, after, delta: after - before };
+  });
+}
+
+export async function getFlashcardsBySession(
+  db: Client,
+  sessionId: string
+): Promise<import('@/modules/spark/types').SparkFlashcard[]> {
+  const { data } = await db
+    .from('spark_flashcards')
+    .select('*')
+    .eq('session_id', sessionId)
+    .order('created_at', { ascending: true });
+  return (data ?? []) as import('@/modules/spark/types').SparkFlashcard[];
+}
+
+export async function getNewErrorPatternsSince(
+  db: Client,
+  userId: string,
+  since: string,
+  topicIds?: string[]
+): Promise<SparkErrorPattern[]> {
+  let query = db
+    .from('spark_error_patterns')
+    .select('*')
+    .eq('user_id', userId)
+    .gte('last_seen_at', since)
+    .order('last_seen_at', { ascending: false });
+  if (topicIds?.length) query = query.in('topic_id', topicIds);
+  const { data } = await query;
+  return (data ?? []) as SparkErrorPattern[];
+}
+
+// ── Stats / racha (Pilar B: weekly overview + heatmap) ───────
+
+/**
+ * Sesiones completadas en los últimos N días — base para racha,
+ * heatmap, y "esta semana". Filtra por ended_at para excluir
+ * abandonadas en cascada.
+ */
+export async function getCompletedSessionsLast(
+  db: Client,
+  userId: string,
+  days: number
+): Promise<SparkLearningSession[]> {
+  const cutoff = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+  const { data } = await db
+    .from('spark_learning_sessions')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('status', 'completed')
+    .gte('ended_at', cutoff)
+    .order('ended_at', { ascending: false });
+  return (data ?? []) as SparkLearningSession[];
+}
+
+/**
+ * Total de turns por sesión — usado para estimar tiempo invertido
+ * (~1.5 min por turn). Devuelve mapa session_id → count.
+ */
+export async function getTurnCountsByCompletedSessions(
+  db: Client,
+  sessionIds: string[]
+): Promise<Map<string, number>> {
+  if (!sessionIds.length) return new Map();
+  const { data } = await db
+    .from('spark_session_turns')
+    .select('session_id')
+    .in('session_id', sessionIds);
+  const counts = new Map<string, number>();
+  for (const row of (data ?? []) as { session_id: string }[]) {
+    counts.set(row.session_id, (counts.get(row.session_id) ?? 0) + 1);
+  }
+  return counts;
+}
+
 // ── Rate limit ───────────────────────────────────────────────
 
 export async function checkAndIncrementRateLimit(

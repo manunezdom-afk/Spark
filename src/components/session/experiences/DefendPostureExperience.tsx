@@ -188,6 +188,7 @@ export function DefendPostureExperience({
           {engine.completionScore ? (
             <CompletionPanel
               score={engine.completionScore}
+              sessionId={session.id}
               topicId={session.topic_ids[0]}
             />
           ) : isPosturePhase ? (
@@ -279,7 +280,7 @@ function PosturePanel({
             border: `1px solid ${hexToRgba(accent, 0.28)}`,
           }}
         >
-          <ShieldHalf className="w-4 h-4" strokeWidth={1.7} />
+          <ShieldHalf className="w-4 h-4" strokeWidth={1.5} />
         </span>
         <div className="flex flex-col leading-tight">
           <span
@@ -334,7 +335,7 @@ function PosturePanel({
           style={{ background: gradient }}
         >
           Sostener esta postura
-          <Zap className="w-3.5 h-3.5" strokeWidth={1.7} />
+          <Zap className="w-3.5 h-3.5" strokeWidth={1.5} />
         </Button>
       </div>
     </article>
@@ -395,7 +396,7 @@ function AttackPanel({
               border: `1px solid ${hexToRgba(accent, 0.28)}`,
             }}
           >
-            <Sword className="w-4 h-4" strokeWidth={1.7} />
+            <Sword className="w-4 h-4" strokeWidth={1.5} />
           </span>
           <div className="flex flex-col leading-tight">
             <span
@@ -419,7 +420,7 @@ function AttackPanel({
           className="mb-4 rounded-xl border bg-amber-50/40 p-3 text-[12.5px] text-foreground/80 italic flex gap-2"
           style={{ borderColor: "rgba(245, 158, 11, 0.25)" }}
         >
-          <Activity className="w-3.5 h-3.5 mt-0.5 shrink-0 text-amber-600" strokeWidth={1.7} />
+          <Activity className="w-3.5 h-3.5 mt-0.5 shrink-0 text-amber-600" strokeWidth={1.5} />
           <span>
             <span className="font-medium not-italic text-amber-700">Nota de Nova: </span>
             {priorNote}
@@ -480,7 +481,7 @@ function AttackPanel({
                       }
                 }
               >
-                <Icon className="w-4 h-4" strokeWidth={1.6} />
+                <Icon className="w-4 h-4" strokeWidth={1.5} />
                 {TACTIC_LABELS[k].label}
               </button>
             );
@@ -523,13 +524,13 @@ function AttackPanel({
           >
             {status === "streaming" ? (
               <>
-                <Loader2 className="w-3.5 h-3.5 animate-spin" strokeWidth={1.7} />
+                <Loader2 className="w-3.5 h-3.5 animate-spin" strokeWidth={1.5} />
                 Defendiendo…
               </>
             ) : (
               <>
                 Lanzar defensa
-                <ChevronRight className="w-3.5 h-3.5" strokeWidth={1.7} />
+                <ChevronRight className="w-3.5 h-3.5" strokeWidth={1.5} />
               </>
             )}
           </Button>
@@ -555,7 +556,7 @@ function RoundsTimeline({
     <aside className="lg:sticky lg:top-32 lg:self-start flex flex-col gap-3">
       <header className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <ListChecks className="w-4 h-4" strokeWidth={1.6} style={{ color: accent }} />
+          <ListChecks className="w-4 h-4" strokeWidth={1.5} style={{ color: accent }} />
           <span
             className="font-mono text-[10px] uppercase tracking-[0.18em]"
             style={{ color: accent }}
@@ -672,7 +673,7 @@ function SolidityChip({ score, accent }: { score: number; accent: string }) {
         borderColor: hexToRgba(accent, 0.18),
       }}
     >
-      <Activity className="w-3 h-3" strokeWidth={1.7} style={{ color: tone.fg }} />
+      <Activity className="w-3 h-3" strokeWidth={1.5} style={{ color: tone.fg }} />
       <span
         className="font-mono text-[10px] uppercase tracking-[0.14em]"
         style={{ color: tone.fg }}

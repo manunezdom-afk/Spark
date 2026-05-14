@@ -60,7 +60,7 @@ export function MethodResponseInput({
 
   return (
     <div
-      className="sticky bottom-0 px-5 md:px-8 py-4 border-t border-black/[0.06] bg-background/92 backdrop-blur-xl"
+      className="sticky bottom-0 px-3 sm:px-5 md:px-8 pt-3 pb-[max(env(safe-area-inset-bottom),0.75rem)] border-t border-black/[0.06] bg-background/92 backdrop-blur-xl"
       style={wrapperStyle}
     >
       <div className="relative max-w-3xl mx-auto">
@@ -88,7 +88,7 @@ export function MethodResponseInput({
             placeholder={overridePlaceholder ?? personality.inputPlaceholder}
             rows={1}
             className={cn(
-              "w-full pr-32 pl-4 pt-7 pb-3 rounded-2xl bg-transparent text-[14px] leading-relaxed",
+              "w-full pr-16 sm:pr-32 pl-4 pt-7 pb-3 rounded-2xl bg-transparent text-[14px] leading-relaxed",
               "placeholder:text-muted-foreground/65 resize-none scrollbar-thin",
               "focus:outline-none disabled:opacity-50",
             )}
@@ -111,7 +111,7 @@ export function MethodResponseInput({
             }
           >
             <span className="hidden sm:inline">{personality.inputCta}</span>
-            <ArrowUp className="w-4 h-4" strokeWidth={2.2} />
+            <ArrowUp className="w-4 h-4" strokeWidth={1.5} />
           </button>
         </div>
         <div className="flex items-center justify-between mt-2 px-1 text-[10px] text-muted-foreground">

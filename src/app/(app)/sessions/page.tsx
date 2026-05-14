@@ -62,7 +62,7 @@ export default async function SessionsPage() {
           <Button asChild variant="spark" className="rounded-full">
             <Link href="/topics">
               Ir a Temas
-              <ArrowRight className="w-3.5 h-3.5" strokeWidth={2} />
+              <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.5} />
             </Link>
           </Button>
         </div>

@@ -663,7 +663,7 @@ function NewSessionHero({ methodKey }: { methodKey: MethodKey }) {
             color: theme.accent,
           }}
         >
-          <Icon className="w-5 h-5" strokeWidth={1.6} />
+          <Icon className="w-5 h-5" strokeWidth={1.5} />
         </span>
         <div className="flex flex-col gap-1.5 min-w-0 max-w-xl">
           <span
@@ -732,7 +732,7 @@ function MethodPickCard({
             color: theme.accent,
           }}
         >
-          <Icon className="w-4 h-4" strokeWidth={1.7} />
+          <Icon className="w-4 h-4" strokeWidth={1.5} />
         </span>
         <span
           className="absolute top-3 right-3 font-mono text-[9px] uppercase tracking-[0.18em] z-10"
@@ -877,7 +877,7 @@ function TopicSelector({
     return (
       <div className="flex flex-col gap-3 p-5 rounded-2xl border border-black/[0.07] bg-white/60">
         <div className="flex items-center gap-2 text-sm text-foreground">
-          <Layers className="w-4 h-4 text-spark" strokeWidth={1.75} />
+          <Layers className="w-4 h-4 text-spark" strokeWidth={1.5} />
           Aún no tienes materias guardadas.
         </div>
         <p className="text-[12px] text-muted-foreground">
@@ -890,7 +890,7 @@ function TopicSelector({
           style={{ background: theme.coachGradient }}
         >
           Crear o importar materia
-          <ArrowRight className="w-3.5 h-3.5" strokeWidth={2} />
+          <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.5} />
         </Link>
       </div>
     );
@@ -942,7 +942,7 @@ function TopicSelector({
                   className="inline-flex items-center justify-center w-5 h-5 rounded-full shrink-0 text-white"
                   style={{ background: theme.accent }}
                 >
-                  <CheckSquare className="w-3 h-3" strokeWidth={2.4} />
+                  <CheckSquare className="w-3 h-3" strokeWidth={1.5} />
                 </span>
               )}
             </div>
@@ -977,7 +977,7 @@ function DemoModePanel({
       <div className="mb-3 flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between rounded-xl border border-spark/25 bg-spark/[0.06] px-4 py-3">
         <div className="flex items-center gap-2.5 min-w-0">
           <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-spark/15 text-spark shrink-0">
-            <FlaskConical className="w-3.5 h-3.5" strokeWidth={1.7} />
+            <FlaskConical className="w-3.5 h-3.5" strokeWidth={1.5} />
           </span>
           <div className="min-w-0">
             <div className="text-[12.5px] font-semibold text-foreground">
@@ -1002,7 +1002,7 @@ function DemoModePanel({
     <div className="mb-3 flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between rounded-xl border border-dashed border-spark/30 bg-spark/[0.03] px-4 py-3">
       <div className="flex items-start gap-2.5 min-w-0">
         <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-white/80 border border-spark/20 text-spark shrink-0">
-          <FlaskConical className="w-3.5 h-3.5" strokeWidth={1.7} />
+          <FlaskConical className="w-3.5 h-3.5" strokeWidth={1.5} />
         </span>
         <div className="min-w-0">
           <div className="text-[12.5px] font-semibold text-foreground">
@@ -1023,7 +1023,7 @@ function DemoModePanel({
         className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-spark px-3.5 py-1.5 text-[12px] font-semibold text-white hover:opacity-90 transition-opacity disabled:opacity-50"
       >
         {demoSeeding ? "Cargando…" : "Probar con ejemplo"}
-        {!demoSeeding && <ArrowRight className="w-3 h-3" strokeWidth={2} />}
+        {!demoSeeding && <ArrowRight className="w-3 h-3" strokeWidth={1.5} />}
       </button>
     </div>
   );
@@ -1149,7 +1149,7 @@ function TestSettings({
                 <span className="flex items-center gap-2">
                   <Icon
                     className="w-4 h-4"
-                    strokeWidth={1.6}
+                    strokeWidth={1.5}
                     style={{ color: active ? accent : "rgba(0,0,0,0.55)" }}
                   />
                   <span
@@ -1244,7 +1244,7 @@ function OptionGroup<T extends string>({
               <span className="flex items-center gap-1.5">
                 <Icon
                   className="w-3.5 h-3.5"
-                  strokeWidth={1.7}
+                  strokeWidth={1.5}
                   style={{ color: active ? accent : "rgba(0,0,0,0.55)" }}
                 />
                 <span
@@ -1350,7 +1350,7 @@ function SummaryPanel({
           className="inline-flex items-center justify-center w-10 h-10 rounded-2xl bg-white border shrink-0"
           style={{ borderColor: hexToRgba(theme.accent, 0.3), color: theme.accent }}
         >
-          <Icon className="w-4.5 h-4.5" strokeWidth={1.7} />
+          <Icon className="w-4.5 h-4.5" strokeWidth={1.5} />
         </span>
         <div className="flex flex-col min-w-0">
           <span
@@ -1447,7 +1447,7 @@ function SummaryPanel({
         }}
       >
         {busy ? "Preparando…" : ctaLabel}
-        <ArrowRight className="w-4 h-4" strokeWidth={1.8} />
+        <ArrowRight className="w-4 h-4" strokeWidth={1.5} />
       </button>
 
       {disabled && disabledReason && (

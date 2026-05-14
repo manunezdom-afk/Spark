@@ -23,7 +23,7 @@ export function DebuggerInteractive({ payload }: { payload: DebuggerPayload }) {
       <header className="flex items-center justify-between gap-3 flex-wrap">
         <div className="flex items-center gap-2">
           <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-orange-100 text-orange-700">
-            <Bug className="w-4 h-4" strokeWidth={1.7} />
+            <Bug className="w-4 h-4" strokeWidth={1.5} />
           </span>
           <div className="flex flex-col">
             <span className="font-mono text-[9.5px] uppercase tracking-[0.18em] text-orange-700">
@@ -43,7 +43,7 @@ export function DebuggerInteractive({ payload }: { payload: DebuggerPayload }) {
             variant="outline"
             className="border-orange-300/60 text-orange-700 hover:bg-orange-100"
           >
-            <Eye className="w-3.5 h-3.5" strokeWidth={1.7} />
+            <Eye className="w-3.5 h-3.5" strokeWidth={1.5} />
             Revelar errores
           </Button>
         )}
@@ -73,7 +73,7 @@ export function DebuggerInteractive({ payload }: { payload: DebuggerPayload }) {
       {revealed && (
         <div className="flex flex-col gap-3 engine-card-rise">
           <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-orange-700 flex items-center gap-2">
-            <AlertTriangle className="w-3 h-3" strokeWidth={1.7} />
+            <AlertTriangle className="w-3 h-3" strokeWidth={1.5} />
             {payload.errors.length} {payload.errors.length === 1 ? "error encontrado" : "errores encontrados"}
           </div>
           <ul className="flex flex-col gap-3">
@@ -92,7 +92,7 @@ export function DebuggerInteractive({ payload }: { payload: DebuggerPayload }) {
                   </span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" strokeWidth={1.7} />
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" strokeWidth={1.5} />
                   <div className="text-[14px] text-foreground/90">{e.correct_version}</div>
                 </div>
                 <div className="text-[12.5px] text-muted-foreground leading-relaxed pl-5">

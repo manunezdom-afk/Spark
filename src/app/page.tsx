@@ -47,7 +47,7 @@ export default function LandingPage() {
           <div className="flex items-start gap-3 p-4 rounded-2xl border border-amber-200 bg-amber-50">
             <AlertTriangle
               className="w-4 h-4 text-amber-600 shrink-0 mt-0.5"
-              strokeWidth={1.75}
+              strokeWidth={1.5}
             />
             <div className="text-sm text-amber-800 leading-relaxed">
               <p className="font-semibold mb-1">Faltan credenciales para iniciar Spark.</p>
@@ -74,7 +74,7 @@ export default function LandingPage() {
 
           <div className="rounded-2xl border border-black/[0.06] bg-white/60 p-5">
             <div className="flex items-center gap-2 mb-3">
-              <KeyRound className="w-3.5 h-3.5 text-muted-foreground" strokeWidth={1.75} />
+              <KeyRound className="w-3.5 h-3.5 text-muted-foreground" strokeWidth={1.5} />
               <p className="text-[11px] font-mono uppercase tracking-[0.16em] text-muted-foreground">
                 .env.local
               </p>

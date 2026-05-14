@@ -79,12 +79,12 @@ export function MethodQuickCard(props: MethodQuickCardProps) {
         >
           <Icon
             className={isRecommendation ? "w-[18px] h-[18px]" : "w-4 h-4"}
-            strokeWidth={1.6}
+            strokeWidth={1.5}
           />
         </span>
         <ArrowUpRight
           className="w-3.5 h-3.5 text-muted-foreground/30 group-hover:text-foreground/60 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-all"
-          strokeWidth={1.75}
+          strokeWidth={1.5}
         />
       </div>
       <div className="flex flex-col gap-1">

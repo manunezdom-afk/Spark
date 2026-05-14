@@ -109,12 +109,12 @@ export default async function TestResultsPage({ params }: RouteParams) {
                   {result.correct ? (
                     <CheckCircle2
                       className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0"
-                      strokeWidth={1.75}
+                      strokeWidth={1.5}
                     />
                   ) : (
                     <XCircle
                       className="w-4 h-4 text-red-400 mt-0.5 shrink-0"
-                      strokeWidth={1.75}
+                      strokeWidth={1.5}
                     />
                   )}
                   <div className="min-w-0 flex-1">

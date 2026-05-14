@@ -23,7 +23,7 @@ export function KairosConnectBanner() {
   return (
     <div className="flex items-start gap-3 rounded-xl border border-black/[0.06] bg-white/40 px-3.5 py-2.5 mb-6 sm:items-center">
       <span className="inline-flex items-center justify-center w-7 h-7 rounded-md bg-nova-soft border border-nova/20 shrink-0">
-        <BookOpen className="w-3.5 h-3.5 text-nova-mid" strokeWidth={1.7} />
+        <BookOpen className="w-3.5 h-3.5 text-nova-mid" strokeWidth={1.5} />
       </span>
       <p className="flex-1 text-[12px] leading-relaxed text-muted-foreground">
         Tus notas de Kairos no están disponibles aquí. Si usas Kairos sin
@@ -36,7 +36,7 @@ export function KairosConnectBanner() {
         className="shrink-0 inline-flex items-center gap-1 rounded-md border border-black/[0.08] bg-white/60 px-2.5 py-1 text-[11px] text-foreground/80 transition-colors hover:border-black/[0.14] hover:text-foreground"
       >
         Abrir Kairos
-        <ExternalLink className="w-3 h-3" strokeWidth={1.7} />
+        <ExternalLink className="w-3 h-3" strokeWidth={1.5} />
       </Link>
     </div>
   );

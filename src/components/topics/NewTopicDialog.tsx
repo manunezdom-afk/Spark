@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { GradientText } from "@/components/brand/GradientText";
+import { InfoIcon } from "@/components/ui/info-icon";
 import { toast } from "sonner";
 
 type ExtractedTopic = {
@@ -186,14 +187,18 @@ export function NewTopicDialog() {
     <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) reset(); }}>
       <DialogTrigger asChild>
         <Button variant="spark" size="sm" className="rounded-full">
-          <Plus className="w-3.5 h-3.5" strokeWidth={2} />
+          <Plus className="w-3.5 h-3.5" strokeWidth={1.5} />
           Nuevo tema
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>
+          <DialogTitle className="inline-flex items-center gap-2">
             Nuevo <GradientText italic className="font-light">tema</GradientText>
+            <InfoIcon
+              hint="Un tema es un trozo de material que entrenas: una materia, un capítulo, un concepto puntual. De cada tema salen sesiones, tarjetas y mediciones de maestría."
+              size="sm"
+            />
           </DialogTitle>
           <DialogDescription>
             Un tema es una unidad atómica de conocimiento que vas a entrenar.
@@ -212,7 +217,7 @@ export function NewTopicDialog() {
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              <Icon className="w-3.5 h-3.5 shrink-0" strokeWidth={1.75} />
+              <Icon className="w-3.5 h-3.5 shrink-0" strokeWidth={1.5} />
               {label}
             </button>
           ))}
@@ -247,7 +252,7 @@ export function NewTopicDialog() {
                 {busy ? "Creando…" : (
                   <>
                     Crear tema
-                    <ArrowRight className="w-3.5 h-3.5" strokeWidth={2} />
+                    <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.5} />
                   </>
                 )}
               </Button>
@@ -271,7 +276,7 @@ export function NewTopicDialog() {
                   <Button onClick={onExtract} disabled={busy || text.trim().length < 50} variant="spark" className="rounded-full">
                     {busy ? "Analizando…" : (
                       <>
-                        <Sparkles className="w-3.5 h-3.5" strokeWidth={1.75} />
+                        <Sparkles className="w-3.5 h-3.5" strokeWidth={1.5} />
                         Extraer conceptos
                       </>
                     )}
@@ -305,7 +310,7 @@ export function NewTopicDialog() {
                           <div className={`w-5 h-5 rounded-md shrink-0 border flex items-center justify-center transition-colors ${
                             isSelected ? "bg-spark border-spark" : "border-black/[0.12] bg-white"
                           }`}>
-                            {isSelected && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
+                            {isSelected && <Check className="w-3 h-3 text-white" strokeWidth={1.5} />}
                           </div>
                         </div>
                       </button>
@@ -386,7 +391,7 @@ export function NewTopicDialog() {
                               ) : (
                                 <BookOpen
                                   className="w-4 h-4"
-                                  strokeWidth={1.75}
+                                  strokeWidth={1.5}
                                   style={{ color: accentColor ?? "rgba(0,0,0,0.45)" }}
                                 />
                               )}
@@ -403,7 +408,7 @@ export function NewTopicDialog() {
                           <div className={`w-5 h-5 rounded-md shrink-0 border flex items-center justify-center transition-colors ${
                             isSelected ? "bg-spark border-spark" : "border-black/[0.12] bg-white"
                           }`}>
-                            {isSelected && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
+                            {isSelected && <Check className="w-3 h-3 text-white" strokeWidth={1.5} />}
                           </div>
                         </div>
                       </button>
@@ -420,7 +425,7 @@ export function NewTopicDialog() {
                     {busy
                       ? "Importando…"
                       : selectedSubjects.size > 0
-                        ? <>Importar {selectedSubjects.size} {selectedSubjects.size === 1 ? "materia" : "materias"} <ArrowRight className="w-3.5 h-3.5" strokeWidth={2} /></>
+                        ? <>Importar {selectedSubjects.size} {selectedSubjects.size === 1 ? "materia" : "materias"} <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.5} /></>
                         : "Importar materias"
                     }
                   </Button>

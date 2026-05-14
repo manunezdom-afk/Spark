@@ -74,7 +74,7 @@ export function MethodSessionShell({
                 color: theme.accent,
               }}
             >
-              <Icon className="w-4 h-4" strokeWidth={1.7} />
+              <Icon className="w-4 h-4" strokeWidth={1.5} />
             </span>
             <div className="flex flex-col items-start min-w-0">
               <span

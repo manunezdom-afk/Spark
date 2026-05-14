@@ -17,7 +17,7 @@ export function QuizCard({ payload }: { payload: QuizPayload }) {
       <header className="flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center gap-2">
           <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-violet-100 text-violet-700">
-            <HelpCircle className="w-4 h-4" strokeWidth={1.7} />
+            <HelpCircle className="w-4 h-4" strokeWidth={1.5} />
           </span>
           <div className="flex flex-col">
             <span className="font-mono text-[9.5px] uppercase tracking-[0.18em] text-violet-700">
@@ -83,7 +83,7 @@ export function QuizCard({ payload }: { payload: QuizPayload }) {
             <ul className="flex flex-col gap-2">
               {payload.expected_concepts.map((c, i) => (
                 <li key={i} className="flex items-start gap-2 text-[14px] text-foreground/90">
-                  <Check className="w-3.5 h-3.5 text-violet-700 shrink-0 mt-1" strokeWidth={2.2} />
+                  <Check className="w-3.5 h-3.5 text-violet-700 shrink-0 mt-1" strokeWidth={1.5} />
                   <span>{c}</span>
                 </li>
               ))}

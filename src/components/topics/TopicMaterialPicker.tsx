@@ -149,7 +149,7 @@ export function TopicMaterialPicker({
               color: theme.accent,
             }}
           >
-            <Layers className="w-4 h-4" strokeWidth={1.7} />
+            <Layers className="w-4 h-4" strokeWidth={1.5} />
           </span>
           <div className="flex flex-col min-w-0">
             <span
@@ -170,7 +170,7 @@ export function TopicMaterialPicker({
             "w-4 h-4 text-muted-foreground transition-transform shrink-0",
             collapsed && "-rotate-90",
           )}
-          strokeWidth={1.7}
+          strokeWidth={1.5}
         />
       </button>
 
@@ -178,7 +178,7 @@ export function TopicMaterialPicker({
         <div className="p-3 flex flex-col gap-2">
           {loading ? (
             <div className="flex items-center gap-2 text-sm text-muted-foreground px-2 py-3">
-              <Loader2 className="w-4 h-4 animate-spin" strokeWidth={1.7} />
+              <Loader2 className="w-4 h-4 animate-spin" strokeWidth={1.5} />
               Buscando apuntes en {topic.title}…
             </div>
           ) : error ? (
@@ -257,7 +257,7 @@ function UseFullToggle({
               : { borderColor: "rgba(0,0,0,0.18)" }
           }
         >
-          {active && <Sparkles className="w-3 h-3" strokeWidth={2.4} />}
+          {active && <Sparkles className="w-3 h-3" strokeWidth={1.5} />}
         </span>
         <div className="flex flex-col min-w-0">
           <span className="text-[13px] font-medium text-foreground">{label}</span>
@@ -315,13 +315,13 @@ function MaterialRow({
         {isChild && (
           <CornerDownRight
             className="w-3.5 h-3.5 text-muted-foreground/60 shrink-0 mt-1"
-            strokeWidth={1.7}
+            strokeWidth={1.5}
           />
         )}
         {!isChild && (
           <FileText
             className="w-3.5 h-3.5 text-muted-foreground/70 shrink-0 mt-1"
-            strokeWidth={1.7}
+            strokeWidth={1.5}
           />
         )}
         <div className="flex flex-col min-w-0 flex-1">

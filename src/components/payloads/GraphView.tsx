@@ -15,7 +15,7 @@ export function GraphView({ payload }: { payload: GraphNodePayload }) {
     <div className="flex flex-col gap-5 p-5 rounded-2xl border border-cyan-200/40 bg-cyan-50/30">
       <header className="flex items-center gap-2">
         <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-cyan-100 text-cyan-700">
-          <Network className="w-4 h-4" strokeWidth={1.7} />
+          <Network className="w-4 h-4" strokeWidth={1.5} />
         </span>
         <div className="flex flex-col">
           <span className="font-mono text-[9.5px] uppercase tracking-[0.18em] text-cyan-700">
@@ -61,7 +61,7 @@ export function GraphView({ payload }: { payload: GraphNodePayload }) {
                 className="flex items-center gap-2 text-[13.5px] flex-wrap p-3 rounded-xl border border-cyan-200/40 bg-white/60"
               >
                 <span className="font-medium text-foreground">{e.source}</span>
-                <ArrowRight className="w-3.5 h-3.5 text-cyan-500" strokeWidth={1.7} />
+                <ArrowRight className="w-3.5 h-3.5 text-cyan-500" strokeWidth={1.5} />
                 <span
                   className="px-2 py-0.5 rounded-full text-[11px] italic"
                   style={{
@@ -71,7 +71,7 @@ export function GraphView({ payload }: { payload: GraphNodePayload }) {
                 >
                   {e.relationship}
                 </span>
-                <ArrowRight className="w-3.5 h-3.5 text-cyan-500" strokeWidth={1.7} />
+                <ArrowRight className="w-3.5 h-3.5 text-cyan-500" strokeWidth={1.5} />
                 <span className="font-medium text-foreground">{e.target}</span>
               </li>
             ))}

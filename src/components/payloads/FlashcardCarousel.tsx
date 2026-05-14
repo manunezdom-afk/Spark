@@ -28,7 +28,7 @@ export function FlashcardCarousel({ payload }: { payload: FlashcardPayload }) {
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center gap-2">
           <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-violet-100 text-violet-700">
-            <Layers className="w-4 h-4" strokeWidth={1.7} />
+            <Layers className="w-4 h-4" strokeWidth={1.5} />
           </span>
           <div className="flex flex-col">
             <span className="font-mono text-[9.5px] uppercase tracking-[0.18em] text-violet-700">
@@ -80,7 +80,7 @@ export function FlashcardCarousel({ payload }: { payload: FlashcardPayload }) {
               </p>
             )}
             <span className="absolute bottom-4 right-4 inline-flex items-center gap-1 text-[10px] uppercase tracking-[0.14em] text-violet-500 opacity-0 group-hover:opacity-100 transition-opacity">
-              <RotateCw className="w-3 h-3" strokeWidth={1.7} />
+              <RotateCw className="w-3 h-3" strokeWidth={1.5} />
               voltear
             </span>
           </div>
@@ -111,7 +111,7 @@ export function FlashcardCarousel({ payload }: { payload: FlashcardPayload }) {
           onClick={() => setFlipped((f) => !f)}
           className="inline-flex items-center gap-1.5 px-3 h-8 rounded-full text-[11px] font-medium uppercase tracking-[0.14em] text-violet-700 bg-violet-100 hover:bg-violet-200 transition-colors"
         >
-          <RotateCw className="w-3 h-3" strokeWidth={1.7} />
+          <RotateCw className="w-3 h-3" strokeWidth={1.5} />
           {flipped ? "Pregunta" : "Respuesta"}
         </button>
         <button

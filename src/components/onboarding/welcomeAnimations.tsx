@@ -87,7 +87,7 @@ export function WelcomeMethodsAnim() {
             style={{ animationDelay: `${i * 180}ms` }}
           >
             <span className="grid h-8 w-8 place-items-center rounded-lg bg-spark/10 text-spark border border-spark/20">
-              <Icon className="h-4 w-4" strokeWidth={1.75} />
+              <Icon className="h-4 w-4" strokeWidth={1.5} />
             </span>
             <span className="text-xs font-semibold text-foreground">
               {label}
@@ -179,11 +179,11 @@ export function WelcomeStartAnim() {
     <div className="relative h-full w-full flex items-center justify-center overflow-hidden">
       <div className="spark-welcome-start-glow" aria-hidden />
       <div className="spark-welcome-start-pill">
-        <Flame className="h-4 w-4 text-spark" strokeWidth={1.75} />
+        <Flame className="h-4 w-4 text-spark" strokeWidth={1.5} />
         <span className="text-xs font-semibold text-foreground">
           Lo importante de hoy
         </span>
-        <ArrowRight className="h-3 w-3 text-muted-foreground" strokeWidth={2} />
+        <ArrowRight className="h-3 w-3 text-muted-foreground" strokeWidth={1.5} />
       </div>
       <span className="spark-welcome-conf spark-welcome-conf--a" />
       <span className="spark-welcome-conf spark-welcome-conf--b" />

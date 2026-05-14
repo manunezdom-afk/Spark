@@ -15,6 +15,18 @@ const config = [
       "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
       "react/no-unescaped-entities": "off",
       "@typescript-eslint/no-require-imports": "off",
+      // CLAUDE.md: Lucide icons SIEMPRE strokeWidth={1.5}. Regla custom
+      // que falla cualquier literal numérico ≠ 1.5 dentro de
+      // strokeWidth={...}. Acepta variables/expresiones dinámicas.
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector:
+            "JSXAttribute[name.name='strokeWidth'] > JSXExpressionContainer > Literal[value!=1.5]",
+          message:
+            "Lucide icons deben usar strokeWidth={1.5} (regla del ecosistema en CLAUDE.md).",
+        },
+      ],
     },
   },
 ];

@@ -7,8 +7,8 @@ import { useNovaAsk } from "@/components/nova/NovaAskProvider";
 
 /**
  * Acciones del hero de la home: CTA principal "Crear sesión" y CTA
- * secundario "Preguntarle a Nova" — equivalentes en jerarquía pero
- * el de Nova es ghost para que no compita con el primario.
+ * secundario "Preguntarle a Nova" en variante `nova` del Button para
+ * mantener consistencia visual y contraste accesible.
  */
 export function HeroActions({ canCreateSession }: { canCreateSession: boolean }) {
   const ask = useNovaAsk();
@@ -21,21 +21,23 @@ export function HeroActions({ canCreateSession }: { canCreateSession: boolean })
           {canCreateSession ? "Crear sesión" : "Crear primer tema"}
         </Link>
       </Button>
-      <button
+      <Button
         type="button"
+        variant="nova"
         onClick={ask.open}
-        className="group inline-flex items-center gap-2 px-4 py-2 rounded-full border border-nova/25 bg-white/60 backdrop-blur-sm text-[13px] font-medium text-foreground/80 hover:text-foreground hover:border-nova/45 hover:bg-white transition-colors"
+        className="group gap-2"
         title="Preguntarle a Nova · pulsa N"
+        aria-label="Preguntarle a Nova"
       >
         <Sparkles
           className="w-3.5 h-3.5 text-nova-mid transition-transform group-hover:rotate-12"
-          strokeWidth={1.7}
+          strokeWidth={1.5}
         />
         Preguntarle a Nova
         <kbd className="ml-1 rounded border border-black/[0.08] bg-black/[0.02] px-1.5 py-0.5 font-mono text-[9px] font-semibold text-muted-foreground/70">
           N
         </kbd>
-      </button>
+      </Button>
     </div>
   );
 }

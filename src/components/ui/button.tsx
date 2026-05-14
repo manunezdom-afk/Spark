@@ -12,6 +12,7 @@ const buttonVariants = cva(
       variant: {
         default: "bg-foreground text-background hover:opacity-90 active:scale-[0.98]",
         spark: "bg-spark text-white hover:bg-spark/90 active:scale-[0.98] shadow-[0_4px_14px_rgba(255,138,76,0.22)]",
+        nova: "border border-nova/35 bg-white text-foreground hover:bg-white hover:border-nova/55 hover:shadow-soft active:scale-[0.98]",
         ghost: "text-foreground hover:bg-black/[0.05]",
         outline: "border border-black/[0.10] bg-white text-foreground hover:bg-black/[0.03]",
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",

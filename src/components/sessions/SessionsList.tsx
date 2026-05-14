@@ -122,7 +122,7 @@ export function SessionsList({
           >
             <Trash2
               className="w-3.5 h-3.5 transition-transform group-hover:-rotate-6"
-              strokeWidth={1.75}
+              strokeWidth={1.5}
             />
             Limpiar historial
           </button>
@@ -132,7 +132,7 @@ export function SessionsList({
       <div className="flex flex-col gap-10">
         {visibleActive.length > 0 && (
           <Group
-            icon={<PlayCircle className="w-3.5 h-3.5" strokeWidth={1.75} />}
+            icon={<PlayCircle className="w-3.5 h-3.5" strokeWidth={1.5} />}
             title="Abiertas"
             tone="spark"
           >
@@ -155,7 +155,7 @@ export function SessionsList({
 
         {visibleCompleted.length > 0 && (
           <Group
-            icon={<Clock className="w-3.5 h-3.5" strokeWidth={1.75} />}
+            icon={<Clock className="w-3.5 h-3.5" strokeWidth={1.5} />}
             title="Completadas"
             tone="muted"
           >
@@ -178,7 +178,7 @@ export function SessionsList({
 
         {visibleAbandoned.length > 0 && (
           <Group
-            icon={<Clock className="w-3.5 h-3.5" strokeWidth={1.75} />}
+            icon={<Clock className="w-3.5 h-3.5" strokeWidth={1.5} />}
             title="Abandonadas"
             tone="muted"
           >
@@ -388,7 +388,7 @@ function RowMenu({
       aria-label="Eliminar sesión"
       className="shrink-0 w-8 h-8 grid place-items-center rounded-lg text-muted-foreground/40 hover:text-rose-600 hover:bg-rose-50 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
     >
-      <MoreHorizontal className="w-4 h-4" strokeWidth={1.75} />
+      <MoreHorizontal className="w-4 h-4" strokeWidth={1.5} />
     </button>
   );
 }

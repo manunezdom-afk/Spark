@@ -182,8 +182,8 @@ export function PageHelp() {
         aria-label={open ? "Cerrar ayuda" : "Ver ayuda"}
       >
         {open
-          ? <X className="w-4 h-4" strokeWidth={2} />
-          : <HelpCircle className="w-4.5 h-4.5" strokeWidth={1.75} />
+          ? <X className="w-4 h-4" strokeWidth={1.5} />
+          : <HelpCircle className="w-4.5 h-4.5" strokeWidth={1.5} />
         }
       </button>
 
@@ -244,7 +244,7 @@ export function PageHelp() {
               }}
               className="flex items-center gap-2 w-full text-left rounded-xl border border-nova/20 bg-nova-soft/60 px-3 py-2 text-[12px] font-medium text-nova hover:border-nova/35 hover:bg-nova-soft transition-colors"
             >
-              <Sparkles className="w-3.5 h-3.5" strokeWidth={1.75} />
+              <Sparkles className="w-3.5 h-3.5" strokeWidth={1.5} />
               Pregúntale a Nova cómo se usa
             </button>
             <button
@@ -255,7 +255,7 @@ export function PageHelp() {
               }}
               className="flex items-center gap-2 w-full text-left rounded-xl border border-black/[0.06] bg-white/60 px-3 py-2 text-[12px] font-medium text-foreground hover:border-black/[0.10] hover:bg-white transition-colors"
             >
-              <Compass className="w-3.5 h-3.5" strokeWidth={1.75} />
+              <Compass className="w-3.5 h-3.5" strokeWidth={1.5} />
               Ver tour de bienvenida
             </button>
             <p className="text-[10px] text-muted-foreground/60 text-center mt-1">

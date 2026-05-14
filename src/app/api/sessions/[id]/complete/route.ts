@@ -12,6 +12,7 @@ import {
   completeSession,
   insertFlashcards,
   checkAndIncrementRateLimit,
+  appendTurn,
 } from "@/lib/spark/queries";
 import { buildEvaluatorPrompt } from "@/modules/spark/prompts/evaluator";
 import { sm2, scoreToQuality } from "@/modules/spark/scheduler/sm2";
@@ -165,6 +166,27 @@ export async function POST(_request: NextRequest, { params }: RouteContext) {
         hint: c.hint ?? null,
       }))
     );
+  }
+
+  // Persistir el ScorePayload como turn assistant final. La summary
+  // page lo necesita para mostrar el breakdown sin tener que volver a
+  // llamar al evaluator. Se guarda como turn (no en otra tabla) para
+  // mantener el shape uniforme de SparkSessionTurn.
+  const lastTurnIndex = turns.reduce(
+    (max, t) => (t.turn_index > max ? t.turn_index : max),
+    -1
+  );
+  try {
+    await appendTurn(db, {
+      session_id: sessionId,
+      role: "assistant",
+      content: scorePayload.feedback,
+      payload: scorePayload,
+      turn_index: lastTurnIndex + 1,
+    });
+  } catch {
+    // Si falla persistir el score-turn, seguimos: el score y feedback ya
+    // están en la sesión. La summary cae al fallback sin breakdown.
   }
 
   await completeSession(db, sessionId, score, scorePayload.feedback);

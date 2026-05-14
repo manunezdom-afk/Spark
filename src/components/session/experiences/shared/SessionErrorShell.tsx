@@ -46,7 +46,7 @@ export function SessionErrorShell({
         >
           <AlertTriangle
             className="w-6 h-6 text-rose-600"
-            strokeWidth={1.7}
+            strokeWidth={1.5}
           />
         </div>
         <h2 className="text-xl md:text-2xl font-semibold tracking-tight text-foreground mb-2 leading-tight">
@@ -63,13 +63,13 @@ export function SessionErrorShell({
               className="gap-1.5 text-white"
               style={{ background: theme.coachGradient }}
             >
-              <RefreshCw className="w-3.5 h-3.5" strokeWidth={1.7} />
+              <RefreshCw className="w-3.5 h-3.5" strokeWidth={1.5} />
               Reintentar
             </Button>
           )}
           <Button asChild variant="outline" className="gap-1.5">
             <Link href="/sessions">
-              <ArrowLeft className="w-3.5 h-3.5" strokeWidth={1.7} />
+              <ArrowLeft className="w-3.5 h-3.5" strokeWidth={1.5} />
               Volver a Sesiones
             </Link>
           </Button>

@@ -32,7 +32,7 @@ export function CollapsibleSecondary({
           className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${
             open ? "rotate-180" : ""
           }`}
-          strokeWidth={1.75}
+          strokeWidth={1.5}
         />
       </button>
       {open && <div className="mt-5">{children}</div>}

@@ -65,7 +65,7 @@ export function MethodChallengeCard({
               color: theme.accent,
             }}
           >
-            <StripIcon className="w-3.5 h-3.5" strokeWidth={1.7} />
+            <StripIcon className="w-3.5 h-3.5" strokeWidth={1.5} />
           </span>
           <NovaMark size={12} />
           <span
@@ -203,7 +203,7 @@ function MethodTurnBody({
               color: accent,
             }}
           >
-            <Spline className="w-3.5 h-3.5" strokeWidth={1.7} />
+            <Spline className="w-3.5 h-3.5" strokeWidth={1.5} />
           </span>
           <p className="text-[15px] leading-relaxed whitespace-pre-wrap text-foreground/90 flex-1">
             {text}
@@ -279,7 +279,7 @@ export function MethodStreamingCard({
             color: theme.accent,
           }}
         >
-          <StripIcon className="w-3.5 h-3.5" strokeWidth={1.7} />
+          <StripIcon className="w-3.5 h-3.5" strokeWidth={1.5} />
         </span>
         <NovaMark size={12} className="animate-pulse" />
         <span

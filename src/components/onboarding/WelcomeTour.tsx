@@ -224,7 +224,7 @@ export function WelcomeTour() {
         {/* Header */}
         <div className="flex items-center justify-between gap-2 px-4 pt-3 sm:px-5">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-spark/[0.08] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-spark">
-            <Sparkles className="h-3 w-3" strokeWidth={1.75} />
+            <Sparkles className="h-3 w-3" strokeWidth={1.5} />
             Tour
           </span>
           <div className="flex items-center gap-1">
@@ -243,7 +243,7 @@ export function WelcomeTour() {
               aria-label="Cerrar tour"
               className="grid h-8 w-8 place-items-center rounded-md text-muted-foreground transition-colors hover:bg-black/[0.04] hover:text-foreground"
             >
-              <X className="h-4 w-4" strokeWidth={2} />
+              <X className="h-4 w-4" strokeWidth={1.5} />
             </button>
           </div>
         </div>
@@ -264,7 +264,7 @@ export function WelcomeTour() {
             key={`eyebrow-${slide.key}`}
             className="flex items-center gap-1.5 text-[11px] font-mono font-semibold uppercase tracking-[0.18em] text-muted-foreground spark-welcome-stage-fade"
           >
-            <Icon className="h-3 w-3 text-spark" strokeWidth={1.75} />
+            <Icon className="h-3 w-3 text-spark" strokeWidth={1.5} />
             {slide.eyebrow}
           </div>
           <h2
@@ -324,19 +324,19 @@ export function WelcomeTour() {
             disabled={index === 0}
             className={cn(index === 0 && "opacity-0 pointer-events-none")}
           >
-            <ArrowLeft className="h-3.5 w-3.5" strokeWidth={1.75} />
+            <ArrowLeft className="h-3.5 w-3.5" strokeWidth={1.5} />
             Atrás
           </Button>
 
           {isLast ? (
             <Button type="button" variant="spark" size="sm" onClick={finish}>
               Ir a mis temas
-              <ArrowRight className="h-3.5 w-3.5" strokeWidth={2} />
+              <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.5} />
             </Button>
           ) : (
             <Button type="button" variant="spark" size="sm" onClick={next}>
               Siguiente
-              <ArrowRight className="h-3.5 w-3.5" strokeWidth={2} />
+              <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.5} />
             </Button>
           )}
         </div>

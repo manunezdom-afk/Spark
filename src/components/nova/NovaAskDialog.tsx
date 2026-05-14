@@ -498,7 +498,7 @@ export function NovaAskDialog({ open, onOpenChange }: NovaAskDialogProps) {
                     className="mt-3 inline-flex items-center gap-1 rounded-full border border-nova/30 bg-nova-soft px-3 py-1 text-[11px] font-semibold text-nova transition-colors hover:border-nova/50"
                   >
                     Ir a repasar
-                    <ArrowRight className="h-3 w-3" strokeWidth={2} />
+                    <ArrowRight className="h-3 w-3" strokeWidth={1.5} />
                   </button>
                 )}
                 <button

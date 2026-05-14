@@ -66,7 +66,7 @@ export function SessionLoadingShell({
           >
             <Icon
               className="w-8 h-8"
-              strokeWidth={1.6}
+              strokeWidth={1.5}
               style={{ color: theme.accent }}
             />
           </div>

@@ -129,11 +129,11 @@ export default function AccountPage() {
               }}
               title="Olvida los tutoriales vistos y los vuelve a mostrar"
             >
-              <RotateCcw className="w-3.5 h-3.5" strokeWidth={1.75} />
+              <RotateCcw className="w-3.5 h-3.5" strokeWidth={1.5} />
               Reiniciar
             </Button>
             <Button variant="spark" size="sm" onClick={openWelcome}>
-              <Compass className="w-3.5 h-3.5" strokeWidth={1.75} />
+              <Compass className="w-3.5 h-3.5" strokeWidth={1.5} />
               Ver tour
             </Button>
           </div>

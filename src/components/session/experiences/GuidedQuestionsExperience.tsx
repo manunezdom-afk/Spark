@@ -174,6 +174,7 @@ export function GuidedQuestionsExperience({
           {engine.completionScore ? (
             <CompletionPanel
               score={engine.completionScore}
+              sessionId={session.id}
               topicId={session.topic_ids[0]}
             />
           ) : currentEntry && currentEntry.question ? (
@@ -230,7 +231,7 @@ export function GuidedQuestionsExperience({
                 >
                   <Activity
                     className="w-3.5 h-3.5 mt-0.5 shrink-0 text-amber-600"
-                    strokeWidth={1.7}
+                    strokeWidth={1.5}
                   />
                   <span>
                     <span className="font-medium not-italic text-amber-700">
@@ -279,7 +280,7 @@ export function GuidedQuestionsExperience({
                     disabled={engine.status !== "idle"}
                     className="gap-1.5"
                   >
-                    <Lightbulb className="w-3.5 h-3.5" strokeWidth={1.6} />
+                    <Lightbulb className="w-3.5 h-3.5" strokeWidth={1.5} />
                     Pedir pista
                   </Button>
                   <Button
@@ -294,7 +295,7 @@ export function GuidedQuestionsExperience({
                     {displayLayer >= 4
                       ? "Cerrar la síntesis"
                       : "Avanzar a la siguiente capa"}
-                    <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.7} />
+                    <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.5} />
                   </Button>
                 </div>
                 {engine.warning && (
@@ -329,7 +330,7 @@ export function GuidedQuestionsExperience({
             <div className="flex items-center gap-2">
               <BookOpenCheck
                 className="w-4 h-4"
-                strokeWidth={1.6}
+                strokeWidth={1.5}
                 style={{ color: theme.accent }}
               />
               <span
@@ -406,7 +407,7 @@ function ClosedLayerRow({
           className="font-mono text-[9.5px] uppercase tracking-[0.16em] flex items-center gap-1"
           style={{ color: accent }}
         >
-          <Layers className="w-3 h-3" strokeWidth={1.7} />
+          <Layers className="w-3 h-3" strokeWidth={1.5} />
           {label}
         </span>
         {grade !== null ? (
@@ -430,7 +431,7 @@ function ClosedLayerRow({
             {Math.round(grade)}
           </span>
         ) : (
-          <Check className="w-3.5 h-3.5 text-emerald-600" strokeWidth={2} />
+          <Check className="w-3.5 h-3.5 text-emerald-600" strokeWidth={1.5} />
         )}
       </div>
       <p className="text-[12px] text-muted-foreground line-clamp-2 mb-1.5">
@@ -459,7 +460,7 @@ function ClosingSynthesisPanel({
       style={{ borderColor: hexToRgba(accent, 0.22) }}
     >
       <header className="flex items-center gap-2 mb-4">
-        <Compass className="w-4 h-4" strokeWidth={1.7} style={{ color: accent }} />
+        <Compass className="w-4 h-4" strokeWidth={1.5} style={{ color: accent }} />
         <span
           className="font-mono text-[10px] uppercase tracking-[0.18em]"
           style={{ color: accent }}
@@ -480,7 +481,7 @@ function ClosingSynthesisPanel({
       {gaps.length > 0 && (
         <div>
           <header className="flex items-center gap-2 mb-2">
-            <AlertCircle className="w-3.5 h-3.5" strokeWidth={1.7} style={{ color: accent }} />
+            <AlertCircle className="w-3.5 h-3.5" strokeWidth={1.5} style={{ color: accent }} />
             <span
               className="font-mono text-[9.5px] uppercase tracking-[0.16em]"
               style={{ color: accent }}
@@ -520,7 +521,7 @@ function GradeChip({ score, accent }: { score: number; accent: string }) {
         borderColor: hexToRgba(accent, 0.18),
       }}
     >
-      <Activity className="w-3 h-3" strokeWidth={1.7} style={{ color: tone.fg }} />
+      <Activity className="w-3 h-3" strokeWidth={1.5} style={{ color: tone.fg }} />
       <span
         className="font-mono text-[10px] uppercase tracking-[0.14em]"
         style={{ color: tone.fg }}

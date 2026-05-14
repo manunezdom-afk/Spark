@@ -23,7 +23,7 @@ export function NovaDashboardEntry() {
           <span className="text-[15px] font-semibold leading-tight">Pregúntale a Nova qué estudiar hoy</span>
           <span className="text-[11px] leading-tight opacity-75">Plan, método recomendado, tarjetas, resúmenes · pulsa N</span>
         </span>
-        <ArrowRight className="relative w-5 h-5 opacity-70 transition-transform group-hover:translate-x-0.5" strokeWidth={1.75} />
+        <ArrowRight className="relative w-5 h-5 opacity-70 transition-transform group-hover:translate-x-0.5" strokeWidth={1.5} />
       </button>
     </div>
   );

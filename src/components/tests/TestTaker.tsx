@@ -178,7 +178,7 @@ export function TestTaker({
           <div className="flex items-center gap-2 min-w-0">
             <ListChecks
               className="w-4 h-4 shrink-0"
-              strokeWidth={1.6}
+              strokeWidth={1.5}
               style={{ color: theme.accent }}
             />
             <div className="flex flex-col leading-tight min-w-0">
@@ -207,9 +207,9 @@ export function TestTaker({
                 }}
               >
                 {timer.paused ? (
-                  <Play className="w-3 h-3" strokeWidth={1.7} />
+                  <Play className="w-3 h-3" strokeWidth={1.5} />
                 ) : (
-                  <Hourglass className="w-3 h-3" strokeWidth={1.7} />
+                  <Hourglass className="w-3 h-3" strokeWidth={1.5} />
                 )}
                 {timerLabel}
               </button>
@@ -221,7 +221,7 @@ export function TestTaker({
                 className="inline-flex items-center gap-1 px-2.5 h-7 rounded-full font-mono text-[10px] tracking-[0.14em] uppercase border bg-white/85 text-muted-foreground hover:text-foreground"
                 title="Activar temporizador (90s por pregunta)"
               >
-                <Timer className="w-3 h-3" strokeWidth={1.7} />
+                <Timer className="w-3 h-3" strokeWidth={1.5} />
                 Cronometrar
               </button>
             )}

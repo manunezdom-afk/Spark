@@ -200,6 +200,7 @@ export function ConnectThemesExperience({
           {engine.completionScore ? (
             <CompletionPanel
               score={engine.completionScore}
+              sessionId={session.id}
               topicId={session.topic_ids[0]}
             />
           ) : openProposal && isOpeningMap ? (
@@ -272,7 +273,7 @@ function OpeningMapPanel({
       }}
     >
       <header className="flex items-center gap-2 mb-4">
-        <Network className="w-4 h-4" strokeWidth={1.7} style={{ color: accent }} />
+        <Network className="w-4 h-4" strokeWidth={1.5} style={{ color: accent }} />
         <span
           className="font-mono text-[10px] uppercase tracking-[0.18em]"
           style={{ color: accent }}
@@ -293,13 +294,13 @@ function OpeningMapPanel({
         >
           {status === "streaming" ? (
             <>
-              <Loader2 className="w-3.5 h-3.5 animate-spin" strokeWidth={1.7} />
+              <Loader2 className="w-3.5 h-3.5 animate-spin" strokeWidth={1.5} />
               Preparando puente…
             </>
           ) : (
             <>
               Empezar conexiones
-              <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.7} />
+              <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.5} />
             </>
           )}
         </Button>
@@ -366,7 +367,7 @@ function ActiveProposalPanel({
               border: `1px solid ${hexToRgba(accent, 0.28)}`,
             }}
           >
-            <Spline className="w-4 h-4" strokeWidth={1.7} />
+            <Spline className="w-4 h-4" strokeWidth={1.5} />
           </span>
           <div className="flex flex-col leading-tight">
             <span
@@ -447,7 +448,7 @@ function ActiveProposalPanel({
                       }
                 }
               >
-                <Icon className="w-4 h-4" strokeWidth={1.6} />
+                <Icon className="w-4 h-4" strokeWidth={1.5} />
                 {VERDICT_LABELS[k].label}
               </button>
             );
@@ -489,13 +490,13 @@ function ActiveProposalPanel({
           >
             {status === "streaming" ? (
               <>
-                <Loader2 className="w-3.5 h-3.5 animate-spin" strokeWidth={1.7} />
+                <Loader2 className="w-3.5 h-3.5 animate-spin" strokeWidth={1.5} />
                 Tendiendo el puente…
               </>
             ) : (
               <>
                 Sellar veredicto
-                <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.7} />
+                <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.5} />
               </>
             )}
           </Button>
@@ -528,14 +529,14 @@ function StructuredBridgeView({
         <div className="hidden md:flex flex-col items-center justify-center px-2">
           <ArrowRight
             className="w-5 h-5"
-            strokeWidth={1.7}
+            strokeWidth={1.5}
             style={{ color: accent }}
           />
         </div>
         <div className="md:hidden flex justify-center">
           <ArrowRight
             className="w-5 h-5 rotate-90"
-            strokeWidth={1.7}
+            strokeWidth={1.5}
             style={{ color: accent }}
           />
         </div>
@@ -566,7 +567,7 @@ function StructuredBridgeView({
         >
           <FlaskConical
             className="w-4 h-4 shrink-0 mt-0.5 text-amber-700"
-            strokeWidth={1.7}
+            strokeWidth={1.5}
           />
           <div>
             <span className="font-mono text-[9.5px] uppercase tracking-[0.16em] block mb-1 text-amber-700">
@@ -635,7 +636,7 @@ function QualityChip({
     >
       <Sparkles
         className="w-3 h-3"
-        strokeWidth={1.7}
+        strokeWidth={1.5}
         style={{ color: tone.fg }}
       />
       <span
@@ -664,7 +665,7 @@ function TopicConstellation({
       style={{ borderColor: hexToRgba(accent, 0.16) }}
     >
       <header className="flex items-center gap-2 mb-3">
-        <Sparkles className="w-3.5 h-3.5" strokeWidth={1.6} style={{ color: accent }} />
+        <Sparkles className="w-3.5 h-3.5" strokeWidth={1.5} style={{ color: accent }} />
         <span
           className="font-mono text-[10px] uppercase tracking-[0.18em]"
           style={{ color: accent }}
@@ -710,7 +711,7 @@ function BridgesPanel({
   return (
     <aside className="lg:sticky lg:top-32 lg:self-start flex flex-col gap-3">
       <header className="flex items-center gap-2">
-        <Network className="w-4 h-4" strokeWidth={1.6} style={{ color: accent }} />
+        <Network className="w-4 h-4" strokeWidth={1.5} style={{ color: accent }} />
         <span
           className="font-mono text-[10px] uppercase tracking-[0.18em]"
           style={{ color: accent }}
@@ -779,7 +780,7 @@ function BridgeRow({ proposal, accent }: { proposal: Proposal; accent: string })
           <span className="font-medium text-foreground/90">{conceptA}</span>
           <ArrowRight
             className="w-3 h-3 shrink-0"
-            strokeWidth={1.7}
+            strokeWidth={1.5}
             style={{ color: accent }}
           />
           <span className="font-medium text-foreground/90">{conceptB}</span>
@@ -814,7 +815,7 @@ function FinalGraph({
       style={{ borderColor: hexToRgba(accent, 0.22) }}
     >
       <header className="flex items-center gap-2 mb-4">
-        <Network className="w-4 h-4" strokeWidth={1.6} style={{ color: accent }} />
+        <Network className="w-4 h-4" strokeWidth={1.5} style={{ color: accent }} />
         <span
           className="font-mono text-[10px] uppercase tracking-[0.18em]"
           style={{ color: accent }}
@@ -830,7 +831,7 @@ function FinalGraph({
             style={{ borderColor: hexToRgba(accent, 0.14) }}
           >
             <span className="font-medium text-foreground">{e.source}</span>
-            <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.7} style={{ color: accent }} />
+            <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.5} style={{ color: accent }} />
             <span
               className="px-2 py-0.5 rounded-full text-[11px] italic"
               style={{
@@ -840,7 +841,7 @@ function FinalGraph({
             >
               {e.relationship}
             </span>
-            <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.7} style={{ color: accent }} />
+            <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.5} style={{ color: accent }} />
             <span className="font-medium text-foreground">{e.target}</span>
           </li>
         ))}

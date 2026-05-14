@@ -15,6 +15,7 @@ import { getAllMastery, getTopics } from "@/lib/spark/queries";
 import { MasteryBar } from "@/components/mastery/MasteryBar";
 import { GradientText } from "@/components/brand/GradientText";
 import { CollapsibleSecondary } from "@/components/mastery/CollapsibleSecondary";
+import { InfoIcon } from "@/components/ui/info-icon";
 import type { SparkMasteryState, SparkTopic } from "@/modules/spark/types";
 
 export const dynamic = "force-dynamic";
@@ -142,7 +143,7 @@ export default async function MapPage() {
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mb-8 text-[12.5px] text-muted-foreground">
             {totalDueToday > 0 ? (
               <span className="inline-flex items-center gap-1.5">
-                <Flame className="w-3.5 h-3.5 text-orange-500" strokeWidth={1.75} />
+                <Flame className="w-3.5 h-3.5 text-orange-500" strokeWidth={1.5} />
                 <span className="text-foreground/80 font-medium">
                   {totalDueToday}
                 </span>{" "}
@@ -152,18 +153,22 @@ export default async function MapPage() {
               <span className="inline-flex items-center gap-1.5">
                 <CheckCircle2
                   className="w-3.5 h-3.5 text-emerald-500"
-                  strokeWidth={1.75}
+                  strokeWidth={1.5}
                 />
                 Nada urgente hoy
               </span>
             )}
             {avgMastery !== null && (
               <span className="inline-flex items-center gap-1.5">
-                <Activity className="w-3.5 h-3.5" strokeWidth={1.75} />
+                <Activity className="w-3.5 h-3.5" strokeWidth={1.5} />
                 Promedio{" "}
                 <span className="text-foreground/80 font-medium tabular-nums">
                   {avgMastery}%
                 </span>
+                <InfoIcon
+                  hint="Maestría es el promedio ponderado de tus puntajes por sesión en cada tema. SM-2 decide cuándo te toca repasar para que el conocimiento no se enfríe."
+                  size="sm"
+                />
               </span>
             )}
           </div>
@@ -277,11 +282,17 @@ function BucketSection({
           <span
             className={`inline-flex items-center justify-center w-8 h-8 rounded-lg border ${style.badge}`}
           >
-            <Icon className="w-3.5 h-3.5" strokeWidth={1.75} />
+            <Icon className="w-3.5 h-3.5" strokeWidth={1.5} />
           </span>
           <div className="flex flex-col leading-tight">
-            <span className="text-[14px] font-semibold tracking-tight">
+            <span className="text-[14px] font-semibold tracking-tight inline-flex items-center gap-1.5">
               {title}
+              {tone === "urgent" && (
+                <InfoIcon
+                  hint="El planificador SM-2 marcó estos temas como vencidos. Repasarlos justo a tiempo (no demasiado temprano, no demasiado tarde) maximiza la retención."
+                  size="sm"
+                />
+              )}
             </span>
             <span className="text-[11.5px] text-muted-foreground">{kicker}</span>
           </div>
@@ -372,7 +383,7 @@ function TopicRow({
         </div>
         <ArrowRight
           className="w-4 h-4 text-muted-foreground/40 group-hover:text-foreground group-hover:translate-x-0.5 transition-all shrink-0"
-          strokeWidth={1.75}
+          strokeWidth={1.5}
         />
       </Link>
     </li>
@@ -439,7 +450,7 @@ function FreshAccountState({ topics }: { topics: SparkTopic[] }) {
   return (
     <div className="rounded-3xl border border-black/[0.07] bg-white/70 p-8 text-center">
       <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-spark/10 border border-spark/20 mb-4">
-        <CheckCircle2 className="w-5 h-5 text-spark" strokeWidth={1.7} />
+        <CheckCircle2 className="w-5 h-5 text-spark" strokeWidth={1.5} />
       </div>
       <h2 className="text-lg font-semibold tracking-tight mb-2">
         Tienes {topics.length} {topics.length === 1 ? "tema creado" : "temas creados"}
@@ -453,7 +464,7 @@ function FreshAccountState({ topics }: { topics: SparkTopic[] }) {
         className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-spark text-white text-[13px] font-semibold hover:scale-[1.02] transition-transform"
       >
         Empezar primera sesión
-        <ArrowRight className="w-3.5 h-3.5" strokeWidth={2} />
+        <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.5} />
       </Link>
     </div>
   );

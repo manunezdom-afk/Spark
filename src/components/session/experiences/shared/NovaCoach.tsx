@@ -68,7 +68,7 @@ export function NovaThinking({
           border: `1px solid ${hexToRgba(theme.accent, 0.22)}`,
         }}
       >
-        <Sparkles className="w-3 h-3 animate-pulse" strokeWidth={1.7} />
+        <Sparkles className="w-3 h-3 animate-pulse" strokeWidth={1.5} />
         <span>{text ? "Nova respondiendo…" : `Nova ${theme.streamingLabel}…`}</span>
       </span>
       {fullText && displayText && (

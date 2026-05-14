@@ -262,7 +262,7 @@ export default async function TopicDetailPage({ params }: RouteParams) {
       {materials.length > 0 && (
         <section className="mb-10">
           <h2 className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted-foreground/70 mb-4 flex items-center gap-2">
-            <BookOpen className="w-3.5 h-3.5" strokeWidth={1.6} />
+            <BookOpen className="w-3.5 h-3.5" strokeWidth={1.5} />
             Material de Kairos
             <span className="text-foreground/40 normal-case tracking-normal">
               ({materials.length})
@@ -285,7 +285,7 @@ export default async function TopicDetailPage({ params }: RouteParams) {
       {sessions.length > 0 && (
         <section className="mb-10">
           <h2 className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted-foreground/70 mb-4 flex items-center gap-2">
-            <History className="w-3.5 h-3.5" strokeWidth={1.6} />
+            <History className="w-3.5 h-3.5" strokeWidth={1.5} />
             Historial de este tema
             <span className="text-foreground/40 normal-case tracking-normal">
               ({sessions.length})
@@ -344,7 +344,7 @@ export default async function TopicDetailPage({ params }: RouteParams) {
               className="mt-3 inline-flex items-center gap-1 text-[11.5px] font-medium text-muted-foreground hover:text-foreground"
             >
               Ver todas las sesiones
-              <ArrowRight className="w-3 h-3" strokeWidth={2} />
+              <ArrowRight className="w-3 h-3" strokeWidth={1.5} />
             </Link>
           )}
         </section>
@@ -354,7 +354,7 @@ export default async function TopicDetailPage({ params }: RouteParams) {
       {errors.length > 0 && (
         <section>
           <h2 className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted-foreground/70 mb-4 flex items-center gap-2">
-            <AlertCircle className="w-3.5 h-3.5" strokeWidth={1.6} />
+            <AlertCircle className="w-3.5 h-3.5" strokeWidth={1.5} />
             Patrones de error
             <span className="text-foreground/40 normal-case tracking-normal">
               ({errors.length})
@@ -383,9 +383,9 @@ export default async function TopicDetailPage({ params }: RouteParams) {
               href={`/sessions/new?engine=debugger&topic=${topic.id}`}
               className="inline-flex items-center gap-1.5 text-[12px] font-medium text-spark hover:gap-2 transition-all"
             >
-              <Sparkles className="w-3 h-3" strokeWidth={1.7} />
+              <Sparkles className="w-3 h-3" strokeWidth={1.5} />
               Atacar estos errores con Cazar errores
-              <ArrowRight className="w-3 h-3" strokeWidth={2} />
+              <ArrowRight className="w-3 h-3" strokeWidth={1.5} />
             </Link>
           </div>
         </section>
@@ -401,7 +401,7 @@ function MaterialRow({ material }: { material: TopicMaterial }) {
   return (
     <li className="flex items-start gap-2.5 p-3 rounded-xl border border-black/[0.06] bg-white/55">
       <span className="inline-flex items-center justify-center w-6 h-6 rounded-md bg-nova-soft border border-nova/20 shrink-0 mt-0.5">
-        <BookOpen className="w-3 h-3 text-nova-mid" strokeWidth={1.7} />
+        <BookOpen className="w-3 h-3 text-nova-mid" strokeWidth={1.5} />
       </span>
       <div className="min-w-0 flex-1">
         <div className="text-[13px] font-medium text-foreground truncate">

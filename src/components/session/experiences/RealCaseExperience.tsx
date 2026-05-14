@@ -172,6 +172,7 @@ export function RealCaseExperience({
           {engine.completionScore ? (
             <CompletionPanel
               score={engine.completionScore}
+              sessionId={session.id}
               topicId={session.topic_ids[0]}
             />
           ) : openAct ? (
@@ -267,7 +268,7 @@ function ScenePanel({
               border: `1px solid ${hexToRgba(accent, 0.28)}`,
             }}
           >
-            <Drama className="w-4 h-4" strokeWidth={1.7} />
+            <Drama className="w-4 h-4" strokeWidth={1.5} />
           </span>
           <div className="flex flex-col leading-tight">
             <span
@@ -299,7 +300,7 @@ function ScenePanel({
         >
           <Sparkles
             className="w-3.5 h-3.5 mt-0.5 shrink-0 text-amber-700"
-            strokeWidth={1.7}
+            strokeWidth={1.5}
           />
           <span className="text-foreground/80">
             <span className="font-medium not-italic text-amber-700">
@@ -317,7 +318,7 @@ function ScenePanel({
       >
         <Quote
           className="absolute top-3 left-3 w-3.5 h-3.5 opacity-40"
-          strokeWidth={1.7}
+          strokeWidth={1.5}
           style={{ color: accent }}
         />
         <p className="text-[16px] leading-relaxed text-foreground/90 whitespace-pre-wrap pl-6 italic">
@@ -491,13 +492,13 @@ function ScenePanel({
               >
                 {status === "streaming" ? (
                   <>
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" strokeWidth={1.7} />
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" strokeWidth={1.5} />
                     Personaje reacciona…
                   </>
                 ) : (
                   <>
                     Ejecutar jugada
-                    <ChevronRight className="w-3.5 h-3.5" strokeWidth={1.7} />
+                    <ChevronRight className="w-3.5 h-3.5" strokeWidth={1.5} />
                   </>
                 )}
               </Button>
@@ -530,7 +531,7 @@ function ScenarioBriefing({
     >
       <header className="flex items-center justify-between gap-3 mb-3 flex-wrap">
         <div className="flex items-center gap-2">
-          <Briefcase className="w-4 h-4" strokeWidth={1.6} style={{ color: accent }} />
+          <Briefcase className="w-4 h-4" strokeWidth={1.5} style={{ color: accent }} />
           <span
             className="font-mono text-[10px] uppercase tracking-[0.18em]"
             style={{ color: accent }}
@@ -539,7 +540,7 @@ function ScenarioBriefing({
           </span>
         </div>
         <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground inline-flex items-center gap-1">
-          <Clock className="w-3 h-3" strokeWidth={1.7} />
+          <Clock className="w-3 h-3" strokeWidth={1.5} />
           Tiempo libre
         </span>
       </header>
@@ -580,7 +581,7 @@ function ActsLog({ acts, accent }: { acts: Act[]; accent: string }) {
   return (
     <aside className="lg:sticky lg:top-32 lg:self-start flex flex-col gap-3">
       <header className="flex items-center gap-2">
-        <ScrollText className="w-4 h-4" strokeWidth={1.6} style={{ color: accent }} />
+        <ScrollText className="w-4 h-4" strokeWidth={1.5} style={{ color: accent }} />
         <span
           className="font-mono text-[10px] uppercase tracking-[0.18em]"
           style={{ color: accent }}
@@ -613,7 +614,7 @@ function ActsLog({ acts, accent }: { acts: Act[]; accent: string }) {
                   </span>
                   {a.posture && (
                     <span className="font-mono text-[9.5px] uppercase tracking-[0.14em] text-foreground/60 flex items-center gap-1">
-                      <ArrowRight className="w-2.5 h-2.5" strokeWidth={1.7} />
+                      <ArrowRight className="w-2.5 h-2.5" strokeWidth={1.5} />
                       {POSTURE_LABELS[a.posture].label}
                     </span>
                   )}

@@ -373,7 +373,7 @@ function RevealButton({ onClick }: { onClick: () => void }) {
     >
       <Eye
         className="w-4 h-4 transition-transform group-hover:scale-110"
-        strokeWidth={1.6}
+        strokeWidth={1.5}
       />
       Mostrar respuesta
     </Button>

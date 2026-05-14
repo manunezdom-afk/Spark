@@ -81,7 +81,7 @@ export function TopicActions({ topic }: { topic: SparkTopic }) {
         onClick={() => setEditOpen(true)}
         className="text-muted-foreground hover:text-foreground"
       >
-        <Pencil className="w-3.5 h-3.5" strokeWidth={1.75} />
+        <Pencil className="w-3.5 h-3.5" strokeWidth={1.5} />
         Editar
       </Button>
       <Button
@@ -90,7 +90,7 @@ export function TopicActions({ topic }: { topic: SparkTopic }) {
         onClick={() => setDeleteOpen(true)}
         className="text-muted-foreground hover:text-destructive"
       >
-        <Trash2 className="w-3.5 h-3.5" strokeWidth={1.75} />
+        <Trash2 className="w-3.5 h-3.5" strokeWidth={1.5} />
         Borrar
       </Button>
 
@@ -143,11 +143,11 @@ export function TopicActions({ topic }: { topic: SparkTopic }) {
           </div>
           <DialogFooter>
             <Button variant="ghost" onClick={() => setEditOpen(false)} disabled={busy}>
-              <X className="w-3.5 h-3.5" strokeWidth={1.75} />
+              <X className="w-3.5 h-3.5" strokeWidth={1.5} />
               Cancelar
             </Button>
             <Button variant="spark" onClick={onSave} disabled={busy}>
-              <Check className="w-3.5 h-3.5" strokeWidth={2} />
+              <Check className="w-3.5 h-3.5" strokeWidth={1.5} />
               {busy ? "Guardando…" : "Guardar"}
             </Button>
           </DialogFooter>
@@ -167,7 +167,7 @@ export function TopicActions({ topic }: { topic: SparkTopic }) {
               Cancelar
             </Button>
             <Button variant="destructive" onClick={onDelete} disabled={busy}>
-              <Trash2 className="w-3.5 h-3.5" strokeWidth={1.75} />
+              <Trash2 className="w-3.5 h-3.5" strokeWidth={1.5} />
               {busy ? "Borrando…" : "Borrar tema"}
             </Button>
           </DialogFooter>

@@ -93,7 +93,7 @@ export function Sidebar() {
             >
               <Icon
                 className={cn("w-[17px] h-[17px] shrink-0 transition-transform", !active && "group-hover:scale-110")}
-                strokeWidth={active ? 2 : 1.75}
+                strokeWidth={1.5}
               />
               {item.label}
             </Link>
@@ -144,7 +144,7 @@ export function Sidebar() {
               : "text-foreground/70 hover:text-foreground hover:bg-black/[0.04]"
           )}
         >
-          <User className="w-4 h-4 shrink-0" strokeWidth={1.75} />
+          <User className="w-4 h-4 shrink-0" strokeWidth={1.5} />
           <span className="truncate text-[12px]">
             {guest ? "Invitado" : (user?.email ?? "Cuenta")}
           </span>
@@ -153,7 +153,7 @@ export function Sidebar() {
           onClick={signOut}
           className="flex items-center gap-3 px-3.5 py-2 rounded-full text-sm text-foreground/60 hover:text-foreground hover:bg-black/[0.04] transition-colors w-full"
         >
-          <LogOut className="w-4 h-4 shrink-0" strokeWidth={1.75} />
+          <LogOut className="w-4 h-4 shrink-0" strokeWidth={1.5} />
           {guest ? "Salir" : "Cerrar sesión"}
         </button>
       </div>
