@@ -246,9 +246,7 @@ function Group({
   return (
     <section>
       <h2
-        className={`font-mono text-[11px] uppercase tracking-[0.2em] mb-4 flex items-center gap-2 ${
-          tone === "spark" ? "text-spark" : "text-muted-foreground/70"
-        }`}
+        className={`font-medium text-[11px] mb-4 flex items-center gap-2 ${ tone === "spark" ? "text-spark" : "text-muted-foreground/70" }`}
       >
         {icon}
         {title}
@@ -303,7 +301,7 @@ function SessionRow({
           className="flex-1 flex items-center justify-between gap-3 p-4 text-sm min-w-0"
         >
           <div className="flex items-center gap-3 min-w-0 flex-1">
-            <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground shrink-0">
+            <span className="font-medium text-[11px] text-muted-foreground shrink-0">
               {ENGINE_LABELS[session.engine]}
             </span>
             <span className="text-sm font-medium text-foreground/90 truncate">
@@ -320,13 +318,7 @@ function SessionRow({
               })}
             </span>
             <span
-              className={`text-[10px] uppercase tracking-[0.14em] font-mono ${
-                session.status === "completed"
-                  ? "text-emerald-600"
-                  : session.status === "active"
-                    ? "text-spark"
-                    : "text-muted-foreground"
-              }`}
+              className={`font-medium text-[11px] ${ session.status === "completed" ? "text-emerald-600" : session.status === "active" ? "text-spark" : "text-muted-foreground" }`}
             >
               {session.status === "completed"
                 ? `${session.score ?? 0}%`

@@ -947,14 +947,14 @@ function TopicSelector({
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0 flex flex-col">
                 {t.category && (
-                  <span className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground mb-0.5">
+                  <span className="font-medium text-[11px] text-muted-foreground mb-0.5">
                     {t.category}
                   </span>
                 )}
                 <span className="font-medium text-sm text-foreground inline-flex items-center gap-2">
                   {t.title}
                   {showDemoBadge && (
-                    <span className="inline-flex items-center gap-1 rounded-full border border-spark/20 bg-spark/[0.08] px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-[0.14em] text-spark">
+                    <span className="inline-flex items-center gap-1 rounded-full border border-spark/20 bg-spark/[0.08] px-1.5 py-0.5 text-[11px] font-semibold text-spark">
                       Demo
                     </span>
                   )}
@@ -1351,7 +1351,7 @@ function SummaryPanel({
         </span>
         <div className="flex flex-col min-w-0">
           <span
-            className="font-mono text-[10px] uppercase tracking-[0.22em]"
+            className="font-medium text-[11px]"
             style={{ color: theme.accent }}
           >
             Tu sesión
@@ -1406,7 +1406,7 @@ function SummaryPanel({
 
       <div className="rounded-2xl bg-white/85 border border-black/[0.05] p-3 text-[12px] leading-relaxed text-foreground/85">
         <span
-          className="block font-mono text-[10px] uppercase tracking-[0.18em] mb-1"
+          className="font-medium block text-[11px] mb-1"
           style={{ color: theme.accent }}
         >
           Nova lo hará así
@@ -1455,7 +1455,7 @@ function SummaryRow({
   return (
     <li className="flex items-start justify-between gap-3">
       <span
-        className="font-mono text-[10px] uppercase tracking-[0.18em] shrink-0 mt-0.5"
+        className="font-medium text-[11px] shrink-0 mt-0.5"
         style={{ color: hexToRgba(accent, 0.85) }}
       >
         {label}

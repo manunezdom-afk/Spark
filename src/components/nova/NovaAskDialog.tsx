@@ -386,7 +386,7 @@ export function NovaAskDialog({ open, onOpenChange }: NovaAskDialogProps) {
             <NovaMark size={15} variant="filled" />
           </span>
           <div className="min-w-0 flex-1">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-nova">
+            <p className="text-[11px] font-semibold text-nova">
               Nova
             </p>
             <p className="truncate text-sm font-semibold text-foreground">
@@ -436,7 +436,7 @@ export function NovaAskDialog({ open, onOpenChange }: NovaAskDialogProps) {
         {/* Quick actions (contextuales) */}
         {!hasOutput && !loading && (
           <div className="px-5 py-4">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/60">
+            <p className="text-[11px] font-semibold text-muted-foreground/60">
               Acciones rápidas
             </p>
             <ul className="mt-2 flex flex-col gap-0.5 max-h-[280px] overflow-y-auto pr-1">
@@ -481,7 +481,7 @@ export function NovaAskDialog({ open, onOpenChange }: NovaAskDialogProps) {
               <div>
                 <div className="flex items-center gap-1.5 mb-2">
                   <Sparkles className="h-3 w-3 text-nova" />
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-nova">
+                  <p className="text-[11px] font-semibold text-nova">
                     Nova
                   </p>
                 </div>

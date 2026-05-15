@@ -5,8 +5,8 @@ import { ArrowRight, History } from "lucide-react";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import { getSessions, getTopicsByIds } from "@/lib/spark/queries";
 import { Button } from "@/components/ui/button";
-import { GradientText } from "@/components/brand/GradientText";
 import { SessionsList } from "@/components/sessions/SessionsList";
+import { PageHeader } from "@/components/layout/PageHeader";
 
 export const dynamic = "force-dynamic";
 
@@ -33,14 +33,7 @@ export default async function SessionsPage() {
 
   return (
     <div className="p-6 md:p-12 max-w-3xl animate-fade-up">
-      <header className="flex flex-col gap-1.5 mb-10">
-        <h1 className="text-3xl md:text-4xl font-medium tracking-tight text-foreground">
-          Sesiones
-        </h1>
-        <p className="text-[14px] text-muted-foreground">
-          Tu historial de entrenamiento.
-        </p>
-      </header>
+      <PageHeader title="Sesiones" description="Tu historial de entrenamiento." />
 
       {sessions.length === 0 ? (
         <div className="flex flex-col items-center text-center py-16 gap-5 max-w-md mx-auto">
@@ -48,9 +41,8 @@ export default async function SessionsPage() {
             <History className="w-6 h-6 text-spark" strokeWidth={1.5} />
           </div>
           <div>
-            <h2 className="text-2xl font-light tracking-tight mb-2">
-              Aún no entrenaste{" "}
-              <GradientText italic>nada</GradientText>
+            <h2 className="text-xl font-medium tracking-tight mb-2 text-foreground">
+              Aún no entrenaste nada
             </h2>
             <p className="text-sm text-muted-foreground leading-relaxed">
               Elige un tema y un método para empezar tu primera sesión.

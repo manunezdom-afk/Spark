@@ -117,27 +117,27 @@ const PERSONALITIES: Record<ChatEngine, MethodPersonality> = {
     hudPhases: ['Briefing', 'Caza', 'Veredicto'],
     hudMaxPhases: 3,
 
-    introHook: 'Hay 3 errores escondidos. Encuéntralos antes que Nova revele el veredicto.',
+    introHook: 'Identifica los errores plantados en el texto antes de pedir la revisión.',
     introRules: [
-      'Nova genera un texto plausible con errores plantados.',
-      'Tú marcas oraciones sospechosas y explicas por qué.',
-      'Al revelar, ves cuántos cazaste y dónde estaban los demás.',
+      'Nova genera un texto plausible con errores intencionales.',
+      'Tú marcas las oraciones que detectes y explicas por qué.',
+      'Al revisar, ves cuáles identificaste y dónde estaban los demás.',
     ],
 
-    thinkingLabel: 'preparando trampas',
-    loadingHint: 'Nova está plantando errores en el texto…',
+    thinkingLabel: 'preparando ejercicio',
+    loadingHint: 'Nova está preparando el texto con errores…',
 
-    inputKicker: 'Tu reporte',
+    inputKicker: 'Tu revisión',
     inputPlaceholder: 'Indica qué oraciones marcaste y por qué.',
-    inputCta: 'Enviar reporte',
+    inputCta: 'Enviar revisión',
     inputHint: 'Nombra el error y di qué debería decir.',
 
     meterLabel: 'Precisión',
-    meterDescription: 'Errores cazados sobre errores plantados.',
+    meterDescription: 'Errores identificados sobre errores totales.',
 
-    novaToneTag: 'Forense conceptual',
+    novaToneTag: 'Revisor conceptual',
     novaToneDescription:
-      'Tono agudo, retador y preciso. Habla como un editor que sabe dónde están las trampas. No revela errores hasta que el usuario marca.',
+      'Tono agudo, claro y preciso. Habla como un editor que sabe dónde están las imprecisiones. No revela errores hasta que el usuario los marca.',
   },
 
   devils_advocate: {
@@ -145,32 +145,32 @@ const PERSONALITIES: Record<ChatEngine, MethodPersonality> = {
     intro: 'rival',
     challenge: 'strike',
 
-    hudKicker: 'Duelo',
-    hudTitle: 'Round',
-    hudPhases: ['Postura', 'Embate I', 'Embate II', 'Veredicto'],
+    hudKicker: 'Debate',
+    hudTitle: 'Ronda',
+    hudPhases: ['Postura', 'Ronda I', 'Ronda II', 'Veredicto'],
     hudMaxPhases: 4,
 
-    introHook: 'Tres rondas. Nova ataca tus premisas. Tú defiendes con tus notas.',
+    introHook: 'Tres rondas. Nova cuestiona tus argumentos para verificar la solidez de tu posición.',
     introRules: [
       'Comienzas declarando la postura que defenderás.',
-      'Nova ataca de la premisa más débil hacia las centrales.',
-      'Cada round mide la solidez con la que respondes.',
+      'Nova cuestiona desde la premisa más débil hacia las centrales.',
+      'Cada ronda mide la solidez con la que respondes.',
     ],
 
-    thinkingLabel: 'cargando contraataque',
-    loadingHint: 'Nova está armando el primer ataque…',
+    thinkingLabel: 'preparando contraargumento',
+    loadingHint: 'Nova está armando el primer contraargumento…',
 
-    inputKicker: 'Tu defensa',
-    inputPlaceholder: 'Defiende, matiza o reformula. No esquives.',
-    inputCta: 'Sostener',
+    inputKicker: 'Tu respuesta',
+    inputPlaceholder: 'Argumenta, matiza o reformula. No esquives.',
+    inputCta: 'Responder',
     inputHint: 'Cita evidencia concreta. Si concedes, dilo.',
 
     meterLabel: 'Solidez argumental',
-    meterDescription: 'Sube cuando defiendes con evidencia. Baja si esquivas.',
+    meterDescription: 'Sube cuando respondes con evidencia. Baja si esquivas.',
 
-    novaToneTag: 'Rival intelectual',
+    novaToneTag: 'Contraparte crítica',
     novaToneDescription:
-      'Tono confrontacional, incisivo y respetuoso. Ataca con contraejemplos reales, nunca con falacias. No cede hasta que el usuario apoye con evidencia.',
+      'Tono crítico, incisivo y respetuoso. Cuestiona con contraejemplos reales, nunca con falacias. No cede hasta que el usuario apoye con evidencia.',
   },
 
   bridge_builder: {
@@ -223,8 +223,8 @@ const PERSONALITIES: Record<ChatEngine, MethodPersonality> = {
       'Al final Nova sale del rol y entrega un debrief.',
     ],
 
-    thinkingLabel: 'entrando en personaje',
-    loadingHint: 'Nova está entrando en personaje…',
+    thinkingLabel: 'preparando el caso',
+    loadingHint: 'Nova está preparando el caso…',
 
     inputKicker: 'Tu jugada',
     inputPlaceholder: 'Habla con el personaje. Decide. Aplica lo que sabes.',

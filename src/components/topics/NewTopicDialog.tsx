@@ -15,7 +15,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { GradientText } from "@/components/brand/GradientText";
 import { InfoIcon } from "@/components/ui/info-icon";
 import { toast } from "sonner";
 
@@ -194,7 +193,7 @@ export function NewTopicDialog() {
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle className="inline-flex items-center gap-2">
-            Nuevo <GradientText italic className="font-light">tema</GradientText>
+            Nuevo tema
             <InfoIcon
               hint="Un tema es un trozo de material que entrenas: una materia, un capítulo, un concepto puntual. De cada tema salen sesiones, tarjetas y mediciones de maestría."
               size="sm"
@@ -303,7 +302,7 @@ export function NewTopicDialog() {
                       }`}>
                         <div className="flex items-start justify-between gap-3">
                           <div className="flex-1">
-                            <div className="text-[10px] font-mono uppercase tracking-[0.16em] text-muted-foreground/80 mb-1">{t.category}</div>
+                            <div className="font-medium text-[11px] text-muted-foreground/80 mb-1">{t.category}</div>
                             <div className="font-semibold text-[14px] text-foreground">{t.title}</div>
                             <div className="text-[12px] text-muted-foreground mt-1 leading-relaxed">{t.summary}</div>
                           </div>

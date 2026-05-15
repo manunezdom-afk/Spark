@@ -272,7 +272,7 @@ function ScenePanel({
           </span>
           <div className="flex flex-col leading-tight">
             <span
-              className="font-mono text-[10px] uppercase tracking-[0.18em]"
+              className="font-medium text-[11px]"
               style={{ color: accent }}
             >
               {isDebrief ? "Debrief · análisis del caso" : `Acto ${actNum} · ${sceneLabel}`}
@@ -330,7 +330,7 @@ function ScenePanel({
       {availableData.length > 0 && !isDebrief && (
         <div className="mt-4">
           <span
-            className="font-mono text-[10px] uppercase tracking-[0.16em] block mb-2"
+            className="font-medium text-[11px] block mb-2"
             style={{ color: accent }}
           >
             Datos a la mano
@@ -360,7 +360,7 @@ function ScenePanel({
       {availableData.length > 0 && isDebrief && (
         <div className="mt-4">
           <span
-            className="font-mono text-[10px] uppercase tracking-[0.16em] block mb-2"
+            className="font-medium text-[11px] block mb-2"
             style={{ color: accent }}
           >
             Lecciones del caso
@@ -389,7 +389,7 @@ function ScenePanel({
           }}
         >
           <span
-            className="font-mono text-[10px] uppercase tracking-[0.16em] block mb-2"
+            className="font-medium text-[11px] block mb-2"
             style={{ color: accent }}
           >
             Veredicto
@@ -407,7 +407,7 @@ function ScenePanel({
           style={{ borderColor: accent }}
         >
           <span
-            className="font-mono text-[10px] uppercase tracking-[0.14em] block"
+            className="font-medium text-[11px] block"
             style={{ color: accent }}
           >
             Tu turno
@@ -423,7 +423,7 @@ function ScenePanel({
         <>
           <div className="mt-6">
             <span
-              className="font-mono text-[10px] uppercase tracking-[0.16em] block mb-2"
+              className="font-medium text-[11px] block mb-2"
               style={{ color: accent }}
             >
               Postura ante este momento
@@ -459,7 +459,7 @@ function ScenePanel({
 
           <div className="mt-4 flex flex-col gap-2">
             <span
-              className="font-mono text-[10px] uppercase tracking-[0.16em]"
+              className="font-medium text-[11px]"
               style={{ color: accent }}
             >
               Tu jugada — {POSTURE_LABELS[posture].verb}
@@ -533,20 +533,20 @@ function ScenarioBriefing({
         <div className="flex items-center gap-2">
           <Briefcase className="w-4 h-4" strokeWidth={1.5} style={{ color: accent }} />
           <span
-            className="font-mono text-[10px] uppercase tracking-[0.18em]"
+            className="font-medium text-[11px]"
             style={{ color: accent }}
           >
             Briefing del caso
           </span>
         </div>
-        <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground inline-flex items-center gap-1">
+        <span className="font-medium text-[11px] text-muted-foreground inline-flex items-center gap-1">
           <Clock className="w-3 h-3" strokeWidth={1.5} />
           Tiempo libre
         </span>
       </header>
       <div className="grid sm:grid-cols-2 gap-4">
         <div>
-          <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-muted-foreground block mb-1">
+          <span className="font-medium text-[11px] text-muted-foreground block mb-1">
             Personaje
           </span>
           <p className="text-[13.5px] text-foreground/90">
@@ -554,7 +554,7 @@ function ScenarioBriefing({
           </p>
         </div>
         <div>
-          <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-muted-foreground block mb-1">
+          <span className="font-medium text-[11px] text-muted-foreground block mb-1">
             Temas que aplicas
           </span>
           <p className="text-[13.5px] text-foreground/90">
@@ -564,7 +564,7 @@ function ScenarioBriefing({
       </div>
       {scenario && (
         <div className="mt-4 pt-4 border-t border-black/[0.06]">
-          <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-muted-foreground block mb-1">
+          <span className="font-medium text-[11px] text-muted-foreground block mb-1">
             Situación
           </span>
           <p className="text-[13.5px] text-foreground/85 leading-relaxed">{scenario}</p>
@@ -583,7 +583,7 @@ function ActsLog({ acts, accent }: { acts: Act[]; accent: string }) {
       <header className="flex items-center gap-2">
         <ScrollText className="w-4 h-4" strokeWidth={1.5} style={{ color: accent }} />
         <span
-          className="font-mono text-[10px] uppercase tracking-[0.18em]"
+          className="font-medium text-[11px]"
           style={{ color: accent }}
         >
           Bitácora del caso
@@ -607,13 +607,13 @@ function ActsLog({ acts, accent }: { acts: Act[]; accent: string }) {
               >
                 <div className="flex items-center justify-between gap-2 mb-1.5">
                   <span
-                    className="font-mono text-[9.5px] uppercase tracking-[0.16em]"
+                    className="font-medium text-[11px]"
                     style={{ color: accent }}
                   >
                     Acto {actNum} · {sceneLabel}
                   </span>
                   {a.posture && (
-                    <span className="font-mono text-[9.5px] uppercase tracking-[0.14em] text-foreground/60 flex items-center gap-1">
+                    <span className="font-medium text-[11px] text-foreground/60 flex items-center gap-1">
                       <ArrowRight className="w-2.5 h-2.5" strokeWidth={1.5} />
                       {POSTURE_LABELS[a.posture].label}
                     </span>

@@ -10,6 +10,7 @@ import { getMethodPersonality } from "@/modules/spark/engines/personalities";
 import type { LearningEngine, SparkTopic } from "@/modules/spark/types";
 
 import { MethodHUD } from "./MethodHUD";
+import { PersonaScene } from "./PersonaScene";
 
 export interface SessionMeter {
   /** 0–1 progress through the session — drives the colored top rail */
@@ -51,12 +52,18 @@ export function MethodSessionShell({
 
   return (
     <div className="flex flex-col h-screen md:h-auto md:min-h-screen" style={shellStyle}>
-      <header className="sticky top-0 z-30 border-b border-black/[0.06] bg-background/85 backdrop-blur-xl">
+      <header className="sticky top-0 z-30 border-b border-black/[0.06] bg-background/85 backdrop-blur-xl overflow-hidden">
         <div
           className="absolute inset-0 pointer-events-none"
           style={{ background: theme.headerGradient, opacity: 0.7 }}
           aria-hidden
         />
+        <div
+          className="absolute inset-0 pointer-events-none opacity-20"
+          aria-hidden
+        >
+          <PersonaScene persona={personality.intro} accent={theme.accent} />
+        </div>
         <div className="relative flex items-center justify-between gap-3 px-5 md:px-8 h-16">
           <Link
             href="/dashboard"

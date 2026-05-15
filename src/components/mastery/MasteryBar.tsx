@@ -20,7 +20,7 @@ export function MasteryBar({
         />
       </div>
       {showLabel && (
-        <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground shrink-0">
+        <span className="font-medium text-[11px] text-muted-foreground shrink-0">
           {safe}%
         </span>
       )}

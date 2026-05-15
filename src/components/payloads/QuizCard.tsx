@@ -20,7 +20,7 @@ export function QuizCard({ payload }: { payload: QuizPayload }) {
             <HelpCircle className="w-4 h-4" strokeWidth={1.5} />
           </span>
           <div className="flex flex-col">
-            <span className="font-mono text-[9.5px] uppercase tracking-[0.18em] text-violet-700">
+            <span className="font-medium text-[11px] text-violet-700">
               Pregunta abierta
             </span>
             <span className="text-[12px] text-foreground/80">
@@ -29,7 +29,7 @@ export function QuizCard({ payload }: { payload: QuizPayload }) {
           </div>
         </div>
         <span
-          className="inline-flex items-center px-2.5 h-6 rounded-full text-[10px] font-mono uppercase tracking-[0.14em]"
+          className="font-medium inline-flex items-center px-2.5 h-6 rounded-full text-[11px]"
           style={{
             background: difficulty.bg,
             color: difficulty.color,
@@ -71,13 +71,13 @@ export function QuizCard({ payload }: { payload: QuizPayload }) {
       ) : (
         <div className="flex flex-col gap-3 engine-card-rise">
           <div className="p-4 rounded-xl bg-white/60 border border-black/[0.06]">
-            <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground mb-2">
+            <div className="font-medium text-[11px] text-muted-foreground mb-2">
               Tu respuesta
             </div>
             <p className="text-[14px] whitespace-pre-wrap text-foreground/90">{answer}</p>
           </div>
           <div className="flex flex-col gap-2 p-4 rounded-xl bg-violet-100/50 border border-violet-200/60">
-            <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-violet-800 mb-1">
+            <div className="font-medium text-[11px] text-violet-800 mb-1">
               Conceptos esperados
             </div>
             <ul className="flex flex-col gap-2">

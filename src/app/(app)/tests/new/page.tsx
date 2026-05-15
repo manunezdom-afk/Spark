@@ -14,6 +14,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { PageHeader } from "@/components/layout/PageHeader";
 import { cn } from "@/lib/utils/cn";
 import { toast } from "sonner";
 
@@ -135,14 +136,10 @@ function NewTestForm() {
         Volver
       </Link>
 
-      <header className="flex flex-col gap-1.5 mb-8">
-        <h1 className="text-3xl md:text-4xl font-medium tracking-tight text-foreground">
-          Pruebas
-        </h1>
-        <p className="text-[14px] text-muted-foreground">
-          Genera una prueba simulada o repasa tus tarjetas.
-        </p>
-      </header>
+      <PageHeader
+        title="Pruebas"
+        description="Genera una prueba simulada o repasa tus tarjetas."
+      />
 
       {/* Repaso de tarjetas — separado y antes del formulario */}
       <section className="mb-8">

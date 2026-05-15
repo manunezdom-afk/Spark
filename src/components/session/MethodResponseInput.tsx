@@ -72,7 +72,7 @@ export function MethodResponseInput({
           }}
         >
           <span
-            className="absolute left-4 top-3 font-mono text-[9px] uppercase tracking-[0.2em]"
+            className="font-medium absolute left-4 top-3 text-[11px]"
             style={{ color: theme.accent, opacity: 0.7 }}
           >
             {personality.inputKicker}

@@ -45,7 +45,7 @@ export function Sidebar() {
         <BrandOrb size="sm" />
         <div className="min-w-0">
           <div className="text-[15px] font-semibold tracking-tight leading-none">Spark</div>
-          <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground/70 mt-1 leading-none font-medium">
+          <div className="text-[11px] text-muted-foreground/70 mt-1 leading-none font-medium">
             Focus OS
           </div>
         </div>
@@ -103,7 +103,7 @@ export function Sidebar() {
 
       {/* Ecosystem footer */}
       <div className="px-3 pb-3">
-        <div className="text-[9px] uppercase tracking-[0.22em] text-muted-foreground/50 font-mono mb-1.5 px-2">
+        <div className="font-medium text-[11px] text-muted-foreground/50 mb-1.5 px-2">
           Familia
         </div>
         <div className="flex flex-col gap-0.5">

@@ -200,7 +200,7 @@ export function GuidedQuestionsExperience({
                   </span>
                   <div className="flex flex-col leading-tight">
                     <span
-                      className="font-mono text-[10px] uppercase tracking-[0.18em]"
+                      className="font-medium text-[11px]"
                       style={{ color: theme.accent }}
                     >
                       Capa {displayLayer} · {layerLabel}
@@ -248,7 +248,7 @@ export function GuidedQuestionsExperience({
 
               <div className="mt-7 flex flex-col gap-3">
                 <label
-                  className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground"
+                  className="font-medium text-[11px] text-muted-foreground"
                   htmlFor="layer-answer"
                 >
                   Tu razonamiento (en voz alta)
@@ -334,7 +334,7 @@ export function GuidedQuestionsExperience({
                 style={{ color: theme.accent }}
               />
               <span
-                className="font-mono text-[10px] uppercase tracking-[0.18em]"
+                className="font-medium text-[11px]"
                 style={{ color: theme.accent }}
               >
                 Lo que ya entendiste
@@ -342,7 +342,7 @@ export function GuidedQuestionsExperience({
             </div>
             {avgGrade !== null && (
               <span
-                className="font-mono text-[10px] tracking-[0.14em] px-2 py-0.5 rounded-full"
+                className="font-medium text-[11px] px-2 py-0.5 rounded-full"
                 style={{
                   background: hexToRgba(theme.accent, 0.10),
                   color: theme.accent,
@@ -404,7 +404,7 @@ function ClosedLayerRow({
     >
       <div className="flex items-center justify-between gap-2 mb-1.5">
         <span
-          className="font-mono text-[9.5px] uppercase tracking-[0.16em] flex items-center gap-1"
+          className="font-medium text-[11px] flex items-center gap-1"
           style={{ color: accent }}
         >
           <Layers className="w-3 h-3" strokeWidth={1.5} />
@@ -462,7 +462,7 @@ function ClosingSynthesisPanel({
       <header className="flex items-center gap-2 mb-4">
         <Compass className="w-4 h-4" strokeWidth={1.5} style={{ color: accent }} />
         <span
-          className="font-mono text-[10px] uppercase tracking-[0.18em]"
+          className="font-medium text-[11px]"
           style={{ color: accent }}
         >
           Síntesis · regla mínima
@@ -483,7 +483,7 @@ function ClosingSynthesisPanel({
           <header className="flex items-center gap-2 mb-2">
             <AlertCircle className="w-3.5 h-3.5" strokeWidth={1.5} style={{ color: accent }} />
             <span
-              className="font-mono text-[9.5px] uppercase tracking-[0.16em]"
+              className="font-medium text-[11px]"
               style={{ color: accent }}
             >
               Brechas detectadas — repasar
@@ -523,7 +523,7 @@ function GradeChip({ score, accent }: { score: number; accent: string }) {
     >
       <Activity className="w-3 h-3" strokeWidth={1.5} style={{ color: tone.fg }} />
       <span
-        className="font-mono text-[10px] uppercase tracking-[0.14em]"
+        className="font-medium text-[11px]"
         style={{ color: tone.fg }}
       >
         Capa anterior · {Math.round(score)} {tone.label}

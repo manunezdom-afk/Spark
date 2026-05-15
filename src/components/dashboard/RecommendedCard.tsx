@@ -52,7 +52,7 @@ export function RecommendedCard({ recommendation: r }: RecommendedCardProps) {
         </div>
         <div className="flex-1 min-w-0">
           <div
-            className={`font-mono text-[10px] uppercase tracking-[0.18em] ${tone.accent} mb-1.5`}
+            className={`font-medium text-[11px] ${tone.accent} mb-1.5`}
           >
             {r.kicker}
           </div>

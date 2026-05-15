@@ -31,7 +31,7 @@ export function FlashcardCarousel({ payload }: { payload: FlashcardPayload }) {
             <Layers className="w-4 h-4" strokeWidth={1.5} />
           </span>
           <div className="flex flex-col">
-            <span className="font-mono text-[9.5px] uppercase tracking-[0.18em] text-violet-700">
+            <span className="font-medium text-[11px] text-violet-700">
               Tarjeta de repaso
             </span>
             <span className="text-[12px] text-foreground/80">
@@ -68,7 +68,7 @@ export function FlashcardCarousel({ payload }: { payload: FlashcardPayload }) {
             className="absolute inset-0 p-6 rounded-2xl border border-violet-200/60 bg-white shadow-soft flex flex-col items-center justify-center text-center gap-3"
             style={{ backfaceVisibility: "hidden" }}
           >
-            <span className="font-mono text-[9.5px] uppercase tracking-[0.18em] text-violet-700">
+            <span className="font-medium text-[11px] text-violet-700">
               Pregunta
             </span>
             <p className="text-[16px] leading-relaxed font-medium text-foreground">
@@ -79,7 +79,7 @@ export function FlashcardCarousel({ payload }: { payload: FlashcardPayload }) {
                 Pista: {card.hint}
               </p>
             )}
-            <span className="absolute bottom-4 right-4 inline-flex items-center gap-1 text-[10px] uppercase tracking-[0.14em] text-violet-500 opacity-0 group-hover:opacity-100 transition-opacity">
+            <span className="font-medium absolute bottom-4 right-4 inline-flex items-center gap-1 text-[11px] text-violet-500 opacity-0 group-hover:opacity-100 transition-opacity">
               <RotateCw className="w-3 h-3" strokeWidth={1.5} />
               voltear
             </span>
@@ -88,7 +88,7 @@ export function FlashcardCarousel({ payload }: { payload: FlashcardPayload }) {
             className="absolute inset-0 p-6 rounded-2xl border border-violet-300/70 bg-violet-100/40 flex flex-col items-center justify-center text-center gap-3"
             style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
           >
-            <span className="font-mono text-[9.5px] uppercase tracking-[0.18em] text-violet-800">
+            <span className="font-medium text-[11px] text-violet-800">
               Respuesta
             </span>
             <p className="text-[16px] leading-relaxed text-foreground">
@@ -109,7 +109,7 @@ export function FlashcardCarousel({ payload }: { payload: FlashcardPayload }) {
         </button>
         <button
           onClick={() => setFlipped((f) => !f)}
-          className="inline-flex items-center gap-1.5 px-3 h-8 rounded-full text-[11px] font-medium uppercase tracking-[0.14em] text-violet-700 bg-violet-100 hover:bg-violet-200 transition-colors"
+          className="inline-flex items-center gap-1.5 px-3 h-8 rounded-full text-[11px] font-medium text-violet-700 bg-violet-100 hover:bg-violet-200 transition-colors"
         >
           <RotateCw className="w-3 h-3" strokeWidth={1.5} />
           {flipped ? "Pregunta" : "Respuesta"}

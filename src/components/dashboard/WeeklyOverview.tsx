@@ -61,12 +61,12 @@ export async function WeeklyOverview({ userId }: WeeklyOverviewProps) {
       {hasData ? (
         <div className="flex items-end justify-between gap-4 flex-wrap">
           <div className="flex flex-col gap-2 min-w-0">
-            <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground/70">
+            <div className="font-medium text-[11px] text-muted-foreground/70">
               Últimas 12 semanas
             </div>
             <ActivityHeatmap data={stats.heatmap} weeks={12} />
           </div>
-          <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground/60">
+          <div className="font-medium flex items-center gap-2 text-[11px] text-muted-foreground/60">
             <span>Menos</span>
             <span className="block w-[11px] h-[11px] rounded-[3px] bg-black/[0.05]" />
             <span className="block w-[11px] h-[11px] rounded-[3px] bg-spark/30" />
@@ -106,7 +106,7 @@ function Metric({ icon, label, value, tone, hint }: MetricProps) {
         >
           {icon}
         </span>
-        <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground inline-flex items-center gap-1">
+        <span className="font-medium text-[11px] text-muted-foreground inline-flex items-center gap-1">
           {label}
           <InfoIcon hint={hint} size="sm" />
         </span>

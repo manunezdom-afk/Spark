@@ -275,7 +275,7 @@ function OpeningMapPanel({
       <header className="flex items-center gap-2 mb-4">
         <Network className="w-4 h-4" strokeWidth={1.5} style={{ color: accent }} />
         <span
-          className="font-mono text-[10px] uppercase tracking-[0.18em]"
+          className="font-medium text-[11px]"
           style={{ color: accent }}
         >
           Apertura del mapa
@@ -371,7 +371,7 @@ function ActiveProposalPanel({
           </span>
           <div className="flex flex-col leading-tight">
             <span
-              className="font-mono text-[10px] uppercase tracking-[0.18em]"
+              className="font-medium text-[11px]"
               style={{ color: accent }}
             >
               Conexión #{validatedCount + 1}
@@ -413,7 +413,7 @@ function ActiveProposalPanel({
 
       <div className="mt-6">
         <span
-          className="font-mono text-[10px] uppercase tracking-[0.16em] block mb-2"
+          className="font-medium text-[11px] block mb-2"
           style={{ color: accent }}
         >
           Tu veredicto
@@ -458,7 +458,7 @@ function ActiveProposalPanel({
 
       <div className="mt-4 flex flex-col gap-2">
         <span
-          className="font-mono text-[10px] uppercase tracking-[0.16em]"
+          className="font-medium text-[11px]"
           style={{ color: accent }}
         >
           Justificación {verdict === "valida" ? "(opcional)" : "(requerida)"}
@@ -550,7 +550,7 @@ function StructuredBridgeView({
         }}
       >
         <span
-          className="font-mono text-[9.5px] uppercase tracking-[0.16em] block mb-1.5"
+          className="font-medium text-[11px] block mb-1.5"
           style={{ color: accent }}
         >
           Mecanismo
@@ -570,7 +570,7 @@ function StructuredBridgeView({
             strokeWidth={1.5}
           />
           <div>
-            <span className="font-mono text-[9.5px] uppercase tracking-[0.16em] block mb-1 text-amber-700">
+            <span className="font-medium text-[11px] block mb-1 text-amber-700">
               Prueba esto
             </span>
             <p className="text-[13.5px] leading-relaxed text-foreground/85">
@@ -601,7 +601,7 @@ function ConceptCard({
       }}
     >
       <span
-        className="font-mono text-[9.5px] uppercase tracking-[0.16em] mb-1"
+        className="font-medium text-[11px] mb-1"
         style={{ color: accent, opacity: 0.75 }}
       >
         {label}
@@ -640,7 +640,7 @@ function QualityChip({
         style={{ color: tone.fg }}
       />
       <span
-        className="font-mono text-[10px] uppercase tracking-[0.14em]"
+        className="font-medium text-[11px]"
         style={{ color: tone.fg }}
       >
         Conexión #{index + 1} · {quality}
@@ -667,7 +667,7 @@ function TopicConstellation({
       <header className="flex items-center gap-2 mb-3">
         <Sparkles className="w-3.5 h-3.5" strokeWidth={1.5} style={{ color: accent }} />
         <span
-          className="font-mono text-[10px] uppercase tracking-[0.18em]"
+          className="font-medium text-[11px]"
           style={{ color: accent }}
         >
           Temas en juego ({topics.length})
@@ -713,7 +713,7 @@ function BridgesPanel({
       <header className="flex items-center gap-2">
         <Network className="w-4 h-4" strokeWidth={1.5} style={{ color: accent }} />
         <span
-          className="font-mono text-[10px] uppercase tracking-[0.18em]"
+          className="font-medium text-[11px]"
           style={{ color: accent }}
         >
           Puentes conceptuales
@@ -750,14 +750,14 @@ function BridgeRow({ proposal, accent }: { proposal: Proposal; accent: string })
     >
       <div className="flex items-center justify-between gap-2 mb-1.5">
         <span
-          className="font-mono text-[9.5px] uppercase tracking-[0.16em]"
+          className="font-medium text-[11px]"
           style={{ color: accent }}
         >
           Conexión #{proposal.index}
         </span>
         {verdictLabel ? (
           <span
-            className="font-mono text-[9.5px] uppercase tracking-[0.14em]"
+            className="font-medium text-[11px]"
             style={{
               color:
                 verdictKey === "valida" || verdictKey === "extiende"
@@ -770,7 +770,7 @@ function BridgeRow({ proposal, accent }: { proposal: Proposal; accent: string })
             {verdictLabel}
           </span>
         ) : (
-          <span className="font-mono text-[9.5px] text-muted-foreground uppercase">
+          <span className="font-medium text-[11px] text-muted-foreground">
             Pendiente
           </span>
         )}
@@ -817,7 +817,7 @@ function FinalGraph({
       <header className="flex items-center gap-2 mb-4">
         <Network className="w-4 h-4" strokeWidth={1.5} style={{ color: accent }} />
         <span
-          className="font-mono text-[10px] uppercase tracking-[0.18em]"
+          className="font-medium text-[11px]"
           style={{ color: accent }}
         >
           Mapa final · {payload.nodes.length} nodos · {payload.edges.length} relaciones

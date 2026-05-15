@@ -8,6 +8,7 @@ import { TopicCard } from "@/components/topics/TopicCard";
 import { NewTopicDialog } from "@/components/topics/NewTopicDialog";
 import { ClearDemoBanner } from "@/components/topics/ClearDemoBanner";
 import { KairosConnectBanner } from "@/components/topics/KairosConnectBanner";
+import { PageHeader } from "@/components/layout/PageHeader";
 import { seedDemoData } from "@/lib/spark/seed-demo";
 
 export const dynamic = "force-dynamic";
@@ -54,17 +55,11 @@ export default async function TopicsPage() {
 
   return (
     <div className="p-6 md:p-12 max-w-6xl animate-fade-up">
-      <header className="flex items-end justify-between flex-wrap gap-4 mb-10">
-        <div className="flex flex-col gap-1.5">
-          <h1 className="text-3xl md:text-4xl font-medium tracking-tight text-foreground">
-            Temas
-          </h1>
-          <p className="text-[14px] text-muted-foreground">
-            Tu material de estudio. Importado de Kairos o creado desde texto.
-          </p>
-        </div>
-        <NewTopicDialog />
-      </header>
+      <PageHeader
+        title="Temas"
+        description="Tu material de estudio. Importado de Kairos o creado desde texto."
+        action={<NewTopicDialog />}
+      />
 
       {showDemoBanner && <ClearDemoBanner />}
       {showKairosBanner && <KairosConnectBanner />}

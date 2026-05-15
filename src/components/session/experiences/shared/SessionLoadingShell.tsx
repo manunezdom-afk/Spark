@@ -74,7 +74,7 @@ export function SessionLoadingShell({
 
         {/* Kicker */}
         <div
-          className="font-mono text-[10px] uppercase tracking-[0.18em] mb-3"
+          className="font-medium text-[11px] mb-3"
           style={{ color: theme.accent }}
         >
           {ENGINE_LABELS[session.engine]} · {theme.streamingLabel}

@@ -153,7 +153,7 @@ export function TopicMaterialPicker({
           </span>
           <div className="flex flex-col min-w-0">
             <span
-              className="font-mono text-[10px] uppercase tracking-[0.18em]"
+              className="font-medium text-[11px]"
               style={{ color: theme.accent }}
             >
               Material para esta sesión

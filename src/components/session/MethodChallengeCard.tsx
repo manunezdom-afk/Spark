@@ -69,7 +69,7 @@ export function MethodChallengeCard({
           </span>
           <NovaMark size={12} />
           <span
-            className="font-mono text-[10px] uppercase tracking-[0.18em] truncate"
+            className="font-medium text-[11px] truncate"
             style={{
               background: theme.coachGradient,
               WebkitBackgroundClip: "text",
@@ -81,7 +81,7 @@ export function MethodChallengeCard({
           </span>
         </div>
         <span
-          className="font-mono text-[10px] uppercase tracking-[0.16em] shrink-0"
+          className="font-medium text-[11px] shrink-0"
           style={{ color: theme.accent }}
         >
           {stripLabel}
@@ -181,7 +181,7 @@ function MethodTurnBody({
           }}
         >
           <span
-            className="font-mono text-[9.5px] uppercase tracking-[0.18em] block mb-2"
+            className="font-medium text-[11px] block mb-2"
             style={{ color: accent }}
           >
             Texto bajo inspección
@@ -224,7 +224,7 @@ function MethodTurnBody({
           }}
         >
           <span
-            className="font-mono text-[9.5px] uppercase tracking-[0.18em] block mb-2 not-italic"
+            className="font-medium text-[11px] block mb-2 not-italic"
             style={{ color: accent }}
           >
             Personaje
@@ -283,7 +283,7 @@ export function MethodStreamingCard({
         </span>
         <NovaMark size={12} className="animate-pulse" />
         <span
-          className="font-mono text-[10px] uppercase tracking-[0.18em] flex-1"
+          className="font-medium text-[11px] flex-1"
           style={{
             background: theme.coachGradient,
             WebkitBackgroundClip: "text",

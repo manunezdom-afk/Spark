@@ -33,7 +33,7 @@ export function NovaCoachRibbon({
 
   return (
     <span
-      className={`inline-flex items-center gap-2 px-2.5 h-6 rounded-full text-[10px] font-mono uppercase tracking-[0.16em] ${className ?? ""}`}
+      className={`font-medium inline-flex items-center gap-2 px-2.5 h-6 rounded-full text-[11px] ${className ?? ""}`}
       style={style}
     >
       <NovaMark size={11} />
@@ -61,7 +61,7 @@ export function NovaThinking({
   return (
     <div className="flex flex-col gap-2">
       <span
-        className="inline-flex items-center gap-2 self-start px-2.5 h-6 rounded-full text-[10px] font-mono uppercase tracking-[0.16em]"
+        className="font-medium inline-flex items-center gap-2 self-start px-2.5 h-6 rounded-full text-[11px]"
         style={{
           background: hexToRgba(theme.accent, 0.08),
           color: theme.accent,

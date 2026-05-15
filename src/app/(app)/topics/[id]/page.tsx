@@ -152,11 +152,11 @@ export default async function TopicDetailPage({ params }: RouteParams) {
           />
         )}
         {topic.category && (
-          <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+          <span className="font-medium text-[11px] text-muted-foreground">
             {topic.category}
           </span>
         )}
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight leading-[1.15] text-foreground break-words">
+        <h1 className="text-3xl md:text-4xl font-medium tracking-tight leading-[1.15] text-foreground break-words">
           {topic.title}
         </h1>
         {topic.summary && (
@@ -194,18 +194,18 @@ export default async function TopicDetailPage({ params }: RouteParams) {
 
       {/* ── Progreso (3 metrics) ─────────────────────────────── */}
       <section className="mb-10">
-        <h2 className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted-foreground/70 mb-4">
+        <h2 className="font-medium text-[11px] text-muted-foreground/70 mb-4">
           Tu progreso en este tema
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="p-4 rounded-2xl border border-black/[0.06] bg-white/60">
-            <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground mb-2">
+            <div className="font-medium text-[11px] text-muted-foreground mb-2">
               Maestría
             </div>
             <MasteryBar score={masteryScore} size="lg" />
           </div>
           <div className="p-4 rounded-2xl border border-black/[0.06] bg-white/60">
-            <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground mb-2">
+            <div className="font-medium text-[11px] text-muted-foreground mb-2">
               Sesiones
             </div>
             <div className="flex items-baseline gap-1.5">
@@ -218,7 +218,7 @@ export default async function TopicDetailPage({ params }: RouteParams) {
             </div>
           </div>
           <div className="p-4 rounded-2xl border border-black/[0.06] bg-white/60">
-            <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground mb-2">
+            <div className="font-medium text-[11px] text-muted-foreground mb-2">
               Errores acumulados
             </div>
             <div className="flex items-baseline gap-1.5">
@@ -235,7 +235,7 @@ export default async function TopicDetailPage({ params }: RouteParams) {
 
       {/* ── Métodos recomendados (solo 2, contextuales) ──────── */}
       <section className="mb-10">
-        <h2 className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted-foreground/70 mb-1">
+        <h2 className="font-medium text-[11px] text-muted-foreground/70 mb-1">
           Recomendado para este tema
         </h2>
         <p className="text-[12.5px] text-muted-foreground mb-4 max-w-2xl">
@@ -265,7 +265,7 @@ export default async function TopicDetailPage({ params }: RouteParams) {
       {/* ── Material (apuntes de Kairos) ─────────────────────── */}
       {materials.length > 0 && (
         <section className="mb-10">
-          <h2 className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted-foreground/70 mb-4 flex items-center gap-2">
+          <h2 className="font-medium text-[11px] text-muted-foreground/70 mb-4 flex items-center gap-2">
             <BookOpen className="w-3.5 h-3.5" strokeWidth={1.5} />
             Material de Kairos
             <span className="text-foreground/40 normal-case tracking-normal">
@@ -288,7 +288,7 @@ export default async function TopicDetailPage({ params }: RouteParams) {
       {/* ── Sesiones recientes de este tema ──────────────────── */}
       {sessions.length > 0 && (
         <section className="mb-10">
-          <h2 className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted-foreground/70 mb-4 flex items-center gap-2">
+          <h2 className="font-medium text-[11px] text-muted-foreground/70 mb-4 flex items-center gap-2">
             <History className="w-3.5 h-3.5" strokeWidth={1.5} />
             Historial de este tema
             <span className="text-foreground/40 normal-case tracking-normal">
@@ -311,7 +311,7 @@ export default async function TopicDetailPage({ params }: RouteParams) {
                   className="flex items-center justify-between gap-3 p-3.5 rounded-xl border border-black/[0.06] bg-white/55 hover:bg-white hover:border-black/[0.12] transition-all duration-200"
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-foreground/70 shrink-0 truncate max-w-[180px]">
+                    <span className="font-medium text-[11px] text-foreground/70 shrink-0 truncate max-w-[180px]">
                       {ENGINE_LABELS[s.engine]}
                     </span>
                     <span className="text-[11.5px] text-muted-foreground truncate">
@@ -324,13 +324,7 @@ export default async function TopicDetailPage({ params }: RouteParams) {
                     </span>
                   </div>
                   <span
-                    className={`font-mono text-[10px] uppercase tracking-[0.14em] shrink-0 ${
-                      s.status === "completed"
-                        ? "text-emerald-600"
-                        : s.status === "active"
-                          ? "text-spark"
-                          : "text-muted-foreground"
-                    }`}
+                    className={`font-medium text-[11px] shrink-0 ${ s.status === "completed" ? "text-emerald-600" : s.status === "active" ? "text-spark" : "text-muted-foreground" }`}
                   >
                     {s.status === "completed"
                       ? `${s.score ?? 0}%`
@@ -357,7 +351,7 @@ export default async function TopicDetailPage({ params }: RouteParams) {
       {/* ── Errores acumulados ───────────────────────────────── */}
       {errors.length > 0 && (
         <section>
-          <h2 className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted-foreground/70 mb-4 flex items-center gap-2">
+          <h2 className="font-medium text-[11px] text-muted-foreground/70 mb-4 flex items-center gap-2">
             <AlertCircle className="w-3.5 h-3.5" strokeWidth={1.5} />
             Patrones de error
             <span className="text-foreground/40 normal-case tracking-normal">
@@ -370,7 +364,7 @@ export default async function TopicDetailPage({ params }: RouteParams) {
                 key={e.id}
                 className="flex items-start gap-3 p-3 rounded-xl border border-black/[0.06] bg-white/60"
               >
-                <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground shrink-0 mt-0.5">
+                <span className="font-medium text-[11px] text-muted-foreground shrink-0 mt-0.5">
                   {e.error_type}
                 </span>
                 <p className="text-[13px] flex-1 text-foreground/90 break-words leading-relaxed">

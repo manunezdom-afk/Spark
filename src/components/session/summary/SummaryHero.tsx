@@ -37,7 +37,7 @@ export function SummaryHero({ engine, score, durationMinutes, topicTitles }: Sum
           </span>
           <div className="min-w-0">
             <div
-              className="font-mono text-[10px] uppercase tracking-[0.18em] mb-1"
+              className="font-medium text-[11px] mb-1"
               style={{ color: theme.accent }}
             >
               {theme.vibe}
@@ -56,7 +56,7 @@ export function SummaryHero({ engine, score, durationMinutes, topicTitles }: Sum
             <Award className="w-5 h-5 text-spark" strokeWidth={1.5} />
           </div>
           <div className="flex flex-col leading-none">
-            <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground mb-1">
+            <span className="font-medium text-[11px] text-muted-foreground mb-1">
               Resultado
             </span>
             <div className="text-3xl md:text-4xl font-semibold tracking-tight">

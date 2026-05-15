@@ -247,7 +247,7 @@ export function FlashcardReview({ initial }: { initial: SparkFlashcard[] }) {
 function DemoBanner() {
   return (
     <div className="flex items-center gap-2.5 rounded-xl border border-spark/15 bg-spark/[0.04] px-4 py-2.5">
-      <span className="inline-flex items-center gap-1.5 rounded-full border border-spark/25 bg-spark/[0.10] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-spark shrink-0">
+      <span className="inline-flex items-center gap-1.5 rounded-full border border-spark/25 bg-spark/[0.10] px-2 py-0.5 text-[11px] font-semibold text-spark shrink-0">
         <FlaskConical className="h-3 w-3" strokeWidth={1.5} />
         Ejemplo
       </span>
@@ -271,7 +271,7 @@ function ProgressHeader({
   return (
     <div className="flex flex-col gap-2">
       <div className="flex items-center justify-between">
-        <span className="font-mono text-[10.5px] uppercase tracking-[0.16em] text-muted-foreground/70">
+        <span className="font-medium text-[11px] text-muted-foreground/70">
           Tarjeta {current} de {total}
         </span>
         <span className="font-mono text-[10.5px] tabular-nums text-muted-foreground/70">
@@ -320,7 +320,7 @@ function Flashcard({
           className="absolute inset-0 flex flex-col items-center justify-center text-center gap-5 px-8 py-10 rounded-3xl border border-black/[0.08] bg-gradient-to-br from-white via-white to-white/40 shadow-[0_1px_2px_rgba(0,0,0,0.03),0_18px_40px_-12px_rgba(0,0,0,0.08)]"
           style={{ backfaceVisibility: "hidden" }}
         >
-          <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-spark">
+          <span className="font-medium inline-flex items-center gap-1.5 text-[11px] text-spark">
             <span className="w-1.5 h-1.5 rounded-full bg-spark" />
             Pregunta
           </span>
@@ -350,7 +350,7 @@ function Flashcard({
             transform: "rotateX(180deg)",
           }}
         >
-          <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-emerald-600">
+          <span className="font-medium inline-flex items-center gap-1.5 text-[11px] text-emerald-600">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
             Respuesta
           </span>
@@ -405,7 +405,7 @@ function QualityButtons({
             {q.shortcut}
           </span>
           <span>{q.label}</span>
-          <span className="text-[10.5px] uppercase tracking-[0.12em] opacity-70 font-medium">
+          <span className="text-[11px] opacity-70 font-medium">
             {q.hint}
           </span>
         </button>
@@ -416,7 +416,7 @@ function QualityButtons({
 
 function KeyboardHint({ revealed }: { revealed: boolean }) {
   return (
-    <p className="text-center text-[10.5px] text-muted-foreground/50 font-mono uppercase tracking-[0.14em] hidden md:block">
+    <p className="font-medium text-center text-[11px] text-muted-foreground/50 hidden md:block">
       {revealed ? "Pulsa 1 · 2 · 3 · 4 para puntuar" : "Pulsa Espacio para revelar"}
     </p>
   );

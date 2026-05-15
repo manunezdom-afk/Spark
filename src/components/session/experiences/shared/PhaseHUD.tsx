@@ -47,7 +47,7 @@ export function PhaseHUD({
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-3 min-w-0">
           <span
-            className="font-mono text-[9.5px] uppercase tracking-[0.2em] shrink-0"
+            className="font-medium text-[11px] shrink-0"
             style={{ color: theme.accent }}
           >
             {kicker} {safePhase + 1} / {total}
@@ -59,7 +59,7 @@ export function PhaseHUD({
           )}
           {badge && (
             <span
-              className="font-mono text-[10px] uppercase tracking-[0.14em] px-2 h-5 rounded-full inline-flex items-center"
+              className="font-medium text-[11px] px-2 h-5 rounded-full inline-flex items-center"
               style={{
                 background: hexToRgba(theme.accent, 0.10),
                 color: theme.accent,
@@ -73,7 +73,7 @@ export function PhaseHUD({
 
         {meterLabel && meterValue !== undefined && (
           <div className="flex items-center gap-2 min-w-[140px]">
-            <span className="font-mono text-[9.5px] uppercase tracking-[0.18em] text-muted-foreground">
+            <span className="font-medium text-[11px] text-muted-foreground">
               {meterLabel}
             </span>
             <div

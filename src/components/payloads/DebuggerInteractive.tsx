@@ -26,7 +26,7 @@ export function DebuggerInteractive({ payload }: { payload: DebuggerPayload }) {
             <Bug className="w-4 h-4" strokeWidth={1.5} />
           </span>
           <div className="flex flex-col">
-            <span className="font-mono text-[9.5px] uppercase tracking-[0.18em] text-orange-700">
+            <span className="font-medium text-[11px] text-orange-700">
               Caso · errores ocultos
             </span>
             <span className="text-[12px] text-foreground/80">
@@ -72,7 +72,7 @@ export function DebuggerInteractive({ payload }: { payload: DebuggerPayload }) {
 
       {revealed && (
         <div className="flex flex-col gap-3 engine-card-rise">
-          <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-orange-700 flex items-center gap-2">
+          <div className="font-medium text-[11px] text-orange-700 flex items-center gap-2">
             <AlertTriangle className="w-3 h-3" strokeWidth={1.5} />
             {payload.errors.length} {payload.errors.length === 1 ? "error encontrado" : "errores encontrados"}
           </div>

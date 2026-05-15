@@ -61,7 +61,7 @@ export async function WeakTopicsWidget({ userId, topics }: WeakTopicsWidgetProps
                 <MasteryBar score={state.mastery_score} size="sm" />
               </div>
             </div>
-            <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground inline-flex items-center gap-1 shrink-0">
+            <span className="font-medium text-[11px] text-muted-foreground inline-flex items-center gap-1 shrink-0">
               Entrenar
               <ArrowRight className="w-3 h-3" strokeWidth={1.5} />
             </span>

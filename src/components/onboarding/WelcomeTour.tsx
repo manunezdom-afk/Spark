@@ -16,7 +16,6 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { GradientText } from "@/components/brand/GradientText";
 import { useTutorialStore } from "@/lib/tutorial/store";
 import { cn } from "@/lib/utils/cn";
 import {
@@ -43,11 +42,7 @@ const SLIDES: Slide[] = [
   {
     key: "welcome",
     eyebrow: "Hola.",
-    title: (
-      <>
-        No memorices. <GradientText italic>Entrena.</GradientText>
-      </>
-    ),
+    title: <>No memorices. Entrena.</>,
     body: "Spark transforma tu material en sesiones de estudio activo. Nova hace de coach: te pregunta, te corrige y detecta lo que aún no dominas.",
     highlight: "Te muestro en 60 segundos cómo se usa.",
     Icon: Zap,
@@ -56,11 +51,7 @@ const SLIDES: Slide[] = [
   {
     key: "topics",
     eyebrow: "Paso 1 · Tus temas",
-    title: (
-      <>
-        Crea o importa <GradientText italic>tus temas.</GradientText>
-      </>
-    ),
+    title: <>Crea o importa tus temas.</>,
     body: "Un tema es una unidad de conocimiento que entrenas. Pega un texto y Spark extrae los conceptos, o importa tus materias desde Kairos para usar tus apuntes reales.",
     highlight: "Los temas viven en la sección Temas y se editan o borran cuando quieras.",
     Icon: BookOpen,
@@ -69,11 +60,7 @@ const SLIDES: Slide[] = [
   {
     key: "kairos",
     eyebrow: "Paso 1b · Kairos",
-    title: (
-      <>
-        Tus apuntes, <GradientText italic>como contexto.</GradientText>
-      </>
-    ),
+    title: <>Tus apuntes, como contexto.</>,
     body: "Si usas Kairos para tomar apuntes, Spark los importa automáticamente. Cada pregunta de Nova usa tu material real — no ejemplos genéricos. Sin configurar nada.",
     highlight: "Kairos y Spark comparten cuenta: conéctate con el mismo email.",
     Icon: Link2,
@@ -82,11 +69,7 @@ const SLIDES: Slide[] = [
   {
     key: "methods",
     eyebrow: "Paso 2 · Métodos de estudio",
-    title: (
-      <>
-        Cinco formas de <GradientText italic>entrenar.</GradientText>
-      </>
-    ),
+    title: <>Cinco formas de entrenar.</>,
     body: "Preguntas guiadas, cazar errores, defender postura, conectar temas y caso real. Más pruebas simuladas (alternativas o desarrollo) con corrección automática.",
     highlight: "Elige el método según lo que necesites: entender, aplicar o defender.",
     Icon: Brain,
@@ -95,11 +78,7 @@ const SLIDES: Slide[] = [
   {
     key: "nova",
     eyebrow: "Paso 3 · Nova",
-    title: (
-      <>
-        Nova es tu <GradientText italic>guía.</GradientText>
-      </>
-    ),
+    title: <>Nova es tu guía.</>,
     body: "Pulsa N en cualquier momento para abrir Nova. Te genera tarjetas, resume un tema, te explica como profesor o detecta tus puntos débiles. También responde dudas sobre cómo usar Spark.",
     highlight: "Atajo: pulsa N (o el botón Nova arriba a la izquierda).",
     Icon: Sparkles,
@@ -108,24 +87,16 @@ const SLIDES: Slide[] = [
   {
     key: "mastery",
     eyebrow: "Paso 4 · Maestría",
-    title: (
-      <>
-        Spark recuerda lo que <GradientText italic>fallaste.</GradientText>
-      </>
-    ),
-    body: "Cada sesión actualiza tu nivel por tema con SM-2 (repetición espaciada). Lo que más fallas vuelve antes; lo que dominas espera más. Sin configurar nada.",
-    highlight: "En Maestría ves tu progreso y qué tema toca repasar hoy.",
+    title: <>Spark detecta dónde necesitas mejorar.</>,
+    body: "Cada sesión actualiza tu nivel por tema con SM-2 (repetición espaciada). Lo que te cuesta vuelve antes; lo que dominas espera más. Sin configurar nada.",
+    highlight: "En Mapa ves tu progreso y qué tema toca repasar hoy.",
     Icon: Trophy,
     Animation: WelcomeMasteryAnim,
   },
   {
     key: "help",
     eyebrow: "Si te pierdes",
-    title: (
-      <>
-        Pregúntale a Nova <GradientText italic>cómo se usa.</GradientText>
-      </>
-    ),
+    title: <>Pregúntale a Nova cómo se usa.</>,
     body: "El botón flotante con un signo de interrogación abre la ayuda en cualquier pantalla. También puedes preguntarle directamente a Nova: '¿cómo creo un tema?', '¿qué método uso hoy?' y similares.",
     highlight: "Atajo de ayuda: pulsa ? en cualquier pantalla.",
     Icon: HelpCircle,
@@ -134,11 +105,7 @@ const SLIDES: Slide[] = [
   {
     key: "start",
     eyebrow: "Listo",
-    title: (
-      <>
-        Vamos a tu <GradientText italic>primer tema.</GradientText>
-      </>
-    ),
+    title: <>Vamos a tu primer tema.</>,
     body: "Empezamos creando o importando un tema. En menos de 2 minutos puedes tener tu primera sesión activa.",
     Icon: Flame,
     Animation: WelcomeStartAnim,
@@ -238,7 +205,7 @@ export function WelcomeTour() {
       >
         {/* Header */}
         <div className="flex items-center justify-between gap-2 px-4 pt-3 sm:px-5">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-spark/[0.08] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-spark">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-spark/[0.08] px-2.5 py-0.5 text-[11px] font-semibold text-spark">
             <Sparkles className="h-3 w-3" strokeWidth={1.5} />
             Tour
           </span>
@@ -277,7 +244,7 @@ export function WelcomeTour() {
         <div className="flex flex-col gap-2 px-6 pb-3 pt-5">
           <div
             key={`eyebrow-${slide.key}`}
-            className="flex items-center gap-1.5 text-[11px] font-mono font-semibold uppercase tracking-[0.18em] text-muted-foreground spark-welcome-stage-fade"
+            className="flex items-center gap-1.5 text-[11px] font-semibold text-muted-foreground spark-welcome-stage-fade"
           >
             <Icon className="h-3 w-3 text-spark" strokeWidth={1.5} />
             {slide.eyebrow}

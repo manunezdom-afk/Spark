@@ -218,7 +218,7 @@ export function TestTaker({
                 onClick={() =>
                   setTimer({ enabled: true, secondsLeft: questions.length * 90, paused: false })
                 }
-                className="inline-flex items-center gap-1 px-2.5 h-7 rounded-full font-mono text-[10px] tracking-[0.14em] uppercase border bg-white/85 text-muted-foreground hover:text-foreground"
+                className="font-medium inline-flex items-center gap-1 px-2.5 h-7 rounded-full text-[11px] border bg-white/85 text-muted-foreground hover:text-foreground"
                 title="Activar temporizador (90s por pregunta)"
               >
                 <Timer className="w-3 h-3" strokeWidth={1.5} />
@@ -229,10 +229,10 @@ export function TestTaker({
         </div>
         <div className="max-w-3xl mx-auto px-5 md:px-8 pb-3">
           <div className="flex items-center justify-between mb-1.5">
-            <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+            <span className="font-medium text-[11px] text-muted-foreground">
               Pregunta {currentIndex + 1} / {total}
             </span>
-            <span className="font-mono text-[10px] tracking-[0.14em] text-muted-foreground">
+            <span className="font-medium text-[11px] text-muted-foreground">
               {answered} / {total} respondidas
             </span>
           </div>

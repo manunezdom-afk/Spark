@@ -15,6 +15,7 @@ import { getAllMastery, getTopics } from "@/lib/spark/queries";
 import { MasteryBar } from "@/components/mastery/MasteryBar";
 import { CollapsibleSecondary } from "@/components/mastery/CollapsibleSecondary";
 import { InfoIcon } from "@/components/ui/info-icon";
+import { PageHeader } from "@/components/layout/PageHeader";
 import type { SparkMasteryState, SparkTopic } from "@/modules/spark/types";
 
 export const dynamic = "force-dynamic";
@@ -116,14 +117,10 @@ export default async function MapPage() {
 
   return (
     <div className="w-full max-w-3xl mx-auto p-6 md:p-12 animate-fade-up">
-      <header className="flex flex-col gap-1.5 mb-8">
-        <h1 className="text-3xl md:text-4xl font-medium tracking-tight text-foreground">
-          Mapa
-        </h1>
-        <p className="text-[14px] text-muted-foreground">
-          Estado de tus temas y próximas revisiones.
-        </p>
-      </header>
+      <PageHeader
+        title="Mapa"
+        description="Estado de tus temas y próximas revisiones."
+      />
 
       {isCompletelyEmpty ? (
         <DemoSection />
@@ -339,7 +336,7 @@ function TopicRow({
           <div className="flex items-center justify-between gap-3 mb-1.5 flex-wrap">
             <div className="min-w-0 flex-1">
               {topic.category && (
-                <div className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground mb-0.5">
+                <div className="font-medium text-[11px] text-muted-foreground mb-0.5">
                   {topic.category}
                 </div>
               )}
@@ -348,14 +345,14 @@ function TopicRow({
               </div>
             </div>
             <span
-              className="font-mono text-[10px] uppercase tracking-[0.16em] shrink-0"
+              className="font-medium text-[11px] shrink-0"
               style={{ color: accentColor }}
             >
               {dueLabel}
             </span>
           </div>
           {!isUntouched && <MasteryBar score={score} />}
-          <div className="flex items-center gap-3 text-[10.5px] uppercase tracking-[0.14em] text-muted-foreground mt-1.5">
+          <div className="font-medium flex items-center gap-3 text-[11px] text-muted-foreground mt-1.5">
             {isUntouched ? (
               <span className="text-spark font-medium normal-case tracking-normal">
                 Empezar primera sesión →
@@ -389,7 +386,7 @@ function DemoSection() {
   return (
     <>
       <div className="flex flex-col gap-3 rounded-xl border border-black/[0.07] bg-white/60 px-4 py-3 mb-6 sm:flex-row sm:items-center sm:gap-4">
-        <span className="inline-flex items-center gap-1.5 self-start rounded-full border border-spark/20 bg-spark/[0.08] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-spark">
+        <span className="inline-flex items-center gap-1.5 self-start rounded-full border border-spark/20 bg-spark/[0.08] px-2.5 py-1 text-[11px] font-semibold text-spark">
           <FlaskConical className="h-3 w-3" strokeWidth={1.5} />
           Ejemplos
         </span>
@@ -413,19 +410,19 @@ function DemoSection() {
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between gap-3 mb-1.5">
                 <div className="min-w-0">
-                  <div className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground mb-0.5">
+                  <div className="font-medium text-[11px] text-muted-foreground mb-0.5">
                     {d.category}
                   </div>
                   <div className="font-medium text-foreground truncate">
                     {d.title}
                   </div>
                 </div>
-                <span className="font-mono text-[10px] uppercase tracking-[0.16em] shrink-0 text-muted-foreground">
+                <span className="font-medium text-[11px] shrink-0 text-muted-foreground">
                   Hoy
                 </span>
               </div>
               <MasteryBar score={d.score} />
-              <div className="flex items-center gap-3 text-[10.5px] uppercase tracking-[0.14em] text-muted-foreground mt-1.5">
+              <div className="font-medium flex items-center gap-3 text-[11px] text-muted-foreground mt-1.5">
                 <span>{d.sessions} sesiones</span>
                 <span>·</span>
                 <span>{d.errors} errores</span>

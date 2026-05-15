@@ -5,6 +5,7 @@ import { CheckCircle2, XCircle, RefreshCw, Home, Brain } from "lucide-react";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import { getSession, getSessionTurns, getTopicsByIds } from "@/lib/spark/queries";
 import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/layout/PageHeader";
 import { cn } from "@/lib/utils/cn";
 
 import type { TestQuestionsPayload, TestResultPayload } from "@/modules/spark/types";
@@ -53,16 +54,10 @@ export default async function TestResultsPage({ params }: RouteParams) {
 
   return (
     <div className="p-6 md:p-10 max-w-2xl">
-      {/* Header */}
-      <div className="mb-8">
-        <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground mb-2">
-          {topics.map((t) => t.title).join(" · ")}
-        </div>
-        <h1 className="text-3xl font-semibold tracking-tight">Resultado</h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          Prueba de {typeLabel} · {total} preguntas
-        </p>
-      </div>
+      <PageHeader
+        title="Resultado"
+        description={`Prueba de ${typeLabel} · ${total} preguntas · ${topics.map((t) => t.title).join(" · ")}`}
+      />
 
       {/* Score card */}
       <div
@@ -88,7 +83,7 @@ export default async function TestResultsPage({ params }: RouteParams) {
 
       {/* Per-question breakdown */}
       <section className="mb-8">
-        <h2 className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-4">
+        <h2 className="font-medium text-[11px] text-muted-foreground mb-4">
           Desglose por pregunta
         </h2>
         <div className="flex flex-col gap-3">
@@ -119,7 +114,7 @@ export default async function TestResultsPage({ params }: RouteParams) {
                   )}
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+                      <span className="font-medium text-[11px] text-muted-foreground">
                         Pregunta {i + 1}
                       </span>
                       {qPayload.test_type === "desarrollo" && (

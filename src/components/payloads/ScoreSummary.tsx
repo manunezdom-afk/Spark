@@ -9,7 +9,7 @@ export function ScoreSummary({ payload }: { payload: ScorePayload }) {
           <Award className="w-6 h-6 text-spark" strokeWidth={1.5} />
         </div>
         <div className="flex flex-col">
-          <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+          <span className="font-medium text-[11px] text-muted-foreground">
             Resultado
           </span>
           <div className="text-4xl font-semibold tracking-tight">
@@ -20,7 +20,7 @@ export function ScoreSummary({ payload }: { payload: ScorePayload }) {
       </div>
 
       <div className="flex flex-col gap-3">
-        <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+        <div className="font-medium text-[11px] text-muted-foreground">
           Desglose
         </div>
         <ul className="flex flex-col gap-2.5">
@@ -42,7 +42,7 @@ export function ScoreSummary({ payload }: { payload: ScorePayload }) {
       </div>
 
       <div className="p-4 rounded-xl border border-black/[0.06] bg-white/60">
-        <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground mb-2">
+        <div className="font-medium text-[11px] text-muted-foreground mb-2">
           Devolución
         </div>
         <p className="text-sm leading-relaxed whitespace-pre-wrap text-foreground/90">{payload.feedback}</p>

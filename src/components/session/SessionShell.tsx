@@ -115,7 +115,7 @@ export function SessionShell({
               Finalizar
             </Button>
           ) : (
-            <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+            <span className="font-medium text-[11px] text-muted-foreground">
               {statusLabel}
             </span>
           )}

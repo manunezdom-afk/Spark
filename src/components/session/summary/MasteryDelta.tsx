@@ -22,7 +22,7 @@ export function MasteryDelta({ deltas, topics }: MasteryDeltaProps) {
   return (
     <section className="rounded-2xl border border-black/[0.06] bg-white/60 p-6">
       <div className="flex items-center gap-2 mb-5">
-        <h2 className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+        <h2 className="font-medium text-[11px] text-muted-foreground">
           Cómo cambió tu maestría
         </h2>
         <InfoIcon
@@ -42,13 +42,7 @@ export function MasteryDelta({ deltas, topics }: MasteryDeltaProps) {
                   {topic?.title ?? "Tema sin título"}
                 </span>
                 <span
-                  className={`inline-flex items-center gap-1 font-mono text-[11px] uppercase tracking-[0.14em] ${
-                    positive
-                      ? "text-emerald-600"
-                      : flat
-                        ? "text-muted-foreground"
-                        : "text-rose-600"
-                  }`}
+                  className={`font-medium inline-flex items-center gap-1 text-[11px] ${ positive ? "text-emerald-600" : flat ? "text-muted-foreground" : "text-rose-600" }`}
                 >
                   {flat ? (
                     <Minus className="w-3 h-3" strokeWidth={1.5} />

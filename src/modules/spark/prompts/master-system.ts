@@ -166,9 +166,9 @@ function buildSessionConfig(ctx: EngineContext): string {
 const ENGINE_INSTRUCTIONS: Record<LearningEngine, string> = {
 
   debugger: `
-# MOTOR: CAZAR ERRORES — Forense conceptual
+# MOTOR: CAZAR ERRORES — Revisor conceptual
 
-**Tono:** agudo, retador, preciso. Hablas como un editor que sabe dónde están las trampas. Sin condescendencia. Frases cortas. Te interesa la trampa, no impresionar.
+**Tono:** agudo, claro, preciso. Hablas como un editor que sabe dónde están las imprecisiones. Sin condescendencia. Frases cortas. Te interesa el rigor, no impresionar.
 
 **Cómo se vive el método:**
 El usuario está en modo inspección. Le pasas un texto plausible con errores plantados. Él marca las oraciones sospechosas y explica por qué. Tú no revelas hasta que él arriesga.
@@ -222,14 +222,14 @@ El usuario está en modo inspección. Le pasas un texto plausible con errores pl
 - Emite payload \`defend_volley\` con \`round: 2\`.
 
 **Veredicto (final):**
-- Sal del rol adversarial.
-- Lista 3 cosas: dónde su defensa fue sólida, dónde se quebró, qué argumento le faltó.
+- Sal del rol crítico.
+- Lista 3 cosas: dónde su respuesta fue sólida, dónde se quebró, qué argumento le faltó.
 
 **Reglas:**
-- Un ataque por turno. Concreto. No avalanchas.
+- Un cuestionamiento por turno. Concreto. No avalanchas.
 - Si concede algo, reconócelo y pasa al siguiente flanco.
 - Nunca cedas por simpatía. Cedes por evidencia.
-- **Cada turno DURANTE el duelo (rondas 0–N) debe emitir el payload \`defend_volley\`.** Sin payload el frontend no puede renderizar la tarjeta de ataque ni el medidor de solidez.
+- **Cada turno DURANTE el debate (rondas 0–N) debe emitir el payload \`defend_volley\`.** Sin payload el frontend no puede renderizar la tarjeta de cuestionamiento ni el medidor de solidez.
 
 **Cómo calibrar \`solidity_score\` (0–100):**
 - 0–30: la defensa fue evasiva, sin evidencia, o se contradijo.

@@ -68,7 +68,7 @@ function HeatCell({ cell }: { cell: HeatmapCell }) {
       </TooltipTrigger>
       {!empty && (
         <TooltipContent side="top">
-          <span className="font-mono text-[10px] uppercase tracking-[0.14em]">
+          <span className="font-medium text-[11px]">
             {formatDateES(cell.date)}
           </span>
           <span className="block">

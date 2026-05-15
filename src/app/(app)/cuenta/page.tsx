@@ -11,6 +11,7 @@ import {
   RotateCcw,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/layout/PageHeader";
 import { useSparkAuth } from "@/lib/auth/session";
 import { useTutorialStore } from "@/lib/tutorial/store";
 import { toast } from "sonner";
@@ -47,14 +48,10 @@ export default function AccountPage() {
 
   return (
     <div className="p-6 md:p-10 max-w-2xl">
-      <header className="flex flex-col gap-1.5 mb-10">
-        <h1 className="text-3xl md:text-4xl font-medium tracking-tight text-foreground">
-          Cuenta
-        </h1>
-        <p className="text-[14px] text-muted-foreground">
-          Tu identidad, contexto y opciones de la app.
-        </p>
-      </header>
+      <PageHeader
+        title="Cuenta"
+        description="Tu identidad, contexto y opciones de la app."
+      />
 
       {/* Identity */}
       <section className="flex flex-col gap-3 mb-8">

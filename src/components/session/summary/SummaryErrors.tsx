@@ -48,7 +48,7 @@ export function SummaryErrors({ errors }: SummaryErrorsProps) {
             key={e.id}
             className="flex items-start gap-3 p-3 rounded-xl border border-black/[0.05] bg-white/70"
           >
-            <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-amber-700 shrink-0 pt-0.5">
+            <span className="font-medium text-[11px] text-amber-700 shrink-0 pt-0.5">
               {ERROR_LABELS[e.error_type]}
             </span>
             <p className="flex-1 text-[12.5px] text-foreground/90 leading-relaxed">

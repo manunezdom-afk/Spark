@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import { getErrorPatterns, getTopicsByIds } from "@/lib/spark/queries";
 import { Badge } from "@/components/ui/badge";
+import { PageHeader } from "@/components/layout/PageHeader";
 import Link from "next/link";
 import { FlaskConical } from "lucide-react";
 
@@ -63,14 +64,10 @@ export default async function ErrorsPage() {
 
   return (
     <div className="w-full max-w-3xl mx-auto p-6 md:p-10 animate-fade-up">
-      <header className="flex flex-col gap-1.5 mb-10">
-        <h1 className="text-3xl md:text-4xl font-medium tracking-tight text-foreground">
-          Errores
-        </h1>
-        <p className="text-[14px] text-muted-foreground">
-          Patrones que se repiten en tus sesiones.
-        </p>
-      </header>
+      <PageHeader
+        title="Errores"
+        description="Patrones que se repiten en tus sesiones."
+      />
 
       {isEmpty ? (
         <>

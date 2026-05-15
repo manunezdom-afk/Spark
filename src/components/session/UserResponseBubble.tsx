@@ -22,7 +22,7 @@ export function UserResponseBubble({
     <div className="flex justify-end engine-bubble-rise">
       <div className="flex flex-col items-end gap-1.5 max-w-[82%]">
         <span
-          className="inline-flex items-center px-2.5 h-5 rounded-full font-mono text-[9px] uppercase tracking-[0.2em]"
+          className="font-medium inline-flex items-center px-2.5 h-5 rounded-full text-[11px]"
           style={{
             background: hexToRgba(theme.accent, 0.13),
             color: theme.accent,

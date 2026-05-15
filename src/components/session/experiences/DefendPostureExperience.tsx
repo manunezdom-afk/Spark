@@ -284,7 +284,7 @@ function PosturePanel({
         </span>
         <div className="flex flex-col leading-tight">
           <span
-            className="font-mono text-[10px] uppercase tracking-[0.18em]"
+            className="font-medium text-[11px]"
             style={{ color: accent }}
           >
             Antes de empezar · declara tu postura
@@ -301,7 +301,7 @@ function PosturePanel({
           style={{ borderColor: hexToRgba(accent, 0.16) }}
         >
           <div
-            className="font-mono text-[10px] uppercase tracking-[0.16em] mb-2"
+            className="font-medium text-[11px] mb-2"
             style={{ color: accent }}
           >
             Pedido de Nova
@@ -400,7 +400,7 @@ function AttackPanel({
           </span>
           <div className="flex flex-col leading-tight">
             <span
-              className="font-mono text-[10px] uppercase tracking-[0.18em]"
+              className="font-medium text-[11px]"
               style={{ color: accent }}
             >
               Ronda {round.index} · {attackLabel}
@@ -453,7 +453,7 @@ function AttackPanel({
 
       <div className="mt-6">
         <span
-          className="font-mono text-[10px] uppercase tracking-[0.16em] block mb-2"
+          className="font-medium text-[11px] block mb-2"
           style={{ color: accent }}
         >
           Tu táctica
@@ -491,7 +491,7 @@ function AttackPanel({
 
       <div className="mt-4 flex flex-col gap-2">
         <span
-          className="font-mono text-[10px] uppercase tracking-[0.16em]"
+          className="font-medium text-[11px]"
           style={{ color: accent }}
         >
           Tu defensa · {TACTIC_LABELS[tactic].verb}
@@ -558,7 +558,7 @@ function RoundsTimeline({
         <div className="flex items-center gap-2">
           <ListChecks className="w-4 h-4" strokeWidth={1.5} style={{ color: accent }} />
           <span
-            className="font-mono text-[10px] uppercase tracking-[0.18em]"
+            className="font-medium text-[11px]"
             style={{ color: accent }}
           >
             Línea del duelo
@@ -566,7 +566,7 @@ function RoundsTimeline({
         </div>
         {avgSolidity !== null && (
           <span
-            className="font-mono text-[10px] tracking-[0.14em] px-2 py-0.5 rounded-full"
+            className="font-medium text-[11px] px-2 py-0.5 rounded-full"
             style={{
               background: hexToRgba(accent, 0.10),
               color: accent,
@@ -603,14 +603,14 @@ function RoundRow({ round, accent }: { round: Round; accent: string }) {
     >
       <div className="flex items-center justify-between gap-2 mb-1.5">
         <span
-          className="font-mono text-[9.5px] uppercase tracking-[0.16em]"
+          className="font-medium text-[11px]"
           style={{ color: accent }}
         >
           {round.index === 0 ? "Postura" : `Ronda ${round.index}`}
           {attackTag && round.index > 0 ? ` · ${attackTag}` : ""}
         </span>
         {tacticLabel && (
-          <span className="font-mono text-[9.5px] uppercase tracking-[0.14em] text-foreground/60">
+          <span className="font-medium text-[11px] text-foreground/60">
             {tacticLabel}
           </span>
         )}
@@ -675,7 +675,7 @@ function SolidityChip({ score, accent }: { score: number; accent: string }) {
     >
       <Activity className="w-3 h-3" strokeWidth={1.5} style={{ color: tone.fg }} />
       <span
-        className="font-mono text-[10px] uppercase tracking-[0.14em]"
+        className="font-medium text-[11px]"
         style={{ color: tone.fg }}
       >
         Defensa anterior · {Math.round(score)} {tone.label}

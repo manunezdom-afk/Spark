@@ -233,7 +233,7 @@ export function HuntErrorsExperience({
                   </span>
                   <div className="flex flex-col leading-tight">
                     <span
-                      className="font-mono text-[10px] uppercase tracking-[0.18em]"
+                      className="font-medium text-[11px]"
                       style={{ color: theme.accent }}
                     >
                       {hasReport
@@ -336,7 +336,7 @@ export function HuntErrorsExperience({
                     style={{ color: theme.accent }}
                   />
                   <span
-                    className="font-mono text-[10px] uppercase tracking-[0.18em]"
+                    className="font-medium text-[11px]"
                     style={{ color: theme.accent }}
                   >
                     Precisión · {precisionPct}%
@@ -390,7 +390,7 @@ export function HuntErrorsExperience({
           <header className="flex items-center gap-2">
             <Sparkles className="w-4 h-4" strokeWidth={1.5} style={{ color: theme.accent }} />
             <span
-              className="font-mono text-[10px] uppercase tracking-[0.18em]"
+              className="font-medium text-[11px]"
               style={{ color: theme.accent }}
             >
               {hasReport ? "Tu reporte" : "Tu cuaderno de inspección"}
@@ -419,7 +419,7 @@ export function HuntErrorsExperience({
                   >
                     <div className="flex items-start justify-between gap-2 mb-1.5">
                       <span
-                        className="font-mono text-[9.5px] uppercase tracking-[0.16em]"
+                        className="font-medium text-[11px]"
                         style={{
                           color:
                             v?.kind === "caught"
@@ -569,7 +569,7 @@ function StatTile({
       style={{ background: colors.bg, borderColor: colors.border }}
     >
       <span
-        className="font-mono text-[9px] uppercase tracking-[0.14em]"
+        className="font-medium text-[11px]"
         style={{ color: colors.fg, opacity: 0.85 }}
       >
         {label}
@@ -645,7 +645,7 @@ function ErrorVerdictRow({
           <span className="text-[11px] text-muted-foreground italic">En: {err.position_hint}</span>
         </div>
         <span
-          className="font-mono text-[9.5px] uppercase tracking-[0.16em] px-2 py-0.5 rounded-full"
+          className="font-medium text-[11px] px-2 py-0.5 rounded-full"
           style={
             caught
               ? { background: "rgb(16 185 129)", color: "white" }

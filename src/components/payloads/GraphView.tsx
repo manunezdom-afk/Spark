@@ -18,7 +18,7 @@ export function GraphView({ payload }: { payload: GraphNodePayload }) {
           <Network className="w-4 h-4" strokeWidth={1.5} />
         </span>
         <div className="flex flex-col">
-          <span className="font-mono text-[9.5px] uppercase tracking-[0.18em] text-cyan-700">
+          <span className="font-medium text-[11px] text-cyan-700">
             Conexiones detectadas
           </span>
           <span className="text-[12px] text-foreground/80">
@@ -34,7 +34,7 @@ export function GraphView({ payload }: { payload: GraphNodePayload }) {
             className="relative p-4 rounded-xl border border-cyan-200/50 bg-white/85 engine-card-rise"
             style={{ animationDelay: `${idx * 80}ms` }}
           >
-            <div className="font-mono text-[9.5px] uppercase tracking-[0.18em] text-cyan-700 mb-2">
+            <div className="font-medium text-[11px] text-cyan-700 mb-2">
               {cat}
             </div>
             <ul className="flex flex-col gap-1.5">
@@ -51,7 +51,7 @@ export function GraphView({ payload }: { payload: GraphNodePayload }) {
 
       {payload.edges.length > 0 && (
         <div className="flex flex-col gap-2">
-          <div className="font-mono text-[9.5px] uppercase tracking-[0.18em] text-cyan-700">
+          <div className="font-medium text-[11px] text-cyan-700">
             Relaciones
           </div>
           <ul className="flex flex-col gap-2">
