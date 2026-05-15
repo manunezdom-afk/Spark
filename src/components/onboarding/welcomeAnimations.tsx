@@ -99,6 +99,44 @@ export function WelcomeMethodsAnim() {
   );
 }
 
+export function WelcomeKairosAnim() {
+  const notes = [
+    { label: "Macroeconomía", color: "#5DD2A8", blocks: 12 },
+    { label: "Derecho Civil", color: "#8B5CF6", blocks: 8 },
+    { label: "Termodinámica", color: "#F59E0B", blocks: 5 },
+  ];
+  return (
+    <div className="relative h-full w-full flex items-center justify-center px-6">
+      <div className="flex flex-col gap-2 w-full max-w-xs">
+        {notes.map((n, i) => (
+          <div
+            key={n.label}
+            className="spark-welcome-topic"
+            style={{ animationDelay: `${i * 220}ms`, borderLeftColor: n.color }}
+          >
+            <span
+              className="text-[9px] font-mono uppercase tracking-[0.16em]"
+              style={{ color: n.color }}
+            >
+              Kairos · {n.blocks} apuntes
+            </span>
+            <span className="text-sm font-semibold text-foreground">{n.label}</span>
+          </div>
+        ))}
+        <div
+          className="flex items-center gap-2 mt-1 opacity-0"
+          style={{ animation: "spark-welcome-fade-up 0.4s ease 0.72s both" }}
+        >
+          <ArrowRight className="h-3 w-3 text-muted-foreground shrink-0" strokeWidth={1.5} />
+          <span className="text-[11px] text-muted-foreground">
+            importados en Spark automáticamente
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function WelcomeNovaAnim() {
   return (
     <div className="relative h-full w-full flex items-center justify-center overflow-hidden">

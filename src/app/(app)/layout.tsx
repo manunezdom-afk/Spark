@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { Toaster } from "sonner";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { MobileTopBar } from "@/components/layout/MobileTopBar";
@@ -26,6 +27,14 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           </div>
           <WelcomeTour />
         </NovaAskProvider>
+        <Toaster
+          position="bottom-right"
+          toastOptions={{
+            classNames: {
+              toast: "font-sans text-[13px] rounded-xl border border-black/[0.08]",
+            },
+          }}
+        />
       </TooltipProvider>
     </AuthProvider>
   );

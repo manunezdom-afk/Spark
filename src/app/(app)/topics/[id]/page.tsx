@@ -20,6 +20,7 @@ import {
 import { getTopicMaterials } from "@/lib/spark/kairos-bridge";
 import { MasteryBar } from "@/components/mastery/MasteryBar";
 import { KairosSourceHeader } from "@/components/topics/KairosSourceHeader";
+import { KairosFlashcardsImport } from "@/components/topics/KairosFlashcardsImport";
 import { TopicActions } from "@/components/topics/TopicActions";
 import { MethodQuickCard } from "@/components/methods/MethodQuickCard";
 import { ENGINE_LABELS } from "@/modules/spark/engines";
@@ -182,6 +183,9 @@ export default async function TopicDetailPage({ params }: RouteParams) {
             <ClipboardList className="w-3.5 h-3.5" strokeWidth={1.5} />
             Generar prueba
           </Link>
+          {topic.source_note_ids?.length ? (
+            <KairosFlashcardsImport topicId={topic.id} />
+          ) : null}
           <span className="text-[12px] text-muted-foreground">
             Estado: <span className="text-foreground/70 font-medium">{masteryStateLabel}</span>
           </span>

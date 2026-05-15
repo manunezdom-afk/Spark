@@ -27,6 +27,7 @@ export interface Recommendation {
   cta: string;
   tone: "urgent" | "warm" | "neutral";
   Icon: LucideIcon;
+  kairosColor?: string | null;
 }
 
 export interface RecommendationInput {
@@ -137,6 +138,7 @@ export function buildRecommendation(args: RecommendationInput): Recommendation {
       cta: "Empezar sesión",
       tone: "neutral",
       Icon: Sparkles,
+      kairosColor: t.kairos_color ?? null,
     };
   }
 

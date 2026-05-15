@@ -8,6 +8,7 @@ import {
   Brain,
   Flame,
   HelpCircle,
+  Link2,
   Sparkles,
   Trophy,
   X,
@@ -20,6 +21,7 @@ import { useTutorialStore } from "@/lib/tutorial/store";
 import { cn } from "@/lib/utils/cn";
 import {
   WelcomeBrandAnim,
+  WelcomeKairosAnim,
   WelcomeMasteryAnim,
   WelcomeMethodsAnim,
   WelcomeNovaAnim,
@@ -63,6 +65,19 @@ const SLIDES: Slide[] = [
     highlight: "Los temas viven en la sección Temas y se editan o borran cuando quieras.",
     Icon: BookOpen,
     Animation: WelcomeTopicsAnim,
+  },
+  {
+    key: "kairos",
+    eyebrow: "Paso 1b · Kairos",
+    title: (
+      <>
+        Tus apuntes, <GradientText italic>como contexto.</GradientText>
+      </>
+    ),
+    body: "Si usas Kairos para tomar apuntes, Spark los importa automáticamente. Cada pregunta de Nova usa tu material real — no ejemplos genéricos. Sin configurar nada.",
+    highlight: "Kairos y Spark comparten cuenta: conéctate con el mismo email.",
+    Icon: Link2,
+    Animation: WelcomeKairosAnim,
   },
   {
     key: "methods",

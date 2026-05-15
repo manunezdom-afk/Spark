@@ -36,8 +36,14 @@ export function RecommendedCard({ recommendation: r }: RecommendedCardProps) {
   return (
     <Link
       href={r.href}
-      className={`group block p-6 md:p-7 rounded-2xl border ${tone.border} ${tone.bg} backdrop-blur-sm hover:shadow-lift hover:border-foreground/15 transition-all duration-300 ease-spring`}
+      className={`group relative block p-6 md:p-7 rounded-2xl border ${tone.border} ${tone.bg} backdrop-blur-sm hover:shadow-lift hover:border-foreground/15 transition-all duration-300 ease-spring overflow-hidden`}
     >
+      {r.kairosColor && (
+        <span
+          className="absolute left-0 top-4 bottom-4 w-[3px] rounded-full opacity-70"
+          style={{ backgroundColor: r.kairosColor }}
+        />
+      )}
       <div className="flex items-start gap-4 flex-wrap">
         <div
           className={`inline-flex items-center justify-center w-11 h-11 rounded-xl ${tone.accentBg} border ${tone.accent} shrink-0`}
