@@ -130,7 +130,7 @@ function MethodTurnBody({
             aria-hidden
           >
             <span
-              className="inline-flex items-center justify-center w-7 h-7 rounded-full font-mono text-[11px] font-semibold"
+              className="inline-flex items-center justify-center w-7 h-7 rounded-full text-[12px] font-semibold"
               style={{
                 background: hexToRgba(accent, 0.12),
                 color: accent,
@@ -333,11 +333,11 @@ const STRIP_ICON: Partial<Record<LearningEngine, typeof HelpCircle>> = {
 function stripLabelFor(engine: LearningEngine, index: number) {
   const n = index + 1;
   if (engine === "socratic") return `Capa ${n}`;
-  if (engine === "devils_advocate") return `Round ${n}`;
+  if (engine === "devils_advocate") return `Ronda ${n}`;
   if (engine === "debugger") return n === 1 ? "Briefing" : `Pase ${n}`;
   if (engine === "bridge_builder") return `Conexión ${n}`;
-  if (engine === "roleplay") return `Beat ${n}`;
-  return `Turn ${n}`;
+  if (engine === "roleplay") return `Escena ${n}`;
+  return `Turno ${n}`;
 }
 
 function hexToRgba(hex: string, alpha: number) {

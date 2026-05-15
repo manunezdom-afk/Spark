@@ -61,16 +61,16 @@ export function SessionShell({
       className="flex flex-col min-h-screen"
       style={shellStyle}
     >
-      <header className="sticky top-0 z-30 border-b border-black/[0.06] bg-background/85 backdrop-blur-xl">
+      <header className="sticky top-0 z-30 border-b border-black/[0.05] bg-background/85 backdrop-blur-xl">
         <div
           className="absolute inset-0 pointer-events-none"
-          style={{ background: theme.headerGradient, opacity: 0.7 }}
+          style={{ background: theme.headerGradient, opacity: 0.6 }}
           aria-hidden
         />
         <div className="relative flex items-center justify-between gap-3 px-5 md:px-8 h-16">
           <Link
             href="/dashboard"
-            className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+            className="inline-flex items-center gap-1 text-[13px] text-ink-secondary hover:text-ink transition-colors"
           >
             <ChevronLeft className="w-4 h-4" strokeWidth={1.5} />
             Salir
@@ -78,7 +78,7 @@ export function SessionShell({
 
           <div className="flex items-center gap-3 min-w-0 flex-1 justify-center">
             <span
-              className="inline-flex items-center justify-center w-8 h-8 rounded-xl border bg-white/80 shrink-0"
+              className="inline-flex items-center justify-center w-8 h-8 rounded-xl border bg-white shrink-0"
               style={{
                 borderColor: hexToRgba(theme.accent, 0.28),
                 color: theme.accent,
@@ -88,16 +88,16 @@ export function SessionShell({
             </span>
             <div className="flex flex-col items-start min-w-0">
               <span
-                className="text-[11px] font-medium leading-tight"
+                className="text-[11px] font-medium leading-tight tracking-tight"
                 style={{ color: theme.accent }}
               >
                 {theme.vibe}
               </span>
               <div className="flex items-baseline gap-2 min-w-0">
-                <span className="text-[14px] font-medium text-foreground leading-tight">
+                <span className="text-[14px] font-medium text-ink leading-tight">
                   {ENGINE_LABELS[engine]}
                 </span>
-                <span className="text-[12px] text-muted-foreground truncate hidden sm:inline">
+                <span className="text-[12px] text-ink-tertiary truncate hidden sm:inline">
                   · {topics.map((t) => t.title).join(" · ")}
                 </span>
               </div>
@@ -115,7 +115,7 @@ export function SessionShell({
               Finalizar
             </Button>
           ) : (
-            <span className="font-medium text-[11px] text-muted-foreground">
+            <span className="font-medium text-[11px] text-ink-tertiary">
               {statusLabel}
             </span>
           )}
