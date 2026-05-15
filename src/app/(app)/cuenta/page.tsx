@@ -47,18 +47,18 @@ export default function AccountPage() {
 
   return (
     <div className="p-6 md:p-10 max-w-2xl">
-      <header className="flex flex-col gap-2 mb-10">
-        <span className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
-          Spark · Cuenta
-        </span>
-        <h1 className="text-4xl font-semibold tracking-tight">
-          Tu <span className="italic text-nova-mid">cuenta.</span>
+      <header className="flex flex-col gap-1.5 mb-10">
+        <h1 className="text-3xl md:text-4xl font-medium tracking-tight text-foreground">
+          Cuenta
         </h1>
+        <p className="text-[14px] text-muted-foreground">
+          Tu identidad, contexto y opciones de la app.
+        </p>
       </header>
 
       {/* Identity */}
       <section className="flex flex-col gap-3 mb-8">
-        <div className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
+        <div className="text-[13px] font-medium text-muted-foreground">
           Identidad
         </div>
         <div className="p-4 rounded-2xl border border-black/[0.06] bg-white/60">
@@ -69,7 +69,7 @@ export default function AccountPage() {
       {/* Context */}
       {ctx && (
         <section className="flex flex-col gap-3 mb-8">
-          <div className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
+          <div className="text-[13px] font-medium text-muted-foreground">
             Tu perfil de aprendizaje
           </div>
           <div className="p-4 rounded-2xl border border-black/[0.06] bg-white/60 flex flex-col gap-2">
@@ -106,7 +106,7 @@ export default function AccountPage() {
 
       {/* Tutorial replay */}
       <section className="flex flex-col gap-3 mb-8">
-        <div className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
+        <div className="text-[13px] font-medium text-muted-foreground">
           Tutorial
         </div>
         <div className="rounded-2xl border border-black/[0.06] bg-white/60 p-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -143,7 +143,7 @@ export default function AccountPage() {
       {/* PWA Install */}
       {installPrompt && (
         <section className="flex flex-col gap-3 mb-8">
-          <div className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
+          <div className="text-[13px] font-medium text-muted-foreground">
             Aplicación
           </div>
           <Button onClick={install} variant="spark">
@@ -163,7 +163,7 @@ export default function AccountPage() {
 
       {/* Focus OS ecosystem footer */}
       <footer className="border-t border-black/[0.04] pt-8">
-        <div className="font-mono text-[9px] uppercase tracking-[0.2em] text-muted-foreground/60 mb-4">
+        <div className="text-[12px] font-medium text-muted-foreground/70 mb-4">
           Familia Focus OS
         </div>
         <div className="flex items-center gap-6">

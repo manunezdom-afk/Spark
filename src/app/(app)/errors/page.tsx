@@ -2,7 +2,6 @@ import { redirect } from "next/navigation";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import { getErrorPatterns, getTopicsByIds } from "@/lib/spark/queries";
 import { Badge } from "@/components/ui/badge";
-import { GradientText } from "@/components/brand/GradientText";
 import Link from "next/link";
 import { FlaskConical } from "lucide-react";
 
@@ -64,23 +63,20 @@ export default async function ErrorsPage() {
 
   return (
     <div className="w-full max-w-3xl mx-auto p-6 md:p-10 animate-fade-up">
-      <header className="flex flex-col gap-2 mb-10">
-        <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted-foreground/70">
-          Spark · Errores
-        </span>
-        <h1 className="text-display-md md:text-display-lg text-foreground">
-          Patrones{" "}
-          <GradientText italic className="font-light">
-            que se repiten.
-          </GradientText>
+      <header className="flex flex-col gap-1.5 mb-10">
+        <h1 className="text-3xl md:text-4xl font-medium tracking-tight text-foreground">
+          Errores
         </h1>
+        <p className="text-[14px] text-muted-foreground">
+          Patrones que se repiten en tus sesiones.
+        </p>
       </header>
 
       {isEmpty ? (
         <>
           {/* Demo banner */}
           <div className="flex flex-col gap-3 rounded-xl border border-black/[0.07] bg-white/60 px-4 py-3 mb-6 sm:flex-row sm:items-center sm:gap-4">
-            <span className="inline-flex items-center gap-1.5 self-start rounded-full border border-spark/20 bg-spark/[0.08] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-spark">
+            <span className="inline-flex items-center gap-1.5 self-start rounded-full border border-spark/20 bg-spark/[0.08] px-2.5 py-1 text-[11px] font-medium text-spark">
               <FlaskConical className="h-3 w-3" strokeWidth={1.5} />
               Ejemplos
             </span>

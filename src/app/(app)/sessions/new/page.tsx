@@ -251,15 +251,15 @@ function NewSessionForm() {
   const params = useSearchParams();
 
   const requestedEngine = params.get("engine") as LearningEngine | null;
-  // Si llegan con engine= en la URL (vinieron desde dashboard/topic), saltamos el
-  // selector de método y vamos directo a elegir materia + ajustes.
-  const lockedToMethod =
+  // Si llegan con engine= en la URL (vinieron desde dashboard/topic), pre-seleccionamos
+  // ese método pero mantenemos el selector visible (el usuario puede cambiar de idea).
+  const initialMethod: MethodKey =
     requestedEngine &&
     requestedEngine in ENGINE_LIMITS &&
     requestedEngine !== "test_alternativas" &&
-    requestedEngine !== "test_desarrollo";
-  const initialMethod: MethodKey =
-    lockedToMethod ? (requestedEngine as MethodKey) : "socratic";
+    requestedEngine !== "test_desarrollo"
+      ? (requestedEngine as MethodKey)
+      : "socratic";
   const presetTopic = params.get("topic");
   const presetTopicIds = params.get("topic_ids");
   const initialSelectedTopicIds = getInitialSelectedTopicIds({
@@ -415,7 +415,7 @@ function NewSessionForm() {
   );
   const onlyTopic = selectedTopics.length === 1 ? selectedTopics[0] : null;
 
-  const stepCount = getNewSessionStepCount(selected.size) - (lockedToMethod ? 1 : 0);
+  const stepCount = getNewSessionStepCount(selected.size);
 
   function canStart(): { ok: boolean; reason?: string } {
     if (loading) return { ok: false, reason: "Cargando temas…" };
@@ -490,29 +490,27 @@ function NewSessionForm() {
         <div className="flex flex-col gap-6">
           <NewSessionHero methodKey={methodKey} />
 
-          {!lockedToMethod && (
-            <Step
-              index={1}
-              total={stepCount}
-              title="Elige cómo entrenar"
-              kicker="Método"
-              theme={theme}
-            >
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {ALL_METHOD_KEYS.map((opt) => (
-                  <MethodPickCard
-                    key={opt}
-                    methodKey={opt}
-                    isActive={opt === methodKey}
-                    onClick={() => changeMethod(opt)}
-                  />
-                ))}
-              </div>
-            </Step>
-          )}
+          <Step
+            index={1}
+            total={stepCount}
+            title="Elige cómo entrenar"
+            kicker="Método"
+            theme={theme}
+          >
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {ALL_METHOD_KEYS.map((opt) => (
+                <MethodPickCard
+                  key={opt}
+                  methodKey={opt}
+                  isActive={opt === methodKey}
+                  onClick={() => changeMethod(opt)}
+                />
+              ))}
+            </div>
+          </Step>
 
           <Step
-            index={lockedToMethod ? 1 : 2}
+            index={2}
             total={stepCount}
             title={
               limits.max === 1
@@ -547,7 +545,7 @@ function NewSessionForm() {
 
           {onlyTopic && (
             <Step
-              index={lockedToMethod ? 2 : 3}
+              index={3}
               total={stepCount}
               title="¿Toda la materia o solo una parte?"
               kicker="Material"
@@ -565,7 +563,7 @@ function NewSessionForm() {
 
           {selected.size > 1 && (
             <Step
-              index={lockedToMethod ? 2 : 3}
+              index={3}
               total={stepCount}
               title="Material por materia"
               kicker="Material"
@@ -580,11 +578,7 @@ function NewSessionForm() {
           )}
 
           <Step
-            index={
-              (onlyTopic || selected.size > 1)
-                ? lockedToMethod ? 3 : 4
-                : lockedToMethod ? 2 : 3
-            }
+            index={onlyTopic || selected.size > 1 ? 4 : 3}
             total={stepCount}
             title="Cómo quieres que sea la sesión"
             kicker="Ajustes"

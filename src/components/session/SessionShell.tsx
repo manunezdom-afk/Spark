@@ -88,16 +88,16 @@ export function SessionShell({
             </span>
             <div className="flex flex-col items-start min-w-0">
               <span
-                className="font-mono text-[9.5px] uppercase tracking-[0.18em] leading-none"
+                className="text-[11px] font-medium leading-tight"
                 style={{ color: theme.accent }}
               >
-                Spark · {theme.vibe}
+                {theme.vibe}
               </span>
               <div className="flex items-baseline gap-2 min-w-0">
-                <span className="text-[13px] font-semibold text-foreground leading-tight">
+                <span className="text-[14px] font-medium text-foreground leading-tight">
                   {ENGINE_LABELS[engine]}
                 </span>
-                <span className="text-[11px] text-muted-foreground truncate hidden sm:inline">
+                <span className="text-[12px] text-muted-foreground truncate hidden sm:inline">
                   · {topics.map((t) => t.title).join(" · ")}
                 </span>
               </div>

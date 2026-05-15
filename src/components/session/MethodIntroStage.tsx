@@ -52,17 +52,17 @@ export function MethodIntroStage({
       <div className="relative z-[2] flex flex-col gap-4">
         <div className="flex items-center gap-2">
           <span
-            className="font-mono text-[10px] uppercase tracking-[0.22em]"
+            className="text-[12px] font-medium"
             style={{ color: theme.accent }}
           >
             {personality.hudKicker}
           </span>
           <span className="text-muted-foreground/40">·</span>
-          <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground/80">
+          <span className="text-[12px] text-muted-foreground/80">
             {personality.novaToneTag}
           </span>
         </div>
-        <h2 className="text-2xl md:text-3xl font-semibold tracking-tight text-foreground leading-tight">
+        <h2 className="text-2xl md:text-3xl font-medium tracking-tight text-foreground leading-tight">
           {ENGINE_LABELS[engine]}
         </h2>
         <p className="text-[14px] md:text-[15px] text-foreground/80 leading-relaxed max-w-xl">
@@ -143,7 +143,7 @@ function Chip({
       }}
     >
       <span
-        className="font-mono uppercase tracking-[0.14em] text-[9px]"
+        className="text-[10.5px] font-medium"
         style={{ color: accent }}
       >
         {kindLabel}

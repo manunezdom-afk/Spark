@@ -42,8 +42,8 @@ export function MobileTopBar() {
           <div className="text-sm font-semibold tracking-tight leading-none">
             {getTitle(pathname)}
           </div>
-          <div className="text-[8px] uppercase tracking-[0.18em] text-muted-foreground/40 leading-none mt-0.5">
-            Spark · Focus OS
+          <div className="text-[10px] text-muted-foreground/55 leading-none mt-0.5">
+            Spark
           </div>
         </div>
       </div>

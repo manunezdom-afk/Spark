@@ -33,16 +33,13 @@ export default async function SessionsPage() {
 
   return (
     <div className="p-6 md:p-12 max-w-3xl animate-fade-up">
-      <header className="flex flex-col gap-2 mb-10">
-        <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted-foreground/70">
-          Spark · Sesiones
-        </span>
-        <h1 className="text-display-md md:text-display-lg text-foreground">
-          <span className="font-light">Tu historial</span>{" "}
-          <GradientText italic className="font-light">
-            de entrenamiento.
-          </GradientText>
+      <header className="flex flex-col gap-1.5 mb-10">
+        <h1 className="text-3xl md:text-4xl font-medium tracking-tight text-foreground">
+          Sesiones
         </h1>
+        <p className="text-[14px] text-muted-foreground">
+          Tu historial de entrenamiento.
+        </p>
       </header>
 
       {sessions.length === 0 ? (
