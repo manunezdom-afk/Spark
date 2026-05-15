@@ -13,29 +13,28 @@ import { useNovaAsk } from "@/components/nova/NovaAskProvider";
 export function EmptySessionsState({ hasTopics }: { hasTopics: boolean }) {
   const ask = useNovaAsk();
   return (
-    <div className="rounded-2xl border border-dashed border-black/[0.12] bg-white/50 p-5 sm:p-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-5">
-      <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-spark/10 border border-spark/25 shrink-0">
-        <Activity className="w-4 h-4 text-spark" strokeWidth={1.5} />
+    <div className="rounded-2xl border border-black/[0.05] bg-white shadow-soft p-5 sm:p-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-5">
+      <div className="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-spark-soft border border-spark/22 shrink-0">
+        <Activity className="w-5 h-5 text-spark" strokeWidth={1.5} />
       </div>
-      <p className="flex-1 text-[13px] leading-relaxed text-foreground/85">
-        No tienes sesiones activas.{" "}
+      <p className="flex-1 text-[13.5px] leading-relaxed text-ink-secondary">
         {hasTopics
-          ? "Crea una desde una de tus materias o pídele a Nova que te recomiende por dónde empezar."
-          : "Crea tu primer tema y empieza con el método que prefieras."}
+          ? "Aún no tienes una sesión en curso. Elige cómo entrenar arriba o pídele a Nova que te recomiende por dónde empezar."
+          : "Crea tu primer tema para empezar a entrenar. Puedes importarlo desde Kairos o crearlo manualmente."}
       </p>
       <div className="flex flex-wrap items-center gap-2 shrink-0">
         <Link
           href={hasTopics ? "/sessions/new" : "/topics"}
-          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-foreground text-background text-[12px] font-semibold hover:opacity-90 transition-opacity"
+          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-spark text-white text-[12.5px] font-medium hover:bg-spark-deep transition-colors shadow-soft"
         >
           {hasTopics ? "Crear sesión" : "Crear tema"}
         </Link>
         <button
           type="button"
           onClick={ask.open}
-          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-nova/35 bg-white text-foreground text-[12px] font-semibold hover:border-nova/55 hover:shadow-soft transition-all"
+          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-nova/30 bg-white text-ink text-[12px] font-medium hover:border-nova/50 hover:shadow-soft transition-all"
         >
-          <Sparkles className="w-3 h-3 text-nova-mid" strokeWidth={1.5} />
+          <Sparkles className="w-3.5 h-3.5 text-nova-mid" strokeWidth={1.5} />
           Pedir a Nova
         </button>
       </div>

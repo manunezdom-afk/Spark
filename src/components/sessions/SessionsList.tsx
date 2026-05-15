@@ -246,7 +246,9 @@ function Group({
   return (
     <section>
       <h2
-        className={`font-medium text-[11px] mb-4 flex items-center gap-2 ${ tone === "spark" ? "text-spark" : "text-muted-foreground/70" }`}
+        className={`font-medium text-[12.5px] mb-3 flex items-center gap-2 tracking-tight ${
+          tone === "spark" ? "text-spark-deep" : "text-ink-secondary"
+        }`}
       >
         {icon}
         {title}
@@ -291,7 +293,7 @@ function SessionRow({
 
   return (
     <li
-      className={`relative group rounded-2xl border border-black/[0.06] bg-white/60 hover:bg-white hover:border-black/[0.10] transition-colors ${
+      className={`relative group rounded-2xl border border-black/[0.05] bg-white shadow-soft hover:shadow-lift hover:border-black/[0.10] transition-all duration-200 ${
         isRemoving ? "opacity-60 pointer-events-none" : ""
       }`}
     >
@@ -301,15 +303,15 @@ function SessionRow({
           className="flex-1 flex items-center justify-between gap-3 p-4 text-sm min-w-0"
         >
           <div className="flex items-center gap-3 min-w-0 flex-1">
-            <span className="font-medium text-[11px] text-muted-foreground shrink-0">
+            <span className="font-medium text-[11px] text-ink-tertiary shrink-0">
               {ENGINE_LABELS[session.engine]}
             </span>
-            <span className="text-sm font-medium text-foreground/90 truncate">
+            <span className="text-[14px] font-medium text-ink truncate">
               {titles}
             </span>
           </div>
           <div className="flex items-center gap-3 shrink-0">
-            <span className="text-[11px] text-muted-foreground hidden sm:inline">
+            <span className="text-[11px] text-ink-tertiary hidden sm:inline">
               {new Date(session.started_at).toLocaleDateString("es", {
                 day: "2-digit",
                 month: "short",
@@ -318,7 +320,13 @@ function SessionRow({
               })}
             </span>
             <span
-              className={`font-medium text-[11px] ${ session.status === "completed" ? "text-emerald-600" : session.status === "active" ? "text-spark" : "text-muted-foreground" }`}
+              className={`font-medium text-[11px] ${
+                session.status === "completed"
+                  ? "text-emerald-600"
+                  : session.status === "active"
+                    ? "text-spark"
+                    : "text-ink-tertiary"
+              }`}
             >
               {session.status === "completed"
                 ? `${session.score ?? 0}%`

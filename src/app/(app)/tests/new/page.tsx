@@ -130,7 +130,7 @@ function NewTestForm() {
     <div className="p-6 md:p-10 max-w-2xl">
       <Link
         href="/dashboard"
-        className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6"
+        className="inline-flex items-center gap-1 text-sm text-ink-tertiary hover:text-ink mb-6 transition-colors"
       >
         <ChevronLeft className="w-4 h-4" strokeWidth={1.5} />
         Volver
@@ -138,24 +138,24 @@ function NewTestForm() {
 
       <PageHeader
         title="Pruebas"
-        description="Genera una prueba simulada o repasa tus tarjetas."
+        description="Genera una prueba simulada o repasa tus tarjetas pendientes."
       />
 
       {/* Repaso de tarjetas — separado y antes del formulario */}
-      <section className="mb-8">
+      <section className="mb-10">
         <Link
           href="/flashcards/review"
-          className="flex items-center justify-between gap-3 p-4 rounded-xl border border-black/[0.08] bg-white/65 hover:bg-white hover:border-black/[0.16] transition-colors"
+          className="flex items-center justify-between gap-3 p-4 rounded-2xl border border-black/[0.05] bg-white shadow-soft hover:shadow-lift hover:border-black/[0.10] transition-all duration-200"
         >
           <div className="flex items-center gap-3 min-w-0">
-            <span className="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-nova-soft border border-nova/25 shrink-0">
+            <span className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-nova-soft border border-nova/25 shrink-0">
               <Layers className="w-4 h-4 text-nova-mid" strokeWidth={1.5} />
             </span>
             <div className="min-w-0">
-              <div className="text-[14px] font-medium text-foreground">
+              <div className="text-[14px] font-medium text-ink">
                 Repaso de tarjetas
               </div>
-              <div className="text-[12.5px] text-muted-foreground">
+              <div className="text-[12.5px] text-ink-secondary">
                 {dueFlashcards === null
                   ? "Tarjetas que vencen hoy según SM-2."
                   : dueFlashcards === 0
@@ -164,17 +164,17 @@ function NewTestForm() {
               </div>
             </div>
           </div>
-          <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0" strokeWidth={1.5} />
+          <ArrowRight className="w-4 h-4 text-ink-tertiary shrink-0" strokeWidth={1.5} />
         </Link>
       </section>
 
-      <h2 className="text-[14px] font-medium text-foreground mb-3">
+      <h2 className="text-[13px] font-medium text-ink-secondary mb-4 tracking-tight">
         Nueva prueba simulada
       </h2>
 
       {/* Test type selector */}
       <section className="mb-6">
-        <Label className="mb-3 block">Tipo de prueba</Label>
+        <Label className="mb-3 block text-ink-secondary">Tipo de prueba</Label>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {(Object.entries(TYPE_CONFIG) as [TestType, (typeof TYPE_CONFIG)[TestType]][]).map(
             ([type, cfg]) => {
@@ -185,31 +185,31 @@ function NewTestForm() {
                   key={type}
                   onClick={() => handleTypeChange(type)}
                   className={cn(
-                    "text-left p-4 rounded-xl border transition-all",
+                    "text-left p-4 rounded-2xl border shadow-soft transition-all",
                     active
-                      ? "border-spark/40 bg-spark/[0.06]"
-                      : "border-black/[0.07] bg-white/40 hover:bg-white/70",
+                      ? "border-spark/40 bg-spark-soft"
+                      : "border-black/[0.05] bg-white hover:border-black/[0.10] hover:shadow-lift",
                   )}
                 >
                   <Icon
                     className={cn(
                       "w-4 h-4 mb-2",
-                      active ? "text-spark" : "text-muted-foreground",
+                      active ? "text-spark" : "text-ink-tertiary",
                     )}
                     strokeWidth={1.5}
                   />
                   <div
                     className={cn(
                       "font-medium text-sm mb-1",
-                      active ? "text-foreground" : "text-foreground/70",
+                      active ? "text-ink" : "text-ink-secondary",
                     )}
                   >
                     {cfg.label}
                   </div>
-                  <div className="text-[12px] text-muted-foreground leading-relaxed">
+                  <div className="text-[12px] text-ink-secondary leading-relaxed">
                     {cfg.description}
                   </div>
-                  <div className="text-[11px] text-muted-foreground/60 mt-2">
+                  <div className="text-[11px] text-ink-tertiary mt-2">
                     Máx. {cfg.max} preguntas
                   </div>
                 </button>
@@ -222,8 +222,8 @@ function NewTestForm() {
       {/* Question count slider */}
       <section className="mb-6">
         <div className="flex items-center justify-between mb-3">
-          <Label htmlFor="count">Cantidad de preguntas</Label>
-          <span className="text-2xl font-semibold text-foreground tabular-nums w-8 text-right">
+          <Label htmlFor="count" className="text-ink-secondary">Cantidad de preguntas</Label>
+          <span className="text-2xl font-semibold text-ink tabular-nums w-8 text-right">
             {count}
           </span>
         </div>
@@ -236,7 +236,7 @@ function NewTestForm() {
           onChange={(e) => setCount(Number(e.target.value))}
           className="w-full cursor-pointer accent-spark h-1.5"
         />
-        <div className="flex justify-between text-[11px] text-muted-foreground/60 mt-1.5">
+        <div className="flex justify-between text-[11px] text-ink-tertiary mt-1.5">
           <span>1</span>
           <span>{config.max}</span>
         </div>
@@ -244,17 +244,17 @@ function NewTestForm() {
 
       {/* Topic selector */}
       <section className="mb-8">
-        <Label className="mb-3 block">
+        <Label className="mb-3 block text-ink-secondary">
           Temas{" "}
-          <span className="text-muted-foreground font-normal">
+          <span className="text-ink-tertiary font-normal">
             ({selected.size} seleccionado{selected.size !== 1 ? "s" : ""})
           </span>
         </Label>
 
         {loadingTopics ? (
-          <div className="text-sm text-muted-foreground py-3">Cargando temas…</div>
+          <div className="text-sm text-ink-tertiary py-3">Cargando temas…</div>
         ) : topics.length === 0 ? (
-          <div className="p-4 rounded-xl border border-black/[0.07] bg-white/40 text-sm text-muted-foreground">
+          <div className="p-4 rounded-2xl border border-black/[0.05] bg-white shadow-soft text-sm text-ink-secondary">
             No tienes temas aún.{" "}
             <Link href="/topics" className="text-spark hover:underline font-medium">
               Crea uno
@@ -270,21 +270,21 @@ function NewTestForm() {
                   key={t.id}
                   onClick={() => toggleTopic(t.id)}
                   className={cn(
-                    "text-left p-3.5 rounded-xl border transition-colors",
+                    "text-left p-3.5 rounded-xl border transition-all",
                     isSelected
-                      ? "border-spark/40 bg-spark/[0.05]"
-                      : "border-black/[0.07] bg-white/40 hover:bg-white/70",
+                      ? "border-spark/40 bg-spark-soft shadow-soft"
+                      : "border-black/[0.05] bg-white hover:border-black/[0.10] hover:shadow-soft",
                   )}
                 >
                   {t.category && (
-                    <div className="text-[12px] text-muted-foreground mb-0.5">
+                    <div className="text-[12px] text-ink-tertiary mb-0.5">
                       {t.category}
                     </div>
                   )}
                   <div
                     className={cn(
                       "font-medium text-sm",
-                      isSelected ? "text-foreground" : "text-foreground/80",
+                      isSelected ? "text-ink" : "text-ink-secondary",
                     )}
                   >
                     {t.title}

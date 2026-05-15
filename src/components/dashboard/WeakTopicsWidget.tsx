@@ -34,9 +34,9 @@ export async function WeakTopicsWidget({ userId, topics }: WeakTopicsWidgetProps
 
   if (weak.length === 0) {
     return (
-      <div className="rounded-2xl border border-dashed border-black/[0.10] bg-white/40 p-5 text-[13px] text-muted-foreground leading-relaxed">
+      <div className="rounded-2xl border border-black/[0.05] bg-white shadow-soft p-5 text-[13px] text-ink-secondary leading-relaxed">
         {trained.length === 0
-          ? "Todavía no tienes temas entrenados. Cuando completes una sesión, aquí verás los más débiles."
+          ? "Todavía no entrenaste ningún tema. Cuando completes tu primera sesión, aquí verás cuáles necesitas reforzar."
           : "Vas bien — ningún tema entrenado está por debajo del 70% de maestría."}
       </div>
     );
@@ -48,20 +48,20 @@ export async function WeakTopicsWidget({ userId, topics }: WeakTopicsWidgetProps
         <li key={state.id}>
           <Link
             href={`/topics/${topic.id}`}
-            className="flex items-center gap-3 p-3.5 rounded-xl border border-black/[0.06] bg-white/55 hover:bg-white hover:border-black/[0.12] hover:shadow-soft transition-all duration-200"
+            className="flex items-center gap-3 p-3.5 rounded-xl border border-black/[0.05] bg-white shadow-soft hover:shadow-lift hover:border-black/[0.10] transition-all duration-200"
           >
-            <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg shrink-0 bg-amber-100/60 border border-amber-200/50 text-amber-700">
+            <span className="inline-flex items-center justify-center w-9 h-9 rounded-lg shrink-0 bg-amber-50 border border-amber-200/55 text-amber-700">
               <TrendingDown className="w-3.5 h-3.5" strokeWidth={1.5} />
             </span>
             <div className="min-w-0 flex-1">
-              <div className="text-[13.5px] font-semibold tracking-tight text-foreground truncate">
+              <div className="text-[13.5px] font-medium tracking-tight text-ink truncate">
                 {topic.title}
               </div>
               <div className="mt-1.5">
                 <MasteryBar score={state.mastery_score} size="sm" />
               </div>
             </div>
-            <span className="font-medium text-[11px] text-muted-foreground inline-flex items-center gap-1 shrink-0">
+            <span className="font-medium text-[11.5px] text-ink-secondary inline-flex items-center gap-1 shrink-0">
               Entrenar
               <ArrowRight className="w-3 h-3" strokeWidth={1.5} />
             </span>

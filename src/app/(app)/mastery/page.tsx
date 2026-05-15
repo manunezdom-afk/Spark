@@ -330,31 +330,31 @@ function TopicRow({
             ? `/sessions/new?topic_ids=${topic.id}`
             : `/topics/${topic.id}`
         }
-        className="group flex items-center gap-4 p-4 rounded-2xl border border-black/[0.06] bg-white/60 hover:bg-white hover:border-black/[0.12] transition-all duration-200"
+        className="group flex items-center gap-4 p-4 rounded-2xl border border-black/[0.05] bg-white shadow-soft hover:shadow-lift hover:border-black/[0.10] transition-all duration-200"
       >
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-3 mb-1.5 flex-wrap">
             <div className="min-w-0 flex-1">
               {topic.category && (
-                <div className="font-medium text-[11px] text-muted-foreground mb-0.5">
+                <div className="font-medium text-[11px] text-ink-tertiary mb-0.5">
                   {topic.category}
                 </div>
               )}
-              <div className="font-medium text-foreground truncate">
+              <div className="font-medium text-[14px] text-ink truncate">
                 {topic.title}
               </div>
             </div>
             <span
-              className="font-medium text-[11px] shrink-0"
+              className="font-medium text-[11.5px] shrink-0"
               style={{ color: accentColor }}
             >
               {dueLabel}
             </span>
           </div>
           {!isUntouched && <MasteryBar score={score} />}
-          <div className="font-medium flex items-center gap-3 text-[11px] text-muted-foreground mt-1.5">
+          <div className="font-medium flex items-center gap-3 text-[11.5px] text-ink-tertiary mt-1.5">
             {isUntouched ? (
-              <span className="text-spark font-medium normal-case tracking-normal">
+              <span className="text-spark-deep font-medium">
                 Empezar primera sesión →
               </span>
             ) : (
@@ -371,7 +371,7 @@ function TopicRow({
           </div>
         </div>
         <ArrowRight
-          className="w-4 h-4 text-muted-foreground/40 group-hover:text-foreground group-hover:translate-x-0.5 transition-all shrink-0"
+          className="w-4 h-4 text-ink-tertiary group-hover:text-ink group-hover:translate-x-0.5 transition-all shrink-0"
           strokeWidth={1.5}
         />
       </Link>

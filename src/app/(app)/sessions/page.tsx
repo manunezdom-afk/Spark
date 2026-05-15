@@ -36,21 +36,21 @@ export default async function SessionsPage() {
       <PageHeader title="Sesiones" description="Tu historial de entrenamiento." />
 
       {sessions.length === 0 ? (
-        <div className="flex flex-col items-center text-center py-16 gap-5 max-w-md mx-auto">
-          <div className="w-14 h-14 rounded-2xl bg-spark/10 border border-spark/20 flex items-center justify-center">
+        <div className="flex flex-col items-center text-center py-20 gap-6 max-w-md mx-auto">
+          <div className="w-14 h-14 rounded-2xl bg-spark-soft border border-spark/22 flex items-center justify-center">
             <History className="w-6 h-6 text-spark" strokeWidth={1.5} />
           </div>
           <div>
-            <h2 className="text-xl font-medium tracking-tight mb-2 text-foreground">
-              Aún no entrenaste nada
+            <h2 className="text-xl font-medium tracking-tight mb-2 text-ink">
+              Aún no tienes sesiones
             </h2>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Elige un tema y un método para empezar tu primera sesión.
+            <p className="text-[13.5px] text-ink-secondary leading-relaxed">
+              Elige un tema y un método para empezar tu primera sesión de entrenamiento.
             </p>
           </div>
-          <Button asChild variant="spark" className="rounded-full">
-            <Link href="/topics">
-              Ir a Temas
+          <Button asChild variant="spark" className="rounded-full gap-2 shadow-soft">
+            <Link href="/dashboard">
+              Volver al inicio
               <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.5} />
             </Link>
           </Button>
