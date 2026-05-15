@@ -370,7 +370,7 @@ export default async function TopicDetailPage({ params }: RouteParams) {
                 <p className="text-[13px] flex-1 text-foreground/90 break-words leading-relaxed">
                   {e.description}
                 </p>
-                <span className="font-mono text-[10px] text-muted-foreground shrink-0 mt-0.5 tabular-nums">
+                <span className="tabular-nums text-[10px] text-muted-foreground shrink-0 mt-0.5">
                   {e.frequency}×
                 </span>
               </li>
@@ -382,7 +382,7 @@ export default async function TopicDetailPage({ params }: RouteParams) {
               className="inline-flex items-center gap-1.5 text-[12px] font-medium text-spark hover:gap-2 transition-all"
             >
               <Sparkles className="w-3 h-3" strokeWidth={1.5} />
-              Atacar estos errores con Cazar errores
+              Repasar estos errores con identificación guiada
               <ArrowRight className="w-3 h-3" strokeWidth={1.5} />
             </Link>
           </div>

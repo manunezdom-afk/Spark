@@ -26,6 +26,15 @@ const config = [
           message:
             "Lucide icons deben usar strokeWidth={1.5} (regla del ecosistema en CLAUDE.md).",
         },
+        // Design system: el patrón font-mono+uppercase+tracking en className
+        // produce el look "SaaS corporativo" que se eliminó del producto.
+        // Usa text-[11px] font-medium en su lugar (ver plan visual en .claude/plans/).
+        {
+          selector:
+            "JSXAttribute[name.name='className'] > Literal[value*='font-mono'][value*='uppercase'][value*='tracking-']",
+          message:
+            "Evitar font-mono+uppercase+tracking en className (elimina el look 'hecho con IA'). Usa text-[11px] font-medium text-muted-foreground.",
+        },
       ],
     },
   },

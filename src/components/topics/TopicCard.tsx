@@ -16,7 +16,7 @@ export function TopicCard({
   return (
     <Link
       href={`/topics/${topic.id}`}
-      className="group relative flex flex-col gap-3 p-5 rounded-2xl border border-black/[0.06] bg-white/60 backdrop-blur-sm hover:bg-white hover:border-black/[0.10] transition-all duration-200 hover:-translate-y-px hover:shadow-[0_6px_24px_rgba(201,123,63,0.08)]"
+      className="group relative flex flex-col gap-3 p-5 rounded-2xl border border-black/[0.06] bg-white/60 backdrop-blur-sm hover:bg-white hover:border-black/[0.10] transition-all duration-200 hover:-translate-y-px hover:shadow-lift"
     >
       {/* Kairos color accent bar */}
       {kairosColor && (

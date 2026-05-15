@@ -120,7 +120,7 @@ export default async function TestResultsPage({ params }: RouteParams) {
                       {qPayload.test_type === "desarrollo" && (
                         <span
                           className={cn(
-                            "font-mono text-[10px]",
+                            "tabular-nums text-[10px]",
                             result.correct ? "text-emerald-600" : "text-red-400"
                           )}
                         >

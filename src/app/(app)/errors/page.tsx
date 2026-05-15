@@ -110,7 +110,7 @@ export default async function ErrorsPage() {
                     </div>
                   )}
                 </div>
-                <span className="font-mono text-[10px] text-muted-foreground shrink-0 mt-1">
+                <span className="tabular-nums text-[10px] text-muted-foreground shrink-0 mt-1">
                   {e.frequency}×
                 </span>
               </li>
@@ -142,7 +142,7 @@ export default async function ErrorsPage() {
                     </div>
                   )}
                 </div>
-                <span className="font-mono text-[10px] text-muted-foreground shrink-0 mt-1">
+                <span className="tabular-nums text-[10px] text-muted-foreground shrink-0 mt-1">
                   {e.frequency}×
                 </span>
               </li>
