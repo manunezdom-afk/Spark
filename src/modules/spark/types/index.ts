@@ -9,17 +9,18 @@ export type LearningEngine =
   | 'test_alternativas'
   | 'test_desarrollo';
 
-export type TestType = 'alternativas' | 'desarrollo';
+export type TestType = 'alternativas' | 'desarrollo' | 'verdadero_falso';
 
 export interface TestQuestion {
   id: number;
   text: string;
-  // For alternativas:
-  options?: string[];          // ["A. ...", "B. ...", "C. ...", "D. ..."]
+  // For alternativas: ["A. ...", "B. ...", "C. ...", "D. ..."]
+  // For verdadero_falso: ["A. Verdadero", "B. Falso"]
+  options?: string[];
   correct_index?: number;      // 0-based index of correct option
   // For desarrollo:
   expected_concepts?: string[];
-  // Shown after submission (both types):
+  // Shown after submission (all types):
   explanation?: string;
 }
 

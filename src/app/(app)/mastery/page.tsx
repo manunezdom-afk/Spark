@@ -13,7 +13,6 @@ import {
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import { getAllMastery, getTopics } from "@/lib/spark/queries";
 import { MasteryBar } from "@/components/mastery/MasteryBar";
-import { GradientText } from "@/components/brand/GradientText";
 import { CollapsibleSecondary } from "@/components/mastery/CollapsibleSecondary";
 import { InfoIcon } from "@/components/ui/info-icon";
 import type { SparkMasteryState, SparkTopic } from "@/modules/spark/types";
@@ -117,19 +116,12 @@ export default async function MapPage() {
 
   return (
     <div className="w-full max-w-3xl mx-auto p-6 md:p-12 animate-fade-up">
-      <header className="flex flex-col gap-2 mb-8">
-        <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted-foreground/70">
-          Spark · Mapa
-        </span>
-        <h1 className="text-display-md md:text-display-lg text-foreground">
-          <span className="font-light">Tu mapa</span>{" "}
-          <GradientText italic className="font-light">
-            de temas.
-          </GradientText>
+      <header className="flex flex-col gap-1.5 mb-8">
+        <h1 className="text-3xl md:text-4xl font-medium tracking-tight text-foreground">
+          Mapa
         </h1>
-        <p className="text-sm text-muted-foreground mt-1 max-w-xl leading-relaxed">
-          Vence hoy, está flojo, ya está sólido. Lo demás se ve cuando lo
-          necesites.
+        <p className="text-[14px] text-muted-foreground">
+          Estado de tus temas y próximas revisiones.
         </p>
       </header>
 

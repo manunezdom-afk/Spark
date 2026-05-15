@@ -1507,7 +1507,7 @@ function buildNovaHint(
   const intensityHint: Record<SessionIntensity, string> = {
     baja: "Sin prisa: te doy más pistas y celebro los pasos correctos.",
     media: "Presión sostenida: avanzo a tu ritmo pero no te facilito el camino.",
-    alta: "Modo combate: ataco lo flojo sin contemplaciones.",
+    alta: "Exigencia alta: identifico vacíos rápido y subo el rigor.",
   };
   return `${objectiveHint[objective]} ${intensityHint[intensity]}`;
 }

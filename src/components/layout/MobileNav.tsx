@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, BookMarked, Layers, ClipboardList } from "lucide-react";
+import { Home, BookMarked, Activity, ClipboardList } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { NovaPill } from "@/components/nova/NovaPill";
 
@@ -12,7 +12,7 @@ const ITEMS_LEFT = [
 ];
 
 const ITEMS_RIGHT = [
-  { href: "/flashcards/review", label: "Repaso", icon: Layers },
+  { href: "/mastery", label: "Mapa", icon: Activity },
   { href: "/tests/new", label: "Pruebas", icon: ClipboardList },
 ];
 

@@ -8,7 +8,6 @@ import { TopicCard } from "@/components/topics/TopicCard";
 import { NewTopicDialog } from "@/components/topics/NewTopicDialog";
 import { ClearDemoBanner } from "@/components/topics/ClearDemoBanner";
 import { KairosConnectBanner } from "@/components/topics/KairosConnectBanner";
-import { GradientText } from "@/components/brand/GradientText";
 import { seedDemoData } from "@/lib/spark/seed-demo";
 
 export const dynamic = "force-dynamic";
@@ -56,16 +55,13 @@ export default async function TopicsPage() {
   return (
     <div className="p-6 md:p-12 max-w-6xl animate-fade-up">
       <header className="flex items-end justify-between flex-wrap gap-4 mb-10">
-        <div className="flex flex-col gap-2">
-          <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted-foreground/70">
-            Spark · Temas
-          </span>
-          <h1 className="text-display-md md:text-display-lg text-foreground">
-            <span className="font-light">Tu biblioteca</span>{" "}
-            <GradientText italic className="font-light">
-              de combate
-            </GradientText>
+        <div className="flex flex-col gap-1.5">
+          <h1 className="text-3xl md:text-4xl font-medium tracking-tight text-foreground">
+            Temas
           </h1>
+          <p className="text-[14px] text-muted-foreground">
+            Tu material de estudio. Importado de Kairos o creado desde texto.
+          </p>
         </div>
         <NewTopicDialog />
       </header>
@@ -93,8 +89,8 @@ export default async function TopicsPage() {
             <BookMarked className="w-6 h-6 text-spark" strokeWidth={1.5} />
           </div>
           <div>
-            <h2 className="text-2xl font-light tracking-tight mb-2">
-              Aún no tienes <GradientText italic>temas</GradientText>
+            <h2 className="text-xl font-medium tracking-tight mb-2 text-foreground">
+              Aún no tienes temas
             </h2>
             <p className="text-sm text-muted-foreground leading-relaxed">
               Crea un tema manualmente o importa tus materias desde Kairos.

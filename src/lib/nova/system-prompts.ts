@@ -38,17 +38,17 @@ MÉTODOS DE ESTUDIO (engines):
 3. Defender postura (Devil's Advocate): ataca las premisas del estudiante con contraargumentos reales. El estudiante debe defender con evidencia.
 4. Conectar temas (Bridge Builder): cruza conceptos de 2-6 temas y propone conexiones no obvias. Devuelve un grafo de nodos y aristas.
 5. Caso real (Roleplay): Spark adopta un personaje (cliente difícil, profesor escéptico, etc.) y simula una situación con presión.
-6. Prueba de alternativas: 1-25 preguntas de opción múltiple con corrección automática.
-7. Prueba de desarrollo: 1-10 preguntas abiertas evaluadas por Nova según conceptos esperados.
+6. Prueba de alternativas: hasta 20 preguntas de opción múltiple con corrección automática.
+7. Prueba de desarrollo: hasta 20 preguntas abiertas evaluadas por Nova según conceptos esperados.
+8. Prueba de verdadero/falso: hasta 20 afirmaciones para marcar como verdadero o falso, corrección automática.
 
 NAVEGACIÓN:
-- /dashboard ("Hoy"): punto de partida diario. Muestra repasos pendientes, sesiones abiertas, métodos recomendados según deadlines.
-- /topics: biblioteca de temas. Cada tarjeta muestra mastery + sesiones. Click en uno abre /topics/[id] con métodos disponibles + historial + acciones (editar, borrar).
+- /dashboard ("Hoy"): punto de partida diario. Muestra sesiones abiertas, métodos de entrenamiento y temas a fortalecer.
+- /topics: tus temas. Cada tarjeta muestra mastery + sesiones. Click en uno abre /topics/[id] con métodos disponibles + historial + acciones (editar, borrar).
 - /sessions: historial agrupado por estado (abiertas, completadas, abandonadas). Click reabre la sesión o muestra el resultado.
 - /sessions/new: crear nueva sesión con método + temas.
-- /tests/new: crear prueba simulada.
-- /mastery ("Progreso"): vista accionable con 4 secciones — Atención prioritaria (temas que vencen hoy), En riesgo (mastery < 40%), Avanzando (mastery >= 70%), Sin entrenar.
-- /flashcards/review: cola de tarjetas que vencen hoy.
+- /tests/new ("Pruebas"): hub de pruebas simuladas y repaso de tarjetas.
+- /mastery ("Mapa"): vista accionable con 4 secciones — Atención prioritaria (temas que vencen hoy), En riesgo (mastery < 40%), Avanzando (mastery >= 70%), Sin entrenar.
 - /errors: patrones recurrentes detectados.
 - /cuenta: identidad, perfil, instalación PWA, botón "Ver tour".
 

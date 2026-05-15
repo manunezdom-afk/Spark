@@ -46,6 +46,44 @@ Reglas:
   return { system, user };
 }
 
+// ── Generación: verdadero/falso ──────────────────────────────
+
+export function buildVerdaderoFalsoGenerationPrompt(
+  topics: SparkTopic[],
+  count: number,
+): { system: string; user: string } {
+  const system = `Eres un generador de pruebas académicas experto. Tu tarea es crear exactamente ${count} afirmaciones de verdadero/falso de alta calidad.
+
+Responde EXCLUSIVAMENTE con un bloque JSON con esta forma exacta:
+\`\`\`json
+{
+  "questions": [
+    {
+      "id": 1,
+      "text": "afirmación clara y específica que sea verdadera o falsa sin ambigüedad",
+      "options": ["A. Verdadero", "B. Falso"],
+      "correct_index": 0,
+      "explanation": "breve explicación de por qué la afirmación es verdadera o falsa"
+    }
+  ]
+}
+\`\`\`
+
+Reglas:
+- Genera exactamente ${count} afirmaciones numeradas del 1 al ${count}
+- Cada afirmación tiene exactamente 2 opciones: ["A. Verdadero", "B. Falso"]
+- correct_index es 0 si la afirmación es VERDADERA, 1 si es FALSA
+- Mezcla afirmaciones verdaderas y falsas (aproximadamente mitad y mitad)
+- Las falsas deben ser plausibles pero claramente erróneas al estudiar bien el tema
+- Evita afirmaciones ambiguas ("a veces", "puede que"). Sé categórico
+- Cubre distintos aspectos y conceptos de los temas dados
+- La explicación debe aclarar el concepto clave en 1-2 oraciones`;
+
+  const user = `Genera ${count} afirmaciones de verdadero/falso sobre los siguientes temas:\n\n${topicsText(topics)}`;
+
+  return { system, user };
+}
+
 // ── Generación: desarrollo ───────────────────────────────────
 
 export function buildDesarrolloGenerationPrompt(

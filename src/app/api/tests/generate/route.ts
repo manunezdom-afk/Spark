@@ -11,6 +11,7 @@ import {
 import {
   buildAlternativasGenerationPrompt,
   buildDesarrolloGenerationPrompt,
+  buildVerdaderoFalsoGenerationPrompt,
 } from '@/lib/spark/test-prompts';
 import { extractJsonPayload } from '@/lib/streaming/sse';
 
@@ -45,7 +46,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Selecciona al menos un tema.' }, { status: 400 });
   }
 
-  const MAX_COUNTS: Record<TestType, number> = { alternativas: 25, desarrollo: 10 };
+  const MAX_COUNTS: Record<TestType, number> = {
+    alternativas: 20,
+    desarrollo: 20,
+    verdadero_falso: 20,
+  };
   const max = MAX_COUNTS[body.test_type] ?? 10;
   const count = Math.min(Math.max(1, body.question_count ?? 10), max);
 
@@ -54,8 +59,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Temas no encontrados.' }, { status: 404 });
   }
 
+  // verdadero_falso re-usa la infraestructura de alternativas (auto-grade
+  // + opciones + correct_index). Solo cambia la generación y el render.
   const engine: LearningEngine =
-    body.test_type === 'alternativas' ? 'test_alternativas' : 'test_desarrollo';
+    body.test_type === 'desarrollo' ? 'test_desarrollo' : 'test_alternativas';
 
   // ⚠️ DB constraint requirement
   // La tabla `spark_learning_sessions` tiene un CHECK constraint sobre `engine`.
@@ -85,7 +92,9 @@ export async function POST(request: NextRequest) {
   const { system, user: userMsg } =
     body.test_type === 'alternativas'
       ? buildAlternativasGenerationPrompt(topics, count)
-      : buildDesarrolloGenerationPrompt(topics, count);
+      : body.test_type === 'verdadero_falso'
+        ? buildVerdaderoFalsoGenerationPrompt(topics, count)
+        : buildDesarrolloGenerationPrompt(topics, count);
 
   const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! });
 

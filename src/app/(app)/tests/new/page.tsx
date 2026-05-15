@@ -3,7 +3,14 @@
 import { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { ChevronLeft, ArrowRight, CheckSquare, AlignLeft } from "lucide-react";
+import {
+  ChevronLeft,
+  ArrowRight,
+  CheckSquare,
+  AlignLeft,
+  CircleCheck,
+  Layers,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -25,9 +32,9 @@ const TYPE_CONFIG: Record<
   alternativas: {
     label: "Alternativas",
     description:
-      "Preguntas de opción múltiple con 4 opciones. Corrección automática e instantánea.",
+      "Preguntas de opción múltiple con 4 opciones. Corrección automática.",
     icon: CheckSquare,
-    max: 25,
+    max: 20,
     defaultCount: 10,
   },
   desarrollo: {
@@ -35,8 +42,16 @@ const TYPE_CONFIG: Record<
     description:
       "Preguntas abiertas evaluadas por IA según los conceptos clave del tema.",
     icon: AlignLeft,
-    max: 10,
+    max: 20,
     defaultCount: 5,
+  },
+  verdadero_falso: {
+    label: "Verdadero / Falso",
+    description:
+      "Afirmaciones para marcar como verdaderas o falsas. Corrección automática.",
+    icon: CircleCheck,
+    max: 20,
+    defaultCount: 10,
   },
 };
 
@@ -52,6 +67,7 @@ function NewTestForm() {
   const [count, setCount] = useState(10);
   const [loadingTopics, setLoadingTopics] = useState(true);
   const [busy, setBusy] = useState(false);
+  const [dueFlashcards, setDueFlashcards] = useState<number | null>(null);
 
   const config = TYPE_CONFIG[testType];
 
@@ -63,6 +79,13 @@ function NewTestForm() {
         setLoadingTopics(false);
       })
       .catch(() => setLoadingTopics(false));
+
+    fetch("/api/flashcards/due-count")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data && typeof data.count === "number") setDueFlashcards(data.count);
+      })
+      .catch(() => {});
   }, []);
 
   function toggleTopic(id: string) {
@@ -112,20 +135,50 @@ function NewTestForm() {
         Volver
       </Link>
 
-      <header className="flex flex-col gap-2 mb-8">
-        <span className="font-mono text-xs uppercase tracking-[0.2em] text-spark">
-          Simulador de Prueba
-        </span>
-        <h1 className="text-3xl font-semibold tracking-tight">Nueva prueba</h1>
-        <p className="text-muted-foreground text-sm leading-relaxed">
-          Genera una prueba simulada con IA a partir de tus temas.
+      <header className="flex flex-col gap-1.5 mb-8">
+        <h1 className="text-3xl md:text-4xl font-medium tracking-tight text-foreground">
+          Pruebas
+        </h1>
+        <p className="text-[14px] text-muted-foreground">
+          Genera una prueba simulada o repasa tus tarjetas.
         </p>
       </header>
+
+      {/* Repaso de tarjetas — separado y antes del formulario */}
+      <section className="mb-8">
+        <Link
+          href="/flashcards/review"
+          className="flex items-center justify-between gap-3 p-4 rounded-xl border border-black/[0.08] bg-white/65 hover:bg-white hover:border-black/[0.16] transition-colors"
+        >
+          <div className="flex items-center gap-3 min-w-0">
+            <span className="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-nova-soft border border-nova/25 shrink-0">
+              <Layers className="w-4 h-4 text-nova-mid" strokeWidth={1.5} />
+            </span>
+            <div className="min-w-0">
+              <div className="text-[14px] font-medium text-foreground">
+                Repaso de tarjetas
+              </div>
+              <div className="text-[12.5px] text-muted-foreground">
+                {dueFlashcards === null
+                  ? "Tarjetas que vencen hoy según SM-2."
+                  : dueFlashcards === 0
+                    ? "Sin tarjetas pendientes hoy."
+                    : `${dueFlashcards} ${dueFlashcards === 1 ? "tarjeta pendiente" : "tarjetas pendientes"} hoy.`}
+              </div>
+            </div>
+          </div>
+          <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0" strokeWidth={1.5} />
+        </Link>
+      </section>
+
+      <h2 className="text-[14px] font-medium text-foreground mb-3">
+        Nueva prueba simulada
+      </h2>
 
       {/* Test type selector */}
       <section className="mb-6">
         <Label className="mb-3 block">Tipo de prueba</Label>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {(Object.entries(TYPE_CONFIG) as [TestType, (typeof TYPE_CONFIG)[TestType]][]).map(
             ([type, cfg]) => {
               const Icon = cfg.icon;
@@ -137,34 +190,34 @@ function NewTestForm() {
                   className={cn(
                     "text-left p-4 rounded-xl border transition-all",
                     active
-                      ? "border-spark/40 bg-spark/[0.06] shadow-glow/10"
-                      : "border-black/[0.07] bg-white/40 hover:bg-white/70"
+                      ? "border-spark/40 bg-spark/[0.06]"
+                      : "border-black/[0.07] bg-white/40 hover:bg-white/70",
                   )}
                 >
                   <Icon
                     className={cn(
                       "w-4 h-4 mb-2",
-                      active ? "text-spark" : "text-muted-foreground"
+                      active ? "text-spark" : "text-muted-foreground",
                     )}
                     strokeWidth={1.5}
                   />
                   <div
                     className={cn(
-                      "font-semibold text-sm mb-1",
-                      active ? "text-foreground" : "text-foreground/70"
+                      "font-medium text-sm mb-1",
+                      active ? "text-foreground" : "text-foreground/70",
                     )}
                   >
                     {cfg.label}
                   </div>
-                  <div className="text-xs text-muted-foreground leading-relaxed">
+                  <div className="text-[12px] text-muted-foreground leading-relaxed">
                     {cfg.description}
                   </div>
-                  <div className="text-[10px] text-muted-foreground/50 mt-2 font-mono">
-                    máx. {cfg.max} preguntas
+                  <div className="text-[11px] text-muted-foreground/60 mt-2">
+                    Máx. {cfg.max} preguntas
                   </div>
                 </button>
               );
-            }
+            },
           )}
         </div>
       </section>
@@ -186,7 +239,7 @@ function NewTestForm() {
           onChange={(e) => setCount(Number(e.target.value))}
           className="w-full cursor-pointer accent-spark h-1.5"
         />
-        <div className="flex justify-between text-[10px] text-muted-foreground/50 mt-1.5 font-mono">
+        <div className="flex justify-between text-[11px] text-muted-foreground/60 mt-1.5">
           <span>1</span>
           <span>{config.max}</span>
         </div>
@@ -223,18 +276,18 @@ function NewTestForm() {
                     "text-left p-3.5 rounded-xl border transition-colors",
                     isSelected
                       ? "border-spark/40 bg-spark/[0.05]"
-                      : "border-black/[0.07] bg-white/40 hover:bg-white/70"
+                      : "border-black/[0.07] bg-white/40 hover:bg-white/70",
                   )}
                 >
                   {t.category && (
-                    <div className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground mb-0.5">
+                    <div className="text-[12px] text-muted-foreground mb-0.5">
                       {t.category}
                     </div>
                   )}
                   <div
                     className={cn(
                       "font-medium text-sm",
-                      isSelected ? "text-foreground" : "text-foreground/80"
+                      isSelected ? "text-foreground" : "text-foreground/80",
                     )}
                   >
                     {t.title}

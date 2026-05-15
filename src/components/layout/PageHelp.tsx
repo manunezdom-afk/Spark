@@ -42,7 +42,7 @@ const HINTS: Record<string, PageHints> = {
     ],
   },
   "/topics": {
-    title: "Tu biblioteca",
+    title: "Temas",
     subtitle: "Los temas que entrenas con Spark",
     items: [
       { icon: BookMarked, label: "Crear tema", desc: "Pulsa 'Nuevo tema' para crear manualmente, pegar texto o importar desde Kairos." },
@@ -53,7 +53,7 @@ const HINTS: Record<string, PageHints> = {
   },
   "/mastery": {
     title: "Mapa",
-    subtitle: "Qué vence hoy · qué está flojo · qué avanza",
+    subtitle: "Estado de tus temas y próximas revisiones",
     items: [
       { icon: AlertCircle, label: "Vencen hoy", desc: "Temas que tocan repasar hoy según SM-2. Empieza por estos." },
       { icon: Activity, label: "Por reforzar", desc: "Temas con maestría menor al 40%. Necesitan base antes de subir el rigor." },

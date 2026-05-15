@@ -46,7 +46,7 @@ export function TestTaker({
 }: TestTakerProps) {
   const router = useRouter();
   const theme = getEngineTheme(
-    testType === "alternativas" ? "test_alternativas" : "test_desarrollo",
+    testType === "desarrollo" ? "test_desarrollo" : "test_alternativas",
   );
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Map<number, TestAnswer>>(new Map());
@@ -183,10 +183,10 @@ export function TestTaker({
             />
             <div className="flex flex-col leading-tight min-w-0">
               <span
-                className="font-mono text-[9.5px] uppercase tracking-[0.18em] leading-none"
+                className="text-[12px] font-medium leading-none"
                 style={{ color: theme.accent }}
               >
-                Prueba {testType === "alternativas" ? "de alternativas" : "de desarrollo"}
+                Prueba {testType === "alternativas" ? "de alternativas" : testType === "desarrollo" ? "de desarrollo" : "de verdadero/falso"}
               </span>
               <span className="text-[12px] text-muted-foreground truncate">
                 {topicTitles.join(" · ")}
@@ -306,7 +306,7 @@ export function TestTaker({
                       }
                     >
                       <span
-                        className="inline-flex items-center justify-center w-7 h-7 rounded-md font-mono text-[12px] font-semibold shrink-0"
+                        className="inline-flex items-center justify-center w-7 h-7 rounded-md text-[13px] font-semibold shrink-0"
                         style={
                           isSelected
                             ? {
@@ -322,6 +322,38 @@ export function TestTaker({
                         {letter}
                       </span>
                       <span className="flex-1">{opt.replace(/^[A-D]\.\s*/, "")}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            {testType === "verdadero_falso" && current.options && (
+              <div className="grid grid-cols-2 gap-3">
+                {current.options.map((opt, i) => {
+                  const isSelected = currentAnswer?.selected_index === i;
+                  const label = opt.replace(/^[A-Z]\.\s*/, "");
+                  return (
+                    <button
+                      key={i}
+                      onClick={() => setAlternativaAnswer(current.id, i)}
+                      className={cn(
+                        "px-5 py-5 rounded-xl border text-[16px] font-medium transition-all",
+                        isSelected
+                          ? "text-foreground"
+                          : "border-black/[0.08] bg-white/60 text-foreground/70 hover:bg-white hover:border-black/[0.15]",
+                      )}
+                      style={
+                        isSelected
+                          ? {
+                              borderColor: theme.accent,
+                              background: hexToRgba(theme.accent, 0.06),
+                              color: theme.accent,
+                            }
+                          : undefined
+                      }
+                    >
+                      {label}
                     </button>
                   );
                 })}

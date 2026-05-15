@@ -145,7 +145,7 @@ function buildSessionConfig(ctx: EngineContext): string {
     media:
       'Presión sostenida. Avanza al ritmo del usuario pero no le facilites el camino. Cero halagos vacíos.',
     alta:
-      'Modo combate. Sube exigencia y velocidad. Ataca lo flojo sin contemplaciones, el usuario pidió rigor.',
+      'Exigencia alta. Sube el nivel y la velocidad: identifica vacíos rápido y mantén el rigor académico, el usuario pidió presión.',
   };
 
   const lines: string[] = ['# CONFIGURACIÓN DE LA SESIÓN'];

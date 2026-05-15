@@ -30,18 +30,18 @@ export function TopicCard({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1.5 flex-wrap">
             {topic.category && (
-              <span className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+              <span className="text-[11px] text-muted-foreground">
                 {topic.category}
               </span>
             )}
             {topic.kairos_subject_id && (
-              <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-[0.14em] text-nova-mid border border-nova-mid/20 bg-nova-mid/[0.06] px-1.5 py-0.5 rounded-full">
+              <span className="inline-flex items-center gap-1 text-[11px] text-nova-mid border border-nova-mid/20 bg-nova-mid/[0.06] px-1.5 py-0.5 rounded-full">
                 <BookOpen className="w-2.5 h-2.5" strokeWidth={1.5} />
                 Kairos
               </span>
             )}
             {topic.is_demo && (
-              <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-[0.14em] text-muted-foreground/70 border border-black/[0.07] bg-black/[0.02] px-1.5 py-0.5 rounded-full">
+              <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground/70 border border-black/[0.07] bg-black/[0.02] px-1.5 py-0.5 rounded-full">
                 <FlaskConical className="w-2.5 h-2.5" strokeWidth={1.5} />
                 Ejemplo
               </span>
@@ -63,7 +63,7 @@ export function TopicCard({
         </p>
       )}
 
-      <div className="flex items-center gap-3 text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+      <div className="flex items-center gap-3 text-[12px] text-muted-foreground">
         <div className="flex items-center gap-1.5">
           <div className="w-16 h-1 rounded-full bg-black/[0.06] overflow-hidden">
             <div
@@ -71,7 +71,7 @@ export function TopicCard({
               style={{ width: `${Math.max(score, 4)}%` }}
             />
           </div>
-          <span className="font-mono">{score}%</span>
+          <span className="tabular-nums">{score}%</span>
         </div>
         <span className="text-muted-foreground/30">·</span>
         <span>

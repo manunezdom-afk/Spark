@@ -60,20 +60,21 @@ export async function POST(request: NextRequest) {
   let overallScore: number;
   let overallFeedback: string;
 
-  // ── Auto-grade alternativas ──────────────────────────────────
-  if (testType === 'alternativas') {
+  // ── Auto-grade alternativas y verdadero/falso ────────────────
+  if (testType === 'alternativas' || testType === 'verdadero_falso') {
     questionResults = questions.map((q) => {
       const ans = answers.find((a) => a.question_id === q.id);
       const isCorrect =
         ans?.selected_index !== undefined && ans.selected_index === q.correct_index;
+      const correctText = q.options?.[q.correct_index ?? 0] ?? '';
       return {
         question_id: q.id,
         correct: isCorrect,
         score: isCorrect ? 100 : 0,
         feedback: isCorrect
           ? '¡Correcto!'
-          : `Incorrecto. La respuesta correcta era: ${q.options?.[q.correct_index ?? 0] ?? ''}`,
-        correct_answer: q.options?.[q.correct_index ?? 0],
+          : `Incorrecto. La respuesta correcta era: ${correctText}`,
+        correct_answer: correctText,
       };
     });
 
