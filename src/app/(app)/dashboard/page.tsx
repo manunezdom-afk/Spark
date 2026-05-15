@@ -76,7 +76,7 @@ export default async function DashboardPage() {
         </div>
       )}
 
-      <header className="mb-10">
+      <header className="mb-10 pb-10 border-b border-black/[0.05]">
         <div className="text-[13px] text-muted-foreground mb-3">
           {capitalize(
             new Date().toLocaleDateString("es", {
@@ -86,7 +86,7 @@ export default async function DashboardPage() {
             }),
           )}
         </div>
-        <h1 className="text-3xl md:text-4xl font-medium tracking-tight text-foreground mb-5 max-w-3xl">
+        <h1 className="text-4xl md:text-5xl font-medium tracking-tight text-foreground mb-6 max-w-3xl leading-[1.1]">
           {greet()}, ¿qué quieres entrenar hoy?
         </h1>
         <HeroActions canCreateSession={hasTopics} />
@@ -171,6 +171,7 @@ function ActiveSessionRow({
     <Link
       href={`/sessions/${session.id}`}
       className="flex items-center justify-between gap-3 p-3.5 rounded-xl border border-black/[0.06] bg-white/55 hover:bg-white hover:border-black/[0.12] transition-all duration-200"
+      style={{ borderLeft: `2.5px solid ${hexToRgba(theme.accent, 0.55)}` }}
     >
       <div className="flex items-center gap-3 min-w-0 flex-1">
         <span

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { CSSProperties } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { ENGINE_LABELS } from "@/modules/spark/engines";
 import { getEngineTheme } from "@/modules/spark/engines/themes";
@@ -60,12 +61,16 @@ export function MethodQuickCard(props: MethodQuickCardProps) {
   return (
     <Link
       href={href}
-      className={`group relative flex flex-col gap-3 ${
+      className={`method-quick-card group relative flex flex-col gap-3 ${
         isRecommendation ? "p-5" : "p-4"
-      } rounded-2xl border border-black/[0.06] bg-white/70 hover:bg-white hover:border-black/[0.12] transition-colors duration-200`}
+      } rounded-2xl border transition-all duration-200`}
       style={{
+        "--mqc-bg": hexToRgba(theme.accent, 0.045),
+        "--mqc-bg-hover": hexToRgba(theme.accent, 0.09),
+        "--mqc-border": hexToRgba(theme.accent, 0.18),
+        "--mqc-border-hover": hexToRgba(theme.accent, 0.32),
         animation: `fade-up 320ms ${animationIndex * 40}ms ease-out both`,
-      }}
+      } as CSSProperties}
     >
       <div className="flex items-start justify-between gap-3">
         <span

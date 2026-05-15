@@ -75,6 +75,16 @@
   h1, h2, h3, h4 { letter-spacing: -0.025em; }
 }
 
+/* ── Method quick cards — engine-tinted backgrounds via CSS custom props ── */
+.method-quick-card {
+  background: var(--mqc-bg, rgba(255,138,76,0.045));
+  border-color: var(--mqc-border, rgba(0,0,0,0.06));
+}
+.method-quick-card:hover {
+  background: var(--mqc-bg-hover, rgba(255,138,76,0.09));
+  border-color: var(--mqc-border-hover, rgba(0,0,0,0.12));
+}
+
 @layer utilities {
   /* ----- Backgrounds ----- */
   .bg-spark-radial {
