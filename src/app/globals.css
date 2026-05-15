@@ -6,33 +6,45 @@
 
 @layer base {
   :root {
-    /* Surface */
-    --background: 30 24% 98%;
+    /* Surface — paper cream con tinte violeta sutil (alineado con Kairos) */
+    --background: 33 30% 98.5%;       /* paper #fbf9f6 — body */
     --foreground: 224 18% 11%;
-    --card: 0 0% 100%;
+    --card: 0 0% 100%;                /* white pure for elevated surfaces */
     --card-foreground: 224 18% 11%;
     --popover: 0 0% 100%;
     --popover-foreground: 224 18% 11%;
+
+    /* Surfaces extra (Kairos parity) */
+    --surface: 0 0% 100%;             /* card surface */
+    --surface-subtle: 30 18% 96%;     /* sidebar / panels secundarios */
+    --surface-sunken: 30 14% 93%;     /* dividers, separadores */
+
+    /* Ink hierarchy (más allá de foreground/muted) */
+    --ink: 224 22% 11%;
+    --ink-secondary: 224 14% 28%;
+    --ink-tertiary: 224 10% 46%;
+    --ink-disabled: 224 8% 64%;
 
     /* Brand: Spark warm orange anchor */
     --primary: 22 86% 56%;
     --primary-foreground: 0 0% 100%;
     --accent: 22 86% 56%;
     --accent-foreground: 0 0% 100%;
+    --accent-soft: 24 100% 96%;       /* spark wash for active states */
 
     /* Muted / secondary */
-    --secondary: 30 15% 95%;
+    --secondary: 30 18% 95%;
     --secondary-foreground: 224 18% 22%;
-    --muted: 30 15% 95%;
+    --muted: 30 18% 95%;
     --muted-foreground: 224 12% 38%;
 
     /* Destructive */
     --destructive: 0 75% 54%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Borders / inputs */
-    --border: 30 14% 90%;
-    --input: 30 14% 92%;
+    /* Borders / inputs — más suaves */
+    --border: 30 16% 91%;
+    --input: 30 16% 92%;
     --ring: 22 86% 56%;
     --radius: 18px;
 

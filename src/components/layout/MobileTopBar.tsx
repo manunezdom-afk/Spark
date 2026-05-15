@@ -33,16 +33,16 @@ export function MobileTopBar() {
   if (isImmersiveSession) return null;
 
   return (
-    <header className="md:hidden fixed top-0 left-0 right-0 z-40 h-14 flex items-center justify-between px-4 bg-white/90 backdrop-blur-xl border-b border-black/[0.06]">
+    <header className="md:hidden fixed top-0 left-0 right-0 z-40 h-14 flex items-center justify-between px-4 bg-white/92 backdrop-blur-xl border-b border-black/[0.05]">
       <div className="flex items-center gap-2.5">
-        <div className="w-6 h-6 rounded-md bg-spark/10 border border-spark/20 flex items-center justify-center">
-          <Zap className="w-3 h-3 text-spark" strokeWidth={1.5} fill="currentColor" />
+        <div className="w-7 h-7 rounded-lg bg-spark-soft border border-spark/20 flex items-center justify-center">
+          <Zap className="w-3.5 h-3.5 text-spark" strokeWidth={1.5} fill="currentColor" />
         </div>
         <div>
-          <div className="text-sm font-semibold tracking-tight leading-none">
+          <div className="text-[14px] font-medium tracking-tight leading-none text-ink">
             {getTitle(pathname)}
           </div>
-          <div className="text-[10px] text-muted-foreground/55 leading-none mt-0.5">
+          <div className="text-[10px] font-medium text-ink-tertiary leading-none mt-1 tracking-tight">
             Spark
           </div>
         </div>
@@ -52,7 +52,7 @@ export function MobileTopBar() {
         <NovaPill variant="icon" />
         <Link
           href="/cuenta"
-          className="w-8 h-8 rounded-full bg-black/[0.04] border border-black/[0.06] flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+          className="w-8 h-8 rounded-full bg-surface-subtle border border-black/[0.05] flex items-center justify-center text-ink-secondary hover:text-ink hover:bg-white transition-colors"
         >
           <User className="w-4 h-4" strokeWidth={1.5} />
         </Link>

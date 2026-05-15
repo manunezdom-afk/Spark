@@ -52,6 +52,7 @@ const config: Config = {
         spark: {
           DEFAULT: "#FF8A4C",
           deep: "#E07238",
+          soft: "hsl(var(--accent-soft))",
           glow: "rgba(255, 138, 76, 0.20)",
         },
         nova: {
@@ -59,6 +60,18 @@ const config: Config = {
           hover: "var(--color-nova-hover)",
           soft: "var(--color-nova-soft)",
           strong: "var(--color-nova-strong)",
+        },
+        // Surface tokens (paper / surface / surface-subtle / surface-sunken)
+        surface: {
+          DEFAULT: "hsl(var(--surface))",
+          subtle: "hsl(var(--surface-subtle))",
+          sunken: "hsl(var(--surface-sunken))",
+        },
+        ink: {
+          DEFAULT: "hsl(var(--ink))",
+          secondary: "hsl(var(--ink-secondary))",
+          tertiary: "hsl(var(--ink-tertiary))",
+          disabled: "hsl(var(--ink-disabled))",
         },
       },
       fontFamily: {

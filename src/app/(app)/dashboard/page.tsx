@@ -9,7 +9,7 @@ import {
 } from "@/lib/spark/queries";
 import { ENGINE_LABELS } from "@/modules/spark/engines";
 import { getEngineTheme } from "@/modules/spark/engines/themes";
-import { HeroActions } from "@/components/dashboard/HeroActions";
+import { IntentActions } from "@/components/dashboard/IntentActions";
 import { EmptySessionsState } from "@/components/dashboard/EmptySessionsState";
 import { WeakTopicsWidget } from "@/components/dashboard/WeakTopicsWidget";
 import { MethodQuickCard } from "@/components/methods/MethodQuickCard";
@@ -76,8 +76,8 @@ export default async function DashboardPage() {
         </div>
       )}
 
-      <header className="mb-10 pb-10 border-b border-black/[0.05]">
-        <div className="text-[13px] text-muted-foreground mb-3">
+      <header className="mb-10">
+        <div className="text-[13px] font-medium text-ink-tertiary mb-3 tracking-tight">
           {capitalize(
             new Date().toLocaleDateString("es", {
               weekday: "long",
@@ -86,16 +86,62 @@ export default async function DashboardPage() {
             }),
           )}
         </div>
-        <h1 className="text-4xl md:text-5xl font-medium tracking-tight text-foreground mb-6 max-w-3xl leading-[1.1]">
-          {greet()}, ¿qué quieres entrenar hoy?
+        <h1 className="text-4xl md:text-5xl font-medium tracking-tight text-ink mb-2 max-w-3xl leading-[1.05]">
+          {greet()}.
         </h1>
-        <HeroActions canCreateSession={hasTopics} />
+        <p className="text-lg md:text-xl text-ink-secondary leading-snug max-w-2xl">
+          ¿Qué quieres entrenar hoy?
+        </p>
       </header>
 
+      {/* Intent-first: el alumno elige qué necesita, Spark elige el método */}
+      <section className="mb-12">
+        <IntentActions canCreateSession={hasTopics} />
+      </section>
+
+      {activeSessions.length > 0 && (
+        <section className="mb-10">
+          <div className="flex items-center justify-between gap-3 mb-3">
+            <h2 className="text-[13px] font-medium text-ink-secondary tracking-tight">
+              Continuar donde lo dejaste
+              <span className="ml-2 text-ink-tertiary font-normal">
+                ({activeSessions.length})
+              </span>
+            </h2>
+            {activeSessions.length > 5 && (
+              <Link
+                href="/sessions"
+                className="text-[12px] font-medium text-ink-tertiary hover:text-ink transition-colors inline-flex items-center gap-1"
+              >
+                Ver todas
+                <ArrowRight className="w-3 h-3" strokeWidth={1.5} />
+              </Link>
+            )}
+          </div>
+          <ul className="flex flex-col gap-2">
+            {activeSessions.slice(0, 5).map((s) => (
+              <ActiveSessionRow key={s.id} session={s} topics={topics} />
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {!hasTopics && activeSessions.length === 0 && (
+        <section className="mb-10">
+          <EmptySessionsState hasTopics={hasTopics} />
+        </section>
+      )}
+
       <section className="mb-10">
-        <h2 className="text-[13px] font-medium text-muted-foreground mb-3">
-          Métodos de entrenamiento
-        </h2>
+        <div className="flex items-baseline justify-between gap-3 mb-1">
+          <h2 className="text-[13px] font-medium text-ink-secondary tracking-tight">
+            Otras formas de entrenar
+          </h2>
+          <span className="text-[11.5px] text-ink-tertiary">5 métodos</span>
+        </div>
+        <p className="text-[12.5px] text-ink-tertiary mb-4 max-w-2xl leading-relaxed">
+          Si ya sabes cómo quieres trabajar, elige el método directamente.
+        </p>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           {METHODS.map((m, i) => (
             <MethodQuickCard
@@ -109,43 +155,14 @@ export default async function DashboardPage() {
         </div>
       </section>
 
-      <section className="mb-10">
-        <div className="flex items-center justify-between gap-3 mb-3">
-          <h2 className="text-[13px] font-medium text-muted-foreground">
-            Sesiones abiertas
-            {activeSessions.length > 0 && (
-              <span className="ml-2 text-foreground/40">
-                ({activeSessions.length})
-              </span>
-            )}
+      {hasTopics && (
+        <section>
+          <h2 className="text-[13px] font-medium text-ink-secondary tracking-tight mb-3">
+            Tus temas a fortalecer
           </h2>
-          {activeSessions.length > 5 && (
-            <Link
-              href="/sessions"
-              className="text-[12px] font-medium text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1"
-            >
-              Ver todas
-              <ArrowRight className="w-3 h-3" strokeWidth={1.5} />
-            </Link>
-          )}
-        </div>
-        {activeSessions.length === 0 ? (
-          <EmptySessionsState hasTopics={hasTopics} />
-        ) : (
-          <ul className="flex flex-col gap-2">
-            {activeSessions.slice(0, 5).map((s) => (
-              <ActiveSessionRow key={s.id} session={s} topics={topics} />
-            ))}
-          </ul>
-        )}
-      </section>
-
-      <section>
-        <h2 className="text-[13px] font-medium text-muted-foreground mb-3">
-          Temas a fortalecer
-        </h2>
-        <WeakTopicsWidget userId={user.id} topics={topics} />
-      </section>
+          <WeakTopicsWidget userId={user.id} topics={topics} />
+        </section>
+      )}
     </div>
   );
 }

@@ -251,15 +251,28 @@ function NewSessionForm() {
   const params = useSearchParams();
 
   const requestedEngine = params.get("engine") as LearningEngine | null;
-  // Si llegan con engine= en la URL (vinieron desde dashboard/topic), pre-seleccionamos
-  // ese método pero mantenemos el selector visible (el usuario puede cambiar de idea).
+  // Intent maps coming from the dashboard intent-first cards. Cada intent
+  // pre-selecciona el método que mejor responde a esa necesidad — el
+  // alumno puede cambiarlo después en el step 1.
+  //   repaso    → socratic (consolidar lo visto)
+  //   aprender  → socratic (construir base)
+  //   practicar → roleplay (caso real)
+  // (intent=prueba se redirige desde IntentActions a /tests/new)
+  const requestedIntent = params.get("intent");
+  const intentToMethod: Record<string, MethodKey> = {
+    repaso: "socratic",
+    aprender: "socratic",
+    practicar: "roleplay",
+  };
   const initialMethod: MethodKey =
     requestedEngine &&
     requestedEngine in ENGINE_LIMITS &&
     requestedEngine !== "test_alternativas" &&
     requestedEngine !== "test_desarrollo"
       ? (requestedEngine as MethodKey)
-      : "socratic";
+      : requestedIntent && requestedIntent in intentToMethod
+        ? intentToMethod[requestedIntent]
+        : "socratic";
   const presetTopic = params.get("topic");
   const presetTopicIds = params.get("topic_ids");
   const initialSelectedTopicIds = getInitialSelectedTopicIds({

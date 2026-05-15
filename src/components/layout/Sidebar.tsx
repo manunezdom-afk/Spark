@@ -39,42 +39,47 @@ export function Sidebar() {
   const ctx = useNovaContext();
 
   return (
-    <aside className="w-[228px] shrink-0 hidden md:flex flex-col border-r border-black/[0.06] bg-background/70 backdrop-blur-2xl">
+    <aside className="w-[244px] shrink-0 hidden md:flex flex-col border-r border-black/[0.04] bg-surface-subtle/60 backdrop-blur-xl">
       {/* Brand header */}
       <div className="px-5 h-[68px] flex items-center gap-3">
         <BrandOrb size="sm" />
         <div className="min-w-0">
-          <div className="text-[15px] font-semibold tracking-tight leading-none">Spark</div>
-          <div className="text-[11px] text-muted-foreground/70 mt-1 leading-none font-medium">
+          <div className="text-[15px] font-medium tracking-tight leading-none text-ink">
+            Spark
+          </div>
+          <div className="text-[10.5px] text-ink-tertiary mt-1 leading-none font-medium tracking-tight">
             Focus OS
           </div>
         </div>
       </div>
 
-      {/* Nova — entrada principal */}
-      <div className="px-3 pt-1 pb-3">
+      {/* Nova — entrada principal (más compacta, menos visualmente dominante) */}
+      <div className="px-3 pt-1 pb-4">
         <button
           type="button"
           onClick={ask.open}
           title="Pregúntale a Nova · N"
-          className="w-full group relative overflow-hidden flex items-center gap-3 px-4 py-3.5 rounded-2xl text-white transition-all duration-200 shadow-[0_4px_20px_var(--color-nova-glow)] hover:shadow-[0_6px_28px_var(--color-nova-glow)] hover:scale-[1.015] active:scale-[0.985] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-nova/50"
+          className="w-full group relative overflow-hidden flex items-center gap-2.5 px-3.5 py-3 rounded-xl text-white transition-all duration-200 shadow-[0_3px_14px_var(--color-nova-glow)] hover:shadow-[0_5px_20px_var(--color-nova-glow)] active:scale-[0.985] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-nova/50"
           style={{ background: "var(--gradient-nova)" }}
         >
-          {/* Brillo al hover */}
-          <span className="pointer-events-none absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-2xl" />
-          <span className="relative grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-white/20 backdrop-blur-sm">
-            <NovaMark size={16} variant="filled" />
+          <span className="pointer-events-none absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-xl" />
+          <span className="relative grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-white/22 backdrop-blur-sm">
+            <NovaMark size={14} variant="filled" />
           </span>
           <span className="relative flex flex-col text-left min-w-0 flex-1">
-            <span className="text-[13px] font-semibold leading-tight">Pregúntale a Nova</span>
-            <span className="text-[10.5px] leading-tight opacity-75 truncate">{ctx.scopeLabel}</span>
+            <span className="text-[12.5px] font-medium leading-tight">Pregúntale a Nova</span>
+            <span className="text-[10px] leading-tight opacity-80 truncate mt-0.5">
+              {ctx.scopeLabel}
+            </span>
           </span>
-          <kbd className="relative shrink-0 rounded border border-white/30 bg-white/15 px-1.5 py-0.5 font-mono text-[9px] font-semibold opacity-80">N</kbd>
+          <kbd className="relative shrink-0 rounded-md border border-white/25 bg-white/12 px-1.5 py-0.5 text-[9px] font-medium opacity-85">
+            N
+          </kbd>
         </button>
       </div>
 
-      {/* Nav */}
-      <nav className="flex-1 px-3 py-1 flex flex-col gap-1">
+      {/* Nav — rounded-xl en lugar de rounded-full, active state suave */}
+      <nav className="flex-1 px-3 py-1 flex flex-col gap-0.5">
         {NAV.map((item) => {
           const active = pathname === item.href || pathname.startsWith(item.href + "/");
           const Icon = item.icon;
@@ -83,14 +88,23 @@ export function Sidebar() {
               key={item.href}
               href={item.href}
               className={cn(
-                "group relative flex items-center gap-3 px-3.5 py-2.5 rounded-full text-sm transition-all duration-200",
+                "group relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] transition-all duration-150",
                 active
-                  ? "bg-foreground text-background font-semibold"
-                  : "text-foreground/70 hover:text-foreground hover:bg-black/[0.04] font-medium"
+                  ? "bg-white text-ink shadow-soft font-medium"
+                  : "text-ink-secondary hover:text-ink hover:bg-white/60 font-normal"
               )}
             >
+              {active && (
+                <span
+                  className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r bg-spark"
+                  aria-hidden
+                />
+              )}
               <Icon
-                className={cn("w-[17px] h-[17px] shrink-0 transition-transform", !active && "group-hover:scale-110")}
+                className={cn(
+                  "w-[16px] h-[16px] shrink-0 transition-colors",
+                  active ? "text-spark" : "text-ink-tertiary group-hover:text-ink-secondary"
+                )}
                 strokeWidth={1.5}
               />
               {item.label}
@@ -102,8 +116,8 @@ export function Sidebar() {
       <IOSFocusBanner />
 
       {/* Ecosystem footer */}
-      <div className="px-3 pb-3">
-        <div className="font-medium text-[11px] text-muted-foreground/50 mb-1.5 px-2">
+      <div className="px-3 pb-3 mt-2">
+        <div className="text-[10px] font-medium text-ink-tertiary mb-1.5 px-2 tracking-tight">
           Familia
         </div>
         <div className="flex flex-col gap-0.5">
@@ -114,15 +128,15 @@ export function Sidebar() {
 
       {/* Guest mode banner */}
       {guest && (
-        <div className="mx-3 mb-2 rounded-lg border border-spark/30 bg-spark/[0.06] p-2.5">
-          <p className="text-[11px] font-semibold text-foreground leading-snug">
+        <div className="mx-3 mb-2 rounded-xl border border-spark/25 bg-spark-soft p-3">
+          <p className="text-[11.5px] font-medium text-ink leading-snug">
             Modo invitado
           </p>
-          <p className="mt-0.5 text-[10.5px] leading-snug text-foreground/60">
+          <p className="mt-1 text-[10.5px] leading-snug text-ink-secondary">
             Tu progreso se guarda. {" "}
             <Link
               href="/login"
-              className="font-medium text-spark underline-offset-2 hover:underline"
+              className="font-medium text-spark hover:underline underline-offset-2"
             >
               Crear cuenta
             </Link>{" "}
@@ -132,24 +146,24 @@ export function Sidebar() {
       )}
 
       {/* Account */}
-      <div className="px-3 py-3 border-t border-black/[0.06] flex flex-col gap-1">
+      <div className="px-3 py-3 border-t border-black/[0.04] flex flex-col gap-0.5">
         <Link
           href="/cuenta"
           className={cn(
-            "flex items-center gap-3 px-3.5 py-2 rounded-full text-sm transition-colors",
+            "flex items-center gap-3 px-3 py-2 rounded-xl text-[12.5px] transition-colors",
             pathname === "/cuenta"
-              ? "bg-foreground text-background font-medium"
-              : "text-foreground/70 hover:text-foreground hover:bg-black/[0.04]"
+              ? "bg-white text-ink shadow-soft font-medium"
+              : "text-ink-secondary hover:text-ink hover:bg-white/60"
           )}
         >
-          <User className="w-4 h-4 shrink-0" strokeWidth={1.5} />
-          <span className="truncate text-[12px]">
+          <User className="w-4 h-4 shrink-0 text-ink-tertiary" strokeWidth={1.5} />
+          <span className="truncate">
             {guest ? "Invitado" : (user?.email ?? "Cuenta")}
           </span>
         </Link>
         <button
           onClick={signOut}
-          className="flex items-center gap-3 px-3.5 py-2 rounded-full text-sm text-foreground/60 hover:text-foreground hover:bg-black/[0.04] transition-colors w-full"
+          className="flex items-center gap-3 px-3 py-2 rounded-xl text-[12.5px] text-ink-tertiary hover:text-ink-secondary hover:bg-white/60 transition-colors w-full"
         >
           <LogOut className="w-4 h-4 shrink-0" strokeWidth={1.5} />
           {guest ? "Salir" : "Cerrar sesión"}
@@ -175,19 +189,19 @@ function EcosystemLink({
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex items-center gap-2 rounded px-2 py-1 text-[11px] transition-colors hover:bg-black/[0.04]"
+      className="group flex items-center gap-2 rounded-lg px-2 py-1.5 text-[11px] transition-colors hover:bg-white/60"
     >
       <span
         className="h-1.5 w-1.5 shrink-0 rounded-full"
         style={{ background: dot }}
       />
-      <span className="font-medium text-foreground/70 group-hover:text-foreground">
+      <span className="font-medium text-ink-secondary group-hover:text-ink">
         {label}
       </span>
-      <span className="text-muted-foreground/50 text-[10px] flex-1 truncate">
+      <span className="text-ink-tertiary text-[10px] flex-1 truncate">
         {sub}
       </span>
-      <ExternalLink className="h-2.5 w-2.5 text-muted-foreground/40 opacity-0 transition-opacity group-hover:opacity-100" />
+      <ExternalLink className="h-2.5 w-2.5 text-ink-tertiary opacity-0 transition-opacity group-hover:opacity-100" />
     </a>
   );
 }

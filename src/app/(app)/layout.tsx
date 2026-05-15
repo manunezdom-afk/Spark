@@ -16,14 +16,14 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       <TooltipProvider delayDuration={200} skipDelayDuration={300}>
         <NovaAskProvider>
           <KairosBridgeProvider />
-          <div className="flex min-h-screen">
+          <div className="flex min-h-screen bg-background">
             <Sidebar />
             <main
-              className="flex-1 flex flex-col min-w-0 pt-14 md:pt-0 pb-[74px] md:pb-0"
+              className="flex-1 flex flex-col min-w-0 pt-14 md:pt-0 pb-[74px] md:pb-0 relative"
               style={{
                 background:
-                  "radial-gradient(ellipse at 80% -10%, rgba(255,138,76,0.07) 0%, transparent 48%), " +
-                  "radial-gradient(ellipse at -5% 90%, rgba(255,138,76,0.045) 0%, transparent 44%)",
+                  "radial-gradient(ellipse 720px 360px at 92% -8%, rgba(255,138,76,0.05) 0%, transparent 60%), " +
+                  "radial-gradient(ellipse 600px 300px at -8% 92%, rgba(168,85,247,0.04) 0%, transparent 55%)",
               }}
             >
               <MobileTopBar />

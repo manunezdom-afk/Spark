@@ -19,12 +19,12 @@ export function PageHeader({
 }) {
   return (
     <header className="flex items-end justify-between flex-wrap gap-4 mb-10">
-      <div className="flex flex-col gap-1.5 min-w-0">
-        <h1 className="text-3xl md:text-4xl font-medium tracking-tight text-foreground">
+      <div className="flex flex-col gap-2 min-w-0">
+        <h1 className="text-3xl md:text-[40px] font-medium tracking-tight text-ink leading-[1.1]">
           {title}
         </h1>
         {description && (
-          <p className="text-[14px] text-muted-foreground leading-relaxed max-w-2xl">
+          <p className="text-[14.5px] text-ink-secondary leading-relaxed max-w-2xl">
             {description}
           </p>
         )}

@@ -3,6 +3,7 @@ import type { CSSProperties } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { ENGINE_LABELS } from "@/modules/spark/engines";
 import { getEngineTheme } from "@/modules/spark/engines/themes";
+import { ENGINE_BLURBS } from "@/modules/spark/engines/blurbs";
 import type { LearningEngine } from "@/modules/spark/types";
 
 /**
@@ -56,7 +57,9 @@ export function MethodQuickCard(props: MethodQuickCardProps) {
   const Icon = theme.Icon;
 
   const isRecommendation = props.variant === "recommendation";
-  const subtitle = isRecommendation ? props.reason : theme.pitch;
+  const blurbEngine: LearningEngine =
+    methodKey === "test" ? "test_alternativas" : methodKey;
+  const subtitle = isRecommendation ? props.reason : ENGINE_BLURBS[blurbEngine];
 
   return (
     <Link
@@ -96,14 +99,14 @@ export function MethodQuickCard(props: MethodQuickCardProps) {
         <div
           className={`${
             isRecommendation ? "text-[15px]" : "text-[14px]"
-          } font-semibold tracking-tight text-foreground leading-tight`}
+          } font-medium tracking-tight text-ink leading-tight`}
         >
           {label}
         </div>
         <p
           className={`${
             isRecommendation ? "text-[12.5px]" : "text-[11.5px]"
-          } text-muted-foreground leading-relaxed line-clamp-1`}
+          } text-ink-secondary leading-relaxed line-clamp-2`}
         >
           {subtitle}
         </p>
