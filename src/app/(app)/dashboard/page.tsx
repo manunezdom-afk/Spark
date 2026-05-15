@@ -24,7 +24,7 @@ import type {
 export const dynamic = "force-dynamic";
 
 const METHODS: Array<{
-  key: LearningEngine | "test";
+  key: LearningEngine;
   href: string;
 }> = [
   { key: "socratic", href: "/sessions/new?engine=socratic" },
@@ -32,7 +32,6 @@ const METHODS: Array<{
   { key: "devils_advocate", href: "/sessions/new?engine=devils_advocate" },
   { key: "bridge_builder", href: "/sessions/new?engine=bridge_builder" },
   { key: "roleplay", href: "/sessions/new?engine=roleplay" },
-  { key: "test", href: "/tests/new" },
 ];
 
 export default async function DashboardPage() {
@@ -120,7 +119,7 @@ export default async function DashboardPage() {
               </span>
             )}
           </h2>
-          {activeSessions.length > 3 && (
+          {activeSessions.length > 5 && (
             <Link
               href="/sessions"
               className="text-[12px] font-medium text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1"
@@ -134,7 +133,7 @@ export default async function DashboardPage() {
           <EmptySessionsState hasTopics={hasTopics} />
         ) : (
           <ul className="flex flex-col gap-2">
-            {activeSessions.slice(0, 3).map((s) => (
+            {activeSessions.slice(0, 5).map((s) => (
               <ActiveSessionRow key={s.id} session={s} topics={topics} />
             ))}
           </ul>

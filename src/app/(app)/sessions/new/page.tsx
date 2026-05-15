@@ -11,22 +11,26 @@ import {
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
-  AlignLeft,
   ArrowRight,
   Brain,
-  CheckSquare,
+  Briefcase,
   ChevronLeft,
+  ClipboardList,
   Flame,
   FlaskConical,
   Gauge,
+  GraduationCap,
   Layers,
+  PencilLine,
+  ShieldCheck,
   Sparkles,
   Target,
+  TrendingUp,
+  UserCheck,
   Wand2,
   Wind,
   type LucideIcon,
 } from "lucide-react";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
@@ -44,27 +48,21 @@ import type {
   SessionIntensity,
   SessionObjective,
   SparkTopic,
-  TestType,
 } from "@/modules/spark/types";
 import { toast } from "sonner";
 
 // ─────────────────────────────────────────────────────────────────
 // Method picker model
 // ─────────────────────────────────────────────────────────────────
-// The picker on this page renders 6 cards: 5 chat-based methods +
-// "Generar prueba". The test card is virtual — it doesn't pin to a
-// single engine; the user chooses alternativas vs desarrollo in the
-// ajustes step. We use `MethodKey` as a thin abstraction so the
-// component can branch on UI without touching the LearningEngine
-// enum used by the API.
+// 5 métodos chat. La generación de pruebas vive aparte en /tests/new
+// para evitar duplicar el flujo y confundir al estudiante.
 
 type MethodKey =
   | "socratic"
   | "debugger"
   | "devils_advocate"
   | "bridge_builder"
-  | "roleplay"
-  | "test";
+  | "roleplay";
 
 const ALL_METHOD_KEYS: MethodKey[] = [
   "socratic",
@@ -72,7 +70,6 @@ const ALL_METHOD_KEYS: MethodKey[] = [
   "devils_advocate",
   "bridge_builder",
   "roleplay",
-  "test",
 ];
 
 const ENGINE_LIMITS: Record<MethodKey, { min: number; max: number }> = {
@@ -81,31 +78,110 @@ const ENGINE_LIMITS: Record<MethodKey, { min: number; max: number }> = {
   roleplay: { min: 1, max: 3 },
   bridge_builder: { min: 2, max: 6 },
   socratic: { min: 1, max: 2 },
-  test: { min: 1, max: 5 },
 };
 
-const TEST_THEME_ENGINE: LearningEngine = "test_alternativas";
-
 function methodKeyToThemeEngine(key: MethodKey): LearningEngine {
-  return key === "test" ? TEST_THEME_ENGINE : (key as LearningEngine);
+  return key as LearningEngine;
 }
 
-// METHOD_TAGS reutiliza ENGINE_TAGS (módulo compartido) — el método
-// "test" es virtual y comparte tags con test_alternativas. Centralizar
-// los tags ahí permite mostrarlos también en el landing público.
 const METHOD_TAGS: Record<MethodKey, string[]> = {
   socratic: ENGINE_TAGS[methodKeyToThemeEngine("socratic")],
   debugger: ENGINE_TAGS[methodKeyToThemeEngine("debugger")],
   devils_advocate: ENGINE_TAGS[methodKeyToThemeEngine("devils_advocate")],
   bridge_builder: ENGINE_TAGS[methodKeyToThemeEngine("bridge_builder")],
   roleplay: ENGINE_TAGS[methodKeyToThemeEngine("roleplay")],
-  test: ENGINE_TAGS[methodKeyToThemeEngine("test")],
 };
 
 function getMethodLabel(key: MethodKey): string {
-  if (key === "test") return "Generar prueba";
   return ENGINE_LABELS[key as LearningEngine];
 }
+
+// ─────────────────────────────────────────────────────────────────
+// Roleplay scenarios (curated)
+// ─────────────────────────────────────────────────────────────────
+// El estudiante no debería tener que inventar el rol del personaje.
+// 6 escenarios pre-configurados + opción de personalizar. Cada uno
+// tiene persona y scenario por defecto que la sesión consume tal cual.
+
+interface RoleplayScenario {
+  id: string;
+  label: string;
+  description: string;
+  Icon: LucideIcon;
+  persona: string;
+  scenario: string;
+}
+
+const ROLEPLAY_SCENARIOS: RoleplayScenario[] = [
+  {
+    id: "skeptical_client",
+    label: "Cliente escéptico",
+    description: "Pide pruebas concretas antes de comprar.",
+    Icon: Briefcase,
+    persona:
+      "Cliente potencial escéptico. No le interesa el marketing, busca pruebas concretas y casos reales antes de decidir.",
+    scenario:
+      "Reunión de venta de 10 minutos. Tú aplicas el tema para venderle algo concreto, él busca razones para decir que no.",
+  },
+  {
+    id: "demanding_professor",
+    label: "Profesor exigente",
+    description: "Examen oral con rigor académico.",
+    Icon: GraduationCap,
+    persona:
+      "Profesor universitario exigente. Si la respuesta no es precisa, repregunta hasta encontrar el vacío. Penaliza la jerga vacía.",
+    scenario:
+      "Examen oral sobre el tema. Te pregunta y exige rigor académico. Si dudas o repites sin entender, baja la nota.",
+  },
+  {
+    id: "investor",
+    label: "Inversionista frío",
+    description: "Solo le importan métricas y mercado.",
+    Icon: TrendingUp,
+    persona:
+      "Inversionista early-stage frío. No le interesan las emociones; solo unit economics, mercado y diferenciación.",
+    scenario:
+      "Pitch de 5 minutos en demo day. Tú vendes la idea aplicando el tema, él busca grietas en tu lógica de mercado.",
+  },
+  {
+    id: "junior_colleague",
+    label: "Compañero junior",
+    description: "Necesita entender desde cero, sin jerga.",
+    Icon: UserCheck,
+    persona:
+      "Colega junior que necesita entender el tema desde cero. Pregunta lo obvio, y si usas jerga te pide que lo expliques de otra forma.",
+    scenario:
+      "Te pidieron explicarle el tema en 10 minutos para que pueda contribuir mañana. Sin diapositivas, solo conversación.",
+  },
+  {
+    id: "manager",
+    label: "Manager pidiendo justificación",
+    description: "Necesita justificar tu decisión a un comité.",
+    Icon: ShieldCheck,
+    persona:
+      "Manager directo. Necesita justificar tu propuesta ante un comité y te pide que cubras los flancos antes de exponerla.",
+    scenario:
+      "Reunión 1:1 de 15 minutos. Te pregunta por qué tu approach es el correcto, qué riesgos tiene y cómo responderías a las objeciones obvias.",
+  },
+  {
+    id: "interviewer",
+    label: "Entrevistador técnico",
+    description: "Entrevista con preguntas trampa.",
+    Icon: ClipboardList,
+    persona:
+      "Entrevistador técnico de una empresa exigente. Hace preguntas trampa para distinguir entre quien memorizó y quien entiende.",
+    scenario:
+      "Entrevista técnica de 30 minutos para tu rol soñado. Pregunta sobre el tema y profundiza cuando ve dudas.",
+  },
+  {
+    id: "custom",
+    label: "Personalizar",
+    description: "Tú escribes el personaje y la situación.",
+    Icon: PencilLine,
+    persona: "",
+    scenario: "",
+  },
+];
 
 // ─────────────────────────────────────────────────────────────────
 // Objective + intensity option metadata
@@ -166,21 +242,6 @@ const INTENSITIES: OptionDef<SessionIntensity>[] = [
   },
 ];
 
-const TEST_TYPES: { value: TestType; label: string; description: string; Icon: LucideIcon }[] = [
-  {
-    value: "alternativas",
-    label: "Alternativas",
-    description: "Opción múltiple. Corrección automática.",
-    Icon: CheckSquare,
-  },
-  {
-    value: "desarrollo",
-    label: "Desarrollo",
-    description: "Preguntas abiertas evaluadas por IA.",
-    Icon: AlignLeft,
-  },
-];
-
 // ─────────────────────────────────────────────────────────────────
 // Page
 // ─────────────────────────────────────────────────────────────────
@@ -190,12 +251,15 @@ function NewSessionForm() {
   const params = useSearchParams();
 
   const requestedEngine = params.get("engine") as LearningEngine | null;
+  // Si llegan con engine= en la URL (vinieron desde dashboard/topic), saltamos el
+  // selector de método y vamos directo a elegir materia + ajustes.
+  const lockedToMethod =
+    requestedEngine &&
+    requestedEngine in ENGINE_LIMITS &&
+    requestedEngine !== "test_alternativas" &&
+    requestedEngine !== "test_desarrollo";
   const initialMethod: MethodKey =
-    requestedEngine === "test_alternativas" || requestedEngine === "test_desarrollo"
-      ? "test"
-      : requestedEngine && requestedEngine in ENGINE_LIMITS
-        ? (requestedEngine as MethodKey)
-        : "socratic";
+    lockedToMethod ? (requestedEngine as MethodKey) : "socratic";
   const presetTopic = params.get("topic");
   const presetTopicIds = params.get("topic_ids");
   const initialSelectedTopicIds = getInitialSelectedTopicIds({
@@ -218,15 +282,10 @@ function NewSessionForm() {
   const [demoMode, setDemoMode] = useState(false);
   const [demoSeeding, setDemoSeeding] = useState(false);
 
-  // Test-only state
-  const [testType, setTestType] = useState<TestType>(
-    requestedEngine === "test_desarrollo" ? "desarrollo" : "alternativas",
-  );
-  const [questionCount, setQuestionCount] = useState(10);
-
-  // Chat-only state
-  const [persona, setPersona] = useState("");
-  const [scenario, setScenario] = useState("");
+  // Roleplay state — escenario seleccionado de la lista curada
+  const [scenarioId, setScenarioId] = useState<string>(ROLEPLAY_SCENARIOS[0].id);
+  const [persona, setPersona] = useState(ROLEPLAY_SCENARIOS[0].persona);
+  const [scenario, setScenario] = useState(ROLEPLAY_SCENARIOS[0].scenario);
 
   // Shared session config
   const [objective, setObjective] = useState<SessionObjective>("comprender");
@@ -356,7 +415,7 @@ function NewSessionForm() {
   );
   const onlyTopic = selectedTopics.length === 1 ? selectedTopics[0] : null;
 
-  const stepCount = getNewSessionStepCount(selected.size);
+  const stepCount = getNewSessionStepCount(selected.size) - (lockedToMethod ? 1 : 0);
 
   function canStart(): { ok: boolean; reason?: string } {
     if (loading) return { ok: false, reason: "Cargando temas…" };
@@ -389,22 +448,6 @@ function NewSessionForm() {
     }
     setBusy(true);
     try {
-      if (methodKey === "test") {
-        const res = await fetch("/api/tests/generate", {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({
-            topic_ids: Array.from(selected),
-            test_type: testType,
-            question_count: questionCount,
-          }),
-        });
-        const body = await res.json();
-        if (!res.ok) throw new Error(body.error ?? "Error generando prueba");
-        router.push(`/tests/${body.session_id}/take`);
-        return;
-      }
-
       const noteIds =
         selected.size === 1 && selectedNoteIds.size > 0
           ? Array.from(selectedNoteIds)
@@ -447,27 +490,29 @@ function NewSessionForm() {
         <div className="flex flex-col gap-6">
           <NewSessionHero methodKey={methodKey} />
 
-          <Step
-            index={1}
-            total={stepCount}
-            title="Elige cómo entrenar"
-            kicker="Método"
-            theme={theme}
-          >
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {ALL_METHOD_KEYS.map((opt) => (
-                <MethodPickCard
-                  key={opt}
-                  methodKey={opt}
-                  isActive={opt === methodKey}
-                  onClick={() => changeMethod(opt)}
-                />
-              ))}
-            </div>
-          </Step>
+          {!lockedToMethod && (
+            <Step
+              index={1}
+              total={stepCount}
+              title="Elige cómo entrenar"
+              kicker="Método"
+              theme={theme}
+            >
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {ALL_METHOD_KEYS.map((opt) => (
+                  <MethodPickCard
+                    key={opt}
+                    methodKey={opt}
+                    isActive={opt === methodKey}
+                    onClick={() => changeMethod(opt)}
+                  />
+                ))}
+              </div>
+            </Step>
+          )}
 
           <Step
-            index={2}
+            index={lockedToMethod ? 1 : 2}
             total={stepCount}
             title={
               limits.max === 1
@@ -502,7 +547,7 @@ function NewSessionForm() {
 
           {onlyTopic && (
             <Step
-              index={3}
+              index={lockedToMethod ? 2 : 3}
               total={stepCount}
               title="¿Toda la materia o solo una parte?"
               kicker="Material"
@@ -520,7 +565,7 @@ function NewSessionForm() {
 
           {selected.size > 1 && (
             <Step
-              index={3}
+              index={lockedToMethod ? 2 : 3}
               total={stepCount}
               title="Material por materia"
               kicker="Material"
@@ -535,34 +580,37 @@ function NewSessionForm() {
           )}
 
           <Step
-            index={onlyTopic || selected.size > 1 ? 4 : 3}
+            index={
+              (onlyTopic || selected.size > 1)
+                ? lockedToMethod ? 3 : 4
+                : lockedToMethod ? 2 : 3
+            }
             total={stepCount}
             title="Cómo quieres que sea la sesión"
             kicker="Ajustes"
             theme={theme}
           >
-            {methodKey === "test" ? (
-              <TestSettings
-                testType={testType}
-                onChangeType={setTestType}
-                questionCount={questionCount}
-                onChangeCount={setQuestionCount}
-                accent={theme.accent}
-              />
-            ) : (
-              <ChatSettings
-                methodKey={methodKey}
-                objective={objective}
-                onChangeObjective={setObjectiveAndAdjust}
-                intensity={intensity}
-                onChangeIntensity={setIntensity}
-                persona={persona}
-                onChangePersona={setPersona}
-                scenario={scenario}
-                onChangeScenario={setScenario}
-                accent={theme.accent}
-              />
-            )}
+            <ChatSettings
+              methodKey={methodKey}
+              objective={objective}
+              onChangeObjective={setObjectiveAndAdjust}
+              intensity={intensity}
+              onChangeIntensity={setIntensity}
+              scenarioId={scenarioId}
+              onChangeScenario={(id) => {
+                setScenarioId(id);
+                const scn = ROLEPLAY_SCENARIOS.find((s) => s.id === id);
+                if (scn) {
+                  setPersona(scn.persona);
+                  setScenario(scn.scenario);
+                }
+              }}
+              persona={persona}
+              onChangePersona={setPersona}
+              scenario={scenario}
+              onChangeScenarioText={setScenario}
+              accent={theme.accent}
+            />
           </Step>
         </div>
 
@@ -578,8 +626,6 @@ function NewSessionForm() {
             objective={objective}
             intensity={intensity}
             persona={persona}
-            testType={testType}
-            questionCount={questionCount}
             disabled={!validity.ok || busy}
             disabledReason={validity.reason}
             busy={busy}
@@ -617,21 +663,21 @@ function Step({
       <header className="flex items-end justify-between gap-3 flex-wrap">
         <div className="flex items-center gap-3 min-w-0">
           <span
-            className="font-mono text-[10px] uppercase tracking-[0.22em] inline-flex items-center justify-center px-2 py-0.5 rounded-full text-white"
+            className="text-[12px] font-medium inline-flex items-center justify-center px-2.5 py-1 rounded-full text-white"
             style={{ background: theme.accent }}
           >
-            {String(index).padStart(2, "0")} · {kicker}
+            {kicker}
           </span>
-          <h2 className="text-[15px] md:text-[16px] font-semibold tracking-tight text-foreground leading-tight">
+          <h2 className="text-[16px] md:text-[17px] font-medium tracking-tight text-foreground leading-tight">
             {title}
           </h2>
         </div>
-        <span className="font-mono text-[9.5px] uppercase tracking-[0.16em] text-muted-foreground">
-          paso {index} de {total}
+        <span className="text-[12px] text-muted-foreground">
+          Paso {index} de {total}
         </span>
       </header>
       {description && (
-        <p className="text-[12.5px] text-muted-foreground -mt-1 leading-relaxed">
+        <p className="text-[13px] text-muted-foreground -mt-1 leading-relaxed">
           {description}
         </p>
       )}
@@ -667,15 +713,15 @@ function NewSessionHero({ methodKey }: { methodKey: MethodKey }) {
         </span>
         <div className="flex flex-col gap-1.5 min-w-0 max-w-xl">
           <span
-            className="font-mono text-[10px] uppercase tracking-[0.22em]"
+            className="text-[13px] font-medium"
             style={{ color: theme.accent }}
           >
-            Configurar sesión · {personality.hudKicker}
+            {personality.hudKicker}
           </span>
-          <h1 className="text-2xl md:text-[28px] font-semibold tracking-tight text-foreground leading-tight">
+          <h1 className="text-2xl md:text-[28px] font-medium tracking-tight text-foreground leading-tight">
             {getMethodLabel(methodKey)}
           </h1>
-          <p className="text-muted-foreground leading-relaxed text-[13.5px]">
+          <p className="text-muted-foreground leading-relaxed text-[14px]">
             {personality.introHook}
           </p>
         </div>
@@ -735,27 +781,27 @@ function MethodPickCard({
           <Icon className="w-4 h-4" strokeWidth={1.5} />
         </span>
         <span
-          className="absolute top-3 right-3 font-mono text-[9px] uppercase tracking-[0.18em] z-10"
+          className="absolute top-3 right-3 text-[11px] font-medium z-10"
           style={{ color: theme.accent }}
         >
           {personality.hudKicker}
         </span>
         {isActive && (
           <span
-            className="absolute bottom-2.5 right-2.5 font-mono text-[9px] uppercase tracking-[0.16em] inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-white z-10"
+            className="absolute bottom-2.5 right-2.5 text-[11px] font-medium inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-white z-10"
             style={{ background: theme.accent }}
           >
-            elegido
+            Elegido
           </span>
         )}
       </div>
 
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between gap-2">
-          <span className="font-semibold text-[14px] text-foreground">
+          <span className="font-medium text-[14px] text-foreground">
             {getMethodLabel(methodKey)}
           </span>
-          <span className="font-mono text-[9.5px] uppercase tracking-[0.14em] text-muted-foreground">
+          <span className="text-[11px] text-muted-foreground">
             {limits.min === limits.max
               ? `${limits.min} ${limits.min === 1 ? "materia" : "materias"}`
               : `${limits.min}–${limits.max} materias`}
@@ -783,23 +829,6 @@ function MethodPickCard({
 }
 
 function PickPreviewMotif({ methodKey }: { methodKey: MethodKey }) {
-  if (methodKey === "test") {
-    return (
-      <>
-        <span className="method-scene-checkrow" style={{ top: "32%" }} aria-hidden />
-        <span
-          className="method-scene-checkrow"
-          style={{ top: "54%", animationDelay: "-0.7s" }}
-          aria-hidden
-        />
-        <span
-          className="method-scene-checkrow"
-          style={{ top: "76%", animationDelay: "-1.3s" }}
-          aria-hidden
-        />
-      </>
-    );
-  }
   const persona = getMethodPersonality(methodKey as LearningEngine).intro;
   if (persona === "mentor") return <span className="method-scene-rings" aria-hidden />;
   if (persona === "detective") {
@@ -939,10 +968,10 @@ function TopicSelector({
               </div>
               {isSelected && (
                 <span
-                  className="inline-flex items-center justify-center w-5 h-5 rounded-full shrink-0 text-white"
+                  className="inline-flex items-center justify-center w-5 h-5 rounded-full shrink-0 text-white text-[11px] font-semibold"
                   style={{ background: theme.accent }}
                 >
-                  <CheckSquare className="w-3 h-3" strokeWidth={1.5} />
+                  ✓
                 </span>
               )}
             </div>
@@ -1039,10 +1068,12 @@ function ChatSettings({
   onChangeObjective,
   intensity,
   onChangeIntensity,
+  scenarioId,
+  onChangeScenario,
   persona,
   onChangePersona,
   scenario,
-  onChangeScenario,
+  onChangeScenarioText,
   accent,
 }: {
   methodKey: MethodKey;
@@ -1050,12 +1081,15 @@ function ChatSettings({
   onChangeObjective: (next: SessionObjective) => void;
   intensity: SessionIntensity;
   onChangeIntensity: (next: SessionIntensity) => void;
+  scenarioId: string;
+  onChangeScenario: (id: string) => void;
   persona: string;
   onChangePersona: (next: string) => void;
   scenario: string;
-  onChangeScenario: (next: string) => void;
+  onChangeScenarioText: (next: string) => void;
   accent: string;
 }) {
+  const isCustom = scenarioId === "custom";
   return (
     <div className="flex flex-col gap-5">
       <OptionGroup
@@ -1076,124 +1110,98 @@ function ChatSettings({
       />
 
       {methodKey === "roleplay" && (
-        <div className="flex flex-col gap-4 p-4 rounded-2xl border border-black/[0.06] bg-white/55">
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="persona" className="text-[13px]">
-              Personaje que adoptará Nova
-            </Label>
-            <Input
-              id="persona"
-              placeholder="ej. Inversionista ángel escéptico"
-              value={persona}
-              onChange={(e) => onChangePersona(e.target.value)}
-            />
+        <div className="flex flex-col gap-3">
+          <div className="flex items-baseline justify-between gap-3">
+            <Label className="text-[13px]">Escenario</Label>
+            <span className="text-[11px] text-muted-foreground">
+              Elige una situación o personaliza la tuya.
+            </span>
           </div>
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="scenario" className="text-[13px]">
-              Escenario (opcional)
-            </Label>
-            <Textarea
-              id="scenario"
-              placeholder="Pitch de 5 minutos en demo day, sala llena…"
-              value={scenario}
-              onChange={(e) => onChangeScenario(e.target.value)}
-              rows={3}
-            />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {ROLEPLAY_SCENARIOS.map((scn) => {
+              const active = scenarioId === scn.id;
+              const Icon = scn.Icon;
+              return (
+                <button
+                  key={scn.id}
+                  type="button"
+                  onClick={() => onChangeScenario(scn.id)}
+                  className="text-left rounded-xl border p-3 transition-colors flex items-start gap-2.5"
+                  style={{
+                    borderColor: active ? hexToRgba(accent, 0.5) : "rgba(0,0,0,0.07)",
+                    background: active ? hexToRgba(accent, 0.07) : "rgba(255,255,255,0.55)",
+                  }}
+                >
+                  <span
+                    className="inline-flex items-center justify-center w-7 h-7 rounded-md shrink-0 mt-0.5"
+                    style={{
+                      background: active ? hexToRgba(accent, 0.16) : "rgba(0,0,0,0.04)",
+                      color: active ? accent : "rgba(0,0,0,0.55)",
+                    }}
+                  >
+                    <Icon className="w-3.5 h-3.5" strokeWidth={1.5} />
+                  </span>
+                  <div className="flex flex-col gap-0.5 min-w-0">
+                    <span
+                      className={cn(
+                        "text-[13px] font-medium",
+                        active ? "text-foreground" : "text-foreground/85",
+                      )}
+                    >
+                      {scn.label}
+                    </span>
+                    <span className="text-[11.5px] text-muted-foreground leading-snug">
+                      {scn.description}
+                    </span>
+                  </div>
+                </button>
+              );
+            })}
           </div>
+
+          {!isCustom && (
+            <div className="rounded-xl border border-black/[0.06] bg-white/65 p-3.5 flex flex-col gap-1.5">
+              <span className="text-[11px] text-muted-foreground">Nova será</span>
+              <p className="text-[13px] text-foreground/85 leading-relaxed">
+                {persona}
+              </p>
+              <span className="text-[11px] text-muted-foreground mt-2">Situación</span>
+              <p className="text-[13px] text-foreground/85 leading-relaxed">
+                {scenario}
+              </p>
+            </div>
+          )}
+
+          {isCustom && (
+            <div className="flex flex-col gap-3 p-4 rounded-xl border border-black/[0.06] bg-white/55">
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="persona" className="text-[13px]">
+                  Personaje que adoptará Nova
+                </Label>
+                <Textarea
+                  id="persona"
+                  placeholder="ej. Inversionista ángel escéptico que pide métricas concretas."
+                  value={persona}
+                  onChange={(e) => onChangePersona(e.target.value)}
+                  rows={2}
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="scenario" className="text-[13px]">
+                  Situación
+                </Label>
+                <Textarea
+                  id="scenario"
+                  placeholder="Pitch de 5 minutos en demo day, sala llena…"
+                  value={scenario}
+                  onChange={(e) => onChangeScenarioText(e.target.value)}
+                  rows={3}
+                />
+              </div>
+            </div>
+          )}
         </div>
       )}
-    </div>
-  );
-}
-
-function TestSettings({
-  testType,
-  onChangeType,
-  questionCount,
-  onChangeCount,
-  accent,
-}: {
-  testType: TestType;
-  onChangeType: (next: TestType) => void;
-  questionCount: number;
-  onChangeCount: (next: number) => void;
-  accent: string;
-}) {
-  const max = testType === "alternativas" ? 25 : 10;
-  const safeCount = Math.min(Math.max(1, questionCount), max);
-  return (
-    <div className="flex flex-col gap-5">
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center justify-between">
-          <Label className="text-[13px]">Formato</Label>
-          <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
-            elige uno
-          </span>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-          {TEST_TYPES.map(({ value, label, description, Icon }) => {
-            const active = testType === value;
-            return (
-              <button
-                key={value}
-                type="button"
-                onClick={() => onChangeType(value)}
-                className={cn(
-                  "text-left rounded-xl border p-3 transition-colors flex flex-col gap-1.5",
-                )}
-                style={{
-                  borderColor: active ? hexToRgba(accent, 0.45) : "rgba(0,0,0,0.07)",
-                  background: active ? hexToRgba(accent, 0.08) : "rgba(255,255,255,0.55)",
-                }}
-              >
-                <span className="flex items-center gap-2">
-                  <Icon
-                    className="w-4 h-4"
-                    strokeWidth={1.5}
-                    style={{ color: active ? accent : "rgba(0,0,0,0.55)" }}
-                  />
-                  <span
-                    className={cn(
-                      "text-[13px] font-medium",
-                      active ? "text-foreground" : "text-foreground/80",
-                    )}
-                  >
-                    {label}
-                  </span>
-                </span>
-                <span className="text-[11.5px] text-muted-foreground leading-relaxed">
-                  {description}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-2 p-4 rounded-2xl border border-black/[0.06] bg-white/55">
-        <div className="flex items-center justify-between">
-          <Label htmlFor="count" className="text-[13px]">
-            Cantidad de preguntas
-          </Label>
-          <span className="text-2xl font-semibold text-foreground tabular-nums w-10 text-right">
-            {safeCount}
-          </span>
-        </div>
-        <input
-          id="count"
-          type="range"
-          min={1}
-          max={max}
-          value={safeCount}
-          onChange={(e) => onChangeCount(Number(e.target.value))}
-          className="w-full cursor-pointer h-1.5"
-          style={{ accentColor: accent }}
-        />
-        <div className="flex justify-between text-[10px] text-muted-foreground/60 mt-1 font-mono">
-          <span>1</span>
-          <span>{max}</span>
-        </div>
-      </div>
     </div>
   );
 }
@@ -1295,8 +1303,6 @@ function SummaryPanel({
   objective,
   intensity,
   persona,
-  testType,
-  questionCount,
   disabled,
   disabledReason,
   busy,
@@ -1312,15 +1318,12 @@ function SummaryPanel({
   objective: SessionObjective;
   intensity: SessionIntensity;
   persona: string;
-  testType: TestType;
-  questionCount: number;
   disabled: boolean;
   disabledReason?: string;
   busy: boolean;
   onStart: () => void;
 }) {
   const Icon = theme.Icon;
-  const isTest = methodKey === "test";
 
   const materialLabel = onlyTopic
     ? selectedNoteIds.size === 0
@@ -1330,9 +1333,9 @@ function SummaryPanel({
       ? `${topics.length} materias completas`
       : "—";
 
-  const ctaLabel = isTest ? "Generar prueba" : "Iniciar con Nova";
+  const ctaLabel = "Iniciar con Nova";
 
-  const novaHint = buildNovaHint(methodKey, objective, intensity, testType, questionCount);
+  const novaHint = buildNovaHint(methodKey, objective, intensity);
 
   const panelStyle = {
     "--engine-accent": theme.accent,
@@ -1382,45 +1385,28 @@ function SummaryPanel({
           accent={theme.accent}
         />
         <SummaryRow label="Material" value={materialLabel} accent={theme.accent} />
-        {isTest ? (
-          <>
-            <SummaryRow
-              label="Formato"
-              value={testType === "alternativas" ? "Alternativas" : "Desarrollo"}
-              accent={theme.accent}
-            />
-            <SummaryRow
-              label="Preguntas"
-              value={`${questionCount}`}
-              accent={theme.accent}
-            />
-          </>
-        ) : (
-          <>
-            <SummaryRow
-              label="Objetivo"
-              value={OBJECTIVE_LABELS[objective]}
-              accent={theme.accent}
-            />
-            <SummaryRow
-              label="Intensidad"
-              value={INTENSITY_LABELS[intensity]}
-              accent={theme.accent}
-            />
-            {methodKey === "roleplay" && (
-              <SummaryRow
-                label="Personaje"
-                value={
-                  persona.trim() ? (
-                    persona
-                  ) : (
-                    <span className="text-muted-foreground italic">Sin definir</span>
-                  )
-                }
-                accent={theme.accent}
-              />
-            )}
-          </>
+        <SummaryRow
+          label="Objetivo"
+          value={OBJECTIVE_LABELS[objective]}
+          accent={theme.accent}
+        />
+        <SummaryRow
+          label="Intensidad"
+          value={INTENSITY_LABELS[intensity]}
+          accent={theme.accent}
+        />
+        {methodKey === "roleplay" && (
+          <SummaryRow
+            label="Personaje"
+            value={
+              persona.trim() ? (
+                persona
+              ) : (
+                <span className="text-muted-foreground italic">Sin definir</span>
+              )
+            }
+            accent={theme.accent}
+          />
         )}
       </ul>
 
@@ -1488,16 +1474,10 @@ function SummaryRow({
 }
 
 function buildNovaHint(
-  methodKey: MethodKey,
+  _methodKey: MethodKey,
   objective: SessionObjective,
   intensity: SessionIntensity,
-  testType: TestType,
-  questionCount: number,
 ): string {
-  if (methodKey === "test") {
-    const fmt = testType === "alternativas" ? "alternativas" : "preguntas de desarrollo";
-    return `Voy a generar ${questionCount} ${fmt} basadas en tu material. Tú respondes y te entrego nota con feedback.`;
-  }
   const objectiveHint: Record<SessionObjective, string> = {
     comprender: "Voy a empujarte a explicar el porqué con tus palabras.",
     memorizar: "Vamos a fijar lo esencial con repetición y flashcards al final.",
