@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { ArrowRight } from "lucide-react";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import {
   getSessions,
@@ -8,19 +7,12 @@ import {
   getTopics,
   getDueFlashcardsCount,
 } from "@/lib/spark/queries";
-import { ENGINE_LABELS } from "@/modules/spark/engines";
-import { getEngineTheme } from "@/modules/spark/engines/themes";
 import { EmptySessionsState } from "@/components/dashboard/EmptySessionsState";
 import { WeakTopicsWidget } from "@/components/dashboard/WeakTopicsWidget";
 import { MethodQuickCard } from "@/components/methods/MethodQuickCard";
 import { WeeklyOverview } from "@/components/dashboard/WeeklyOverview";
-import { formatRelativeTime } from "@/lib/spark/recommendation";
-import { hexToRgba } from "@/lib/utils/color";
-import type {
-  LearningEngine,
-  SparkLearningSession,
-  SparkTopic,
-} from "@/modules/spark/types";
+import { ActiveSessionsSection } from "@/components/dashboard/ActiveSessionsSection";
+import type { LearningEngine } from "@/modules/spark/types";
 
 export const dynamic = "force-dynamic";
 
@@ -158,32 +150,8 @@ export default async function DashboardPage() {
       </section>
 
       {/* 2. Continuar donde lo dejaste (Sesiones en curso) */}
-      {activeSessions.length > 0 && (
-        <section className="mb-10">
-          <div className="flex items-center justify-between gap-3 mb-3">
-            <h2 className="text-[13px] font-medium text-ink-secondary tracking-tight">
-              Continuar donde lo dejaste
-              <span className="ml-2 text-ink-tertiary font-normal">
-                ({activeSessions.length} activas)
-              </span>
-            </h2>
-            {activeSessions.length > 3 && (
-              <Link
-                href="/sessions"
-                className="text-[12px] font-medium text-ink-tertiary hover:text-ink transition-colors inline-flex items-center gap-1"
-              >
-                Ver todas
-                <ArrowRight className="w-3 h-3" strokeWidth={1.5} />
-              </Link>
-            )}
-          </div>
-          <ul className="flex flex-col gap-2">
-            {activeSessions.slice(0, 3).map((s) => (
-              <ActiveSessionRow key={s.id} session={s} topics={topics} />
-            ))}
-          </ul>
-        </section>
-      )}
+      {/* 2. Continuar donde lo dejaste (Sesiones en curso con opción de eliminación) */}
+      <ActiveSessionsSection initialSessions={activeSessions} topics={topics} />
 
       {!hasTopics && activeSessions.length === 0 && (
         <section className="mb-10">
@@ -212,59 +180,7 @@ export default async function DashboardPage() {
   );
 }
 
-function ActiveSessionRow({
-  session,
-  topics,
-}: {
-  session: SparkLearningSession;
-  topics: SparkTopic[];
-}) {
-  const theme = getEngineTheme(session.engine);
-  const title = ENGINE_LABELS[session.engine];
-  const sessionTopics = topics.filter((t) => session.topic_ids.includes(t.id));
-  const subjectLabel =
-    sessionTopics.length === 0
-      ? "Sin tema asignado"
-      : sessionTopics.length === 1
-        ? sessionTopics[0].title
-        : `${sessionTopics[0].title} +${sessionTopics.length - 1}`;
 
-  return (
-    <Link
-      href={`/sessions/${session.id}`}
-      className="flex items-center justify-between gap-3 p-3.5 rounded-xl border border-black/[0.06] bg-white/55 hover:bg-white hover:border-black/[0.12] hover:scale-[1.01] active:scale-[0.995] transition-all duration-300 ease-spring"
-      style={{ borderLeft: `2.5px solid ${hexToRgba(theme.accent, 0.55)}` }}
-    >
-      <div className="flex items-center gap-3 min-w-0 flex-1">
-        <span
-          className="inline-flex items-center justify-center w-8 h-8 rounded-lg shrink-0"
-          style={{
-            background: hexToRgba(theme.accent, 0.1),
-            color: theme.accent,
-            border: `1px solid ${hexToRgba(theme.accent, 0.22)}`,
-          }}
-        >
-          <theme.Icon className="w-3.5 h-3.5" strokeWidth={1.5} />
-        </span>
-        <div className="min-w-0 flex-1">
-          <div className="text-[14px] font-medium tracking-tight text-foreground truncate">
-            {title}
-          </div>
-          <div className="text-[12px] text-muted-foreground truncate">
-            {subjectLabel} · iniciada {formatRelativeTime(session.started_at)}
-          </div>
-        </div>
-      </div>
-      <span
-        className="text-[12px] font-medium inline-flex items-center gap-1 shrink-0"
-        style={{ color: theme.accent }}
-      >
-        Continuar
-        <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.5} />
-      </span>
-    </Link>
-  );
-}
 
 function greet(): string {
   const hour = new Date().getHours();
