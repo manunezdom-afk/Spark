@@ -11,6 +11,7 @@ import {
   History,
   ListChecks,
   Activity,
+  Thermometer,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -228,6 +229,7 @@ export function DefendPostureExperience({
               priorScore={lastClosedRound?.volley?.solidity_score ?? null}
               priorNote={openRound.volley?.prior_defense_note ?? null}
               textareaRef={textareaRef}
+              userCount={userCount}
             />
           ) : engine.status === "streaming" ? (
             <div
@@ -370,6 +372,7 @@ function AttackPanel({
   priorScore,
   priorNote,
   textareaRef,
+  userCount,
 }: {
   round: Round;
   tactic: DefenseTactic;
@@ -383,172 +386,265 @@ function AttackPanel({
   priorScore: number | null;
   priorNote: string | null;
   textareaRef: React.RefObject<HTMLTextAreaElement>;
+  userCount: number;
 }) {
   const attackLabel = round.volley?.attack_label ?? "Objeción de Nova";
   const closingQ = round.volley?.closing_question;
   const objection =
     round.volley?.objection ?? stripJson(round.objection ?? "");
 
+  // Presión argumental (Ronda 0: Postura; Ronda 1: 55C, Ronda 2: 85C)
+  const temperature = 25 + userCount * 30;
+  const tempLabels = ["Templada", "Moderada", "Crítica", "Extrema"];
+  const activeTempLabel = tempLabels[Math.min(3, userCount)];
+
+  // Escudos de premisas defensivas
+  const shields = useMemo(() => [
+    {
+      key: "evidencia",
+      label: "Evidencia Empírica",
+      desc: "Hechos o ejemplos",
+      matched: /evidencia|ejemplo|dato|hecho|prueba|demuestra|caso/i.test(draft),
+    },
+    {
+      key: "causalidad",
+      label: "Nexo Causal",
+      desc: "Por qué lógico",
+      matched: /porque|causa|debido|consecuencia|genera|produce|razon/i.test(draft),
+    },
+    {
+      key: "contexto",
+      label: "Límite Contextual",
+      desc: "Dónde aplica",
+      matched: /contexto|limite|depende|excepto|restringe|salvo/i.test(draft),
+    },
+  ], [draft]);
+
   return (
-    <article
-      key={round.index}
-      className="rounded-3xl border bg-white/90 p-7 md:p-9 engine-card-rise"
-      style={{
-        borderColor: hexToRgba(accent, 0.22),
-        boxShadow: `0 12px 36px ${hexToRgba(accent, 0.10)}`,
-      }}
-    >
-      <header className="flex items-center justify-between gap-3 mb-5 flex-wrap">
-        <div className="flex items-center gap-2">
-          <span
-            className="inline-flex items-center justify-center w-9 h-9 rounded-xl"
-            style={{
-              background: hexToRgba(accent, 0.12),
-              color: accent,
-              border: `1px solid ${hexToRgba(accent, 0.28)}`,
-            }}
-          >
-            <Sword className="w-4 h-4" strokeWidth={1.5} />
-          </span>
-          <div className="flex flex-col leading-tight">
-            <span
-              className="font-medium text-[11px]"
-              style={{ color: accent }}
+    <div className="grid md:grid-cols-2 gap-6 items-stretch">
+      {/* Left Panel: Nova (Carmesí/Crimson Attack Arena) */}
+      <article
+        className="rounded-3xl border bg-rose-950/[0.02] p-6 md:p-8 flex flex-col justify-between transition-all duration-500 engine-card-rise shadow-soft"
+        style={{
+          borderColor: "rgba(244, 63, 94, 0.22)",
+          boxShadow: "0 12px 36px rgba(244, 63, 94, 0.05)",
+        }}
+      >
+        <div>
+          <header className="flex items-center justify-between gap-3 mb-5 flex-wrap">
+            <div className="flex items-center gap-2">
+              <span
+                className="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-rose-500/10 text-rose-600 border border-rose-500/22"
+              >
+                <Sword className="w-4 h-4 text-rose-600" strokeWidth={1.5} />
+              </span>
+              <div className="flex flex-col leading-tight">
+                <span className="font-semibold text-[12px] text-rose-700 uppercase tracking-wider">
+                  Nova AI · {attackLabel}
+                </span>
+                <span className="text-[11.5px] text-muted-foreground">
+                  Ronda {round.index}
+                </span>
+              </div>
+            </div>
+          </header>
+
+          {priorNote && (
+            <div
+              className="mb-4 rounded-xl border bg-amber-50/50 p-3 text-[12.5px] text-foreground/80 italic flex gap-2"
+              style={{ borderColor: "rgba(245, 158, 11, 0.25)" }}
             >
-              Ronda {round.index} · {attackLabel}
-            </span>
-            <span className="text-[11.5px] text-muted-foreground">
-              Elige cómo respondes. Una jugada por ronda.
-            </span>
+              <Activity className="w-3.5 h-3.5 mt-0.5 shrink-0 text-amber-600" strokeWidth={1.5} />
+              <span>
+                <span className="font-medium not-italic text-amber-700">Comentario de Nova: </span>
+                {priorNote}
+              </span>
+            </div>
+          )}
+
+          <div className="relative rounded-2xl border p-5 bg-rose-50/30 border-rose-100 mb-4 min-h-[140px] flex flex-col justify-between">
+            <div className="absolute left-0 top-3 bottom-3 w-[3px] rounded-r-md bg-rose-500" />
+            <p className="text-[15px] leading-relaxed text-foreground/90 pl-3 whitespace-pre-wrap italic">
+              &ldquo;{objection}&rdquo;
+            </p>
+            {closingQ && (
+              <p className="text-[13px] font-semibold pl-3 mt-4 pt-3 border-t border-rose-100 text-rose-700">
+                → {closingQ}
+              </p>
+            )}
           </div>
         </div>
-        {priorScore !== null && (
-          <SolidityChip score={priorScore} accent={accent} />
-        )}
-      </header>
 
-      {priorNote && (
-        <div
-          className="mb-4 rounded-xl border bg-amber-50/40 p-3 text-[12.5px] text-foreground/80 italic flex gap-2"
-          style={{ borderColor: "rgba(245, 158, 11, 0.25)" }}
-        >
-          <Activity className="w-3.5 h-3.5 mt-0.5 shrink-0 text-amber-600" strokeWidth={1.5} />
-          <span>
-            <span className="font-medium not-italic text-amber-700">Nota de Nova: </span>
-            {priorNote}
-          </span>
-        </div>
-      )}
-
-      <div
-        className="relative rounded-2xl border p-5 bg-rose-50/40"
-        style={{ borderColor: hexToRgba(accent, 0.18) }}
-      >
-        <div
-          className="absolute left-0 top-3 bottom-3 w-[3px] rounded-r-md"
-          style={{
-            background: `linear-gradient(180deg, ${accent}, transparent)`,
-          }}
-        />
-        <p className="text-[16px] leading-relaxed text-foreground/90 pl-3 whitespace-pre-wrap">
-          {objection}
-        </p>
-        {closingQ && (
-          <p
-            className="text-[13.5px] font-medium pl-3 mt-3 pt-3 border-t"
-            style={{ borderColor: hexToRgba(accent, 0.18), color: accent }}
-          >
-            → {closingQ}
+        {/* Argumentative Pressure Temperature Meter */}
+        <div className="mt-4 bg-white/70 p-4 rounded-2xl border border-rose-500/10">
+          <div className="flex items-center justify-between mb-1.5">
+            <div className="flex items-center gap-1.5 text-rose-700">
+              <Thermometer className="w-4 h-4 text-rose-600" strokeWidth={1.5} />
+              <span className="text-[11px] font-semibold">Presión Argumental</span>
+            </div>
+            <span className="text-[11px] font-mono font-bold text-rose-600 uppercase tracking-wider">
+              {temperature}°C ({activeTempLabel})
+            </span>
+          </div>
+          <div className="h-2 rounded-full bg-black/[0.04] overflow-hidden p-[1px]">
+            <div
+              className="h-full rounded-full transition-all duration-500 ease-out"
+              style={{
+                width: `${(temperature / 115) * 100}%`,
+                background: "linear-gradient(90deg, #f97316, #ec4899, #ef4444)",
+                boxShadow: "0 0 8px rgba(239, 68, 68, 0.3)",
+              }}
+            />
+          </div>
+          <p className="text-[10px] text-muted-foreground mt-1.5 leading-normal">
+            La intensidad de las objeciones aumenta con cada embate. Sostén tu tesis.
           </p>
-        )}
-      </div>
+        </div>
+      </article>
 
-      <div className="mt-6">
-        <span
-          className="font-medium text-[11px] block mb-2"
-          style={{ color: accent }}
-        >
-          Tu táctica
-        </span>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-          {(Object.keys(TACTIC_LABELS) as DefenseTactic[]).map((k) => {
-            const Icon = TACTIC_LABELS[k].icon;
-            const active = tactic === k;
-            return (
-              <button
-                key={k}
-                onClick={() => setTactic(k)}
-                className="flex flex-col items-center justify-center gap-1.5 rounded-xl border py-3 text-[12px] font-medium transition-all"
-                style={
-                  active
-                    ? {
-                        borderColor: accent,
-                        background: hexToRgba(accent, 0.08),
-                        color: accent,
-                      }
-                    : {
-                        borderColor: "rgba(0,0,0,0.08)",
-                        background: "rgba(255,255,255,0.7)",
-                        color: "rgb(40 40 40 / 0.85)",
-                      }
-                }
+      {/* Right Panel: You (Dorado/Gold Defense Arena) */}
+      <article
+        className="rounded-3xl border bg-amber-500/[0.01] p-6 md:p-8 flex flex-col justify-between transition-all duration-500 engine-card-rise shadow-soft"
+        style={{
+          borderColor: "rgba(245, 158, 11, 0.22)",
+          boxShadow: "0 12px 36px rgba(245, 158, 11, 0.05)",
+        }}
+      >
+        <div className="flex flex-col gap-5">
+          <header className="flex items-center justify-between gap-3 flex-wrap">
+            <div className="flex items-center gap-2">
+              <span
+                className="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-amber-500/10 text-amber-600 border border-amber-500/22"
               >
-                <Icon className="w-4 h-4" strokeWidth={1.5} />
-                {TACTIC_LABELS[k].label}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      <div className="mt-4 flex flex-col gap-2">
-        <span
-          className="font-medium text-[11px]"
-          style={{ color: accent }}
-        >
-          Tu defensa · {TACTIC_LABELS[tactic].verb}
-        </span>
-        <Textarea
-          ref={textareaRef}
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-          placeholder={TACTIC_LABELS[tactic].placeholder}
-          rows={3}
-          disabled={status !== "idle"}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
-              e.preventDefault();
-              onSubmit();
-            }
-          }}
-          className="bg-white/95 resize-none"
-        />
-        <div className="flex items-center justify-between gap-2 mt-1">
-          <span className="text-[11px] text-muted-foreground">
-            Atajo: ⌘+Enter
-          </span>
-          <Button
-            size="sm"
-            onClick={onSubmit}
-            disabled={!draft.trim() || status !== "idle"}
-            className="text-white gap-1.5"
-            style={{ background: gradient }}
-          >
-            {status === "streaming" ? (
-              <>
-                <Loader2 className="w-3.5 h-3.5 animate-spin" strokeWidth={1.5} />
-                Defendiendo…
-              </>
-            ) : (
-              <>
-                Lanzar defensa
-                <ChevronRight className="w-3.5 h-3.5" strokeWidth={1.5} />
-              </>
+                <ShieldHalf className="w-4 h-4 text-amber-600" strokeWidth={1.5} />
+              </span>
+              <div className="flex flex-col leading-tight">
+                <span className="font-semibold text-[12px] text-amber-700 uppercase tracking-wider">
+                  Tu Defensa
+                </span>
+                <span className="text-[11.5px] text-muted-foreground">
+                  Ronda {round.index} de 2
+                </span>
+              </div>
+            </div>
+            {priorScore !== null && (
+              <SolidityChip score={priorScore} accent={accent} />
             )}
-          </Button>
+          </header>
+
+          {/* Escudo de Premisas (Concept check tags) */}
+          <div className="bg-white/60 p-4 rounded-2xl border border-amber-500/10">
+            <span className="font-semibold text-[11px] block text-amber-800 mb-2">
+              Tus Escudos de Premisa (Valida al escribir)
+            </span>
+            <div className="flex flex-col gap-2">
+              {shields.map((s) => (
+                <div
+                  className={`flex items-center justify-between p-2 rounded-xl border text-[11px] transition-all duration-300 ${
+                    s.matched
+                      ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-800 font-semibold shadow-[0_0_8px_rgba(16,185,129,0.1)]"
+                      : "bg-black/[0.01] border-black/[0.04] text-muted-foreground"
+                  }`}
+                  key={s.key}
+                >
+                  <div className="flex items-center gap-1.5">
+                    <span
+                      className={`w-1.5 h-1.5 rounded-full ${
+                        s.matched ? "bg-emerald-500 animate-pulse" : "bg-black/10"
+                      }`}
+                    />
+                    <span>{s.label} <span className="opacity-70">({s.desc})</span></span>
+                  </div>
+                  <span className="font-mono text-[9px] font-bold">
+                    {s.matched ? "✓ ACTIVADO" : "+ APAGADO"}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <span className="font-semibold text-[11px] block text-amber-800 mb-2">
+              Tu táctica argumentativa
+            </span>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              {(Object.keys(TACTIC_LABELS) as DefenseTactic[]).map((k) => {
+                const Icon = TACTIC_LABELS[k].icon;
+                const active = tactic === k;
+                return (
+                  <button
+                    key={k}
+                    onClick={() => setTactic(k)}
+                    className="flex flex-col items-center justify-center gap-1.5 rounded-xl border py-2.5 text-[11.5px] font-medium transition-all"
+                    style={
+                      active
+                        ? {
+                            borderColor: "rgba(245, 158, 11, 0.6)",
+                            background: "rgba(245, 158, 11, 0.08)",
+                            color: "rgb(217, 119, 6)",
+                          }
+                        : {
+                            borderColor: "rgba(0,0,0,0.06)",
+                            background: "rgba(255,255,255,0.7)",
+                            color: "rgb(40 40 40 / 0.85)",
+                          }
+                    }
+                  >
+                    <Icon className="w-3.5 h-3.5" strokeWidth={1.5} />
+                    {TACTIC_LABELS[k].label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         </div>
-      </div>
-    </article>
+
+        <div className="mt-4 flex flex-col gap-2">
+          <span className="font-semibold text-[11px] text-amber-800">
+            Tu defensa · {TACTIC_LABELS[tactic].verb}
+          </span>
+          <Textarea
+            ref={textareaRef}
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            placeholder={TACTIC_LABELS[tactic].placeholder}
+            rows={3}
+            disabled={status !== "idle"}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+                e.preventDefault();
+                onSubmit();
+              }
+            }}
+            className="bg-white/90 resize-none border-amber-100 focus:border-amber-400"
+          />
+          <div className="flex items-center justify-between gap-2 mt-1">
+            <span className="text-[10px] text-muted-foreground">
+              Atajo: ⌘+Enter
+            </span>
+            <Button
+              size="sm"
+              onClick={onSubmit}
+              disabled={!draft.trim() || status !== "idle"}
+              className="text-white gap-1.5"
+              style={{ background: gradient }}
+            >
+              {status === "streaming" ? (
+                <>
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" strokeWidth={1.5} />
+                  Defendiendo…
+                </>
+              ) : (
+                <>
+                  Lanzar defensa
+                  <ChevronRight className="w-3.5 h-3.5" strokeWidth={1.5} />
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
+      </article>
+    </div>
   );
 }
 
