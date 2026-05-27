@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
-import { getUserContext, upsertUserContext, getTopics } from "@/lib/spark/queries";
+import { getUserContext, upsertUserContext, getTopics, checkRateLimit } from "@/lib/spark/queries";
 import { seedDemoData } from "@/lib/spark/seed-demo";
 import type { LearningStyle, ActiveProject, PersonalGoal } from "@/modules/spark/types";
 
@@ -8,8 +8,13 @@ export async function GET() {
   const db = await getSupabaseServerClient();
   const { data: { user } } = await db.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const ctx = await getUserContext(db, user.id);
-  return NextResponse.json({ context: ctx });
+  
+  const [ctx, rateLimit] = await Promise.all([
+    getUserContext(db, user.id),
+    checkRateLimit(db, user.id),
+  ]);
+  
+  return NextResponse.json({ context: ctx, rateLimit: rateLimit.current });
 }
 
 type PutBody = {

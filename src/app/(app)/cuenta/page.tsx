@@ -20,6 +20,7 @@ import type { SparkUserContext } from "@/modules/spark/types";
 export default function AccountPage() {
   const { user, signOut } = useSparkAuth();
   const [ctx, setCtx] = useState<SparkUserContext | null>(null);
+  const [rateLimit, setRateLimit] = useState<number | null>(null);
   const [installPrompt, setInstallPrompt] = useState<Event | null>(null);
   const openWelcome = useTutorialStore((s) => s.openWelcome);
   const resetAll = useTutorialStore((s) => s.resetAll);
@@ -27,7 +28,12 @@ export default function AccountPage() {
   useEffect(() => {
     fetch("/api/user-context")
       .then((r) => r.json())
-      .then((d) => setCtx(d.context));
+      .then((d) => {
+        setCtx(d.context);
+        if (typeof d.rateLimit === "number") {
+          setRateLimit(d.rateLimit);
+        }
+      });
   }, []);
 
   useEffect(() => {
@@ -60,6 +66,44 @@ export default function AccountPage() {
         </div>
         <div className="p-4 rounded-2xl border border-black/[0.06] bg-white/60">
           <div className="text-sm text-foreground">{user?.email ?? "Sin correo"}</div>
+        </div>
+      </section>
+
+      {/* Rate Limit Tracker */}
+      <section className="flex flex-col gap-3 mb-8">
+        <div className="text-[13px] font-medium text-muted-foreground">
+          Límite de consultas diarias
+        </div>
+        <div className="p-5 rounded-2xl border border-black/[0.06] bg-white/60 backdrop-blur-sm flex flex-col gap-4">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <span className="w-8 h-8 rounded-lg bg-spark/10 border border-spark/20 flex items-center justify-center text-spark">
+                <Zap className="w-4 h-4 animate-pulse" strokeWidth={1.5} />
+              </span>
+              <div>
+                <p className="text-sm font-medium text-foreground">Consultas a Nova y entrenamientos</p>
+                <p className="text-xs text-muted-foreground leading-normal">Se reinicia automáticamente a las 00:00.</p>
+              </div>
+            </div>
+            <div className="text-right shrink-0">
+              <span className="text-lg font-semibold text-foreground tabular-nums">
+                {rateLimit !== null ? rateLimit : "…"}
+              </span>
+              <span className="text-xs text-muted-foreground"> / 100</span>
+            </div>
+          </div>
+
+          <div className="w-full bg-black/[0.04] h-2 rounded-full overflow-hidden border border-black/[0.02]">
+            <div
+              className="h-full bg-gradient-to-r from-spark/80 to-spark rounded-full transition-all duration-500 ease-spring"
+              style={{
+                width: `${rateLimit !== null ? Math.min(100, (rateLimit / 100) * 100) : 0}%`,
+              }}
+            />
+          </div>
+          <p className="text-[11.5px] text-muted-foreground leading-relaxed">
+            Tu límite diario es de 100 consultas para garantizar el uso justo del servicio. Si te quedas sin consultas, podrás continuar mañana sin problemas.
+          </p>
         </div>
       </section>
 

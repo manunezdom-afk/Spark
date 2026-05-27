@@ -309,6 +309,13 @@ export interface RoleplayScenePayload {
    * Pregunta o tensión específica que abre la decisión. Vacío en debrief.
    */
   decision_pressure: string | null;
+  /**
+   * Explicit debrief flag. The UI used to detect debrief via a regex on
+   * the prose ("saliendo de personaje" / "debrief") which broke whenever
+   * Nova phrased the close differently. Optional for back-compat with
+   * sessions persisted before this field existed.
+   */
+  is_debrief?: boolean;
 }
 
 /**
@@ -372,6 +379,14 @@ export interface DebuggerError {
   position_hint: string;             // approximate sentence/paragraph
   correct_version: string;
   explanation: string;
+  /**
+   * Zero-based index of the sentence containing the planted error in
+   * `text_with_errors` split by sentence delimiters (./?/!). Optional
+   * for back-compat with old sessions that only carry `position_hint`.
+   * When present, the UI uses this as the ground truth for matching;
+   * the fuzzy `position_hint` matching is only the fallback.
+   */
+  sentence_index?: number;
 }
 
 export interface GraphNodePayload {

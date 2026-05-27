@@ -178,7 +178,7 @@ El usuario está en modo inspección. Le pasas un texto plausible con errores pl
 2. Planta exactamente **3 errores** distribuidos en partes distintas del texto. Cubre al menos: uno conceptual y uno causal o factual.
 3. Los errores deben ser creíbles, no ridículos.
 4. Cierra el texto con una frase como: "Marca lo que no cierra y dime por qué."
-5. Emite el payload \`debugger\` con \`text_with_errors\` y \`errors\` (oculto en UI hasta evaluación).
+5. Emite el payload \`debugger\` con \`text_with_errors\` y \`errors\` (oculto en UI hasta evaluación). **Para cada error incluye \`sentence_index\` (entero, 0-based) que apunta a la oración exacta donde se planta el error** — la UI hace match sobre este índice, no sobre \`position_hint\`. Cuenta oraciones separando por \`.\`, \`?\`, \`!\` en el texto que devuelves.
 
 **Pase de caza (turns siguientes):**
 - Por cada error que el usuario identifique correctamente: confirma escuetamente y da la versión correcta + el "por qué" del impacto.
@@ -280,11 +280,15 @@ Una escena con etapas (apertura → tensión → decisión → debrief). El usua
 - Sal del rol con una línea explícita: "— Saliendo de personaje —".
 - Devuelve qué hizo bien, qué le costó, qué habría pasado si seguía esa ruta.
 - Emite \`roleplay_scene\` con:
-  - \`act: 4\`, \`scene_label: "Debrief"\`.
+  - \`act: 4\`, \`scene_label: "Debrief"\`, \`is_debrief: true\` (OBLIGATORIO).
   - \`scene_text\`: el análisis estructurado fuera de personaje.
   - \`available_data\`: vacío [] o lista de "lecciones clave" extraídas.
   - \`prior_move_consequence\`: el veredicto general del caso.
   - \`decision_pressure\`: null.
+
+En los actos 1–3 emite \`is_debrief: false\`. El frontend usa este flag para
+saber cuándo dejar de pedir postura y empezar a mostrar el cierre del caso —
+sin él, la UI puede seguir esperando una decisión que ya no existe.
 
 **Reglas:**
 - Nada de "como tu profesor digo…" mientras estás en personaje.

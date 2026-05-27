@@ -128,38 +128,62 @@ export default async function MapPage() {
         <FreshAccountState topics={topics} />
       ) : (
         <>
-          {/* Resumen sutil — sin chips, dos métricas relevantes */}
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mb-8 text-[12.5px] text-muted-foreground">
-            {totalDueToday > 0 ? (
-              <span className="inline-flex items-center gap-1.5">
-                <Flame className="w-3.5 h-3.5 text-orange-500" strokeWidth={1.5} />
-                <span className="text-foreground/80 font-medium">
-                  {totalDueToday}
-                </span>{" "}
-                {totalDueToday === 1 ? "tema" : "temas"} para hoy
+          {/* Tarjeta de Resumen Visual Premium */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+            <div className="relative overflow-hidden p-5 rounded-2xl border border-black/[0.06] bg-white/60 backdrop-blur-sm shadow-soft flex items-center justify-between gap-4">
+              <div className="min-w-0">
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-1">
+                  Revisiones Pendientes
+                </p>
+                <h3 className="text-2xl font-bold tracking-tight text-foreground">
+                  {totalDueToday > 0 
+                    ? `${totalDueToday} ${totalDueToday === 1 ? "tema" : "temas"}` 
+                    : "¡Todo al día!"}
+                </h3>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {totalDueToday > 0 ? "Repasos sugeridos hoy por SM-2." : "No tienes repasos vencidos."}
+                </p>
+              </div>
+              <span className={`inline-flex items-center justify-center w-11 h-11 rounded-xl border shrink-0 ${
+                totalDueToday > 0 
+                  ? "bg-orange-50 border-orange-200/50 text-orange-600 animate-pulse" 
+                  : "bg-emerald-50 border-emerald-200/50 text-emerald-600"
+              }`}>
+                {totalDueToday > 0 ? (
+                  <Flame className="w-5 h-5" strokeWidth={1.5} />
+                ) : (
+                  <CheckCircle2 className="w-5 h-5" strokeWidth={1.5} />
+                )}
               </span>
-            ) : (
-              <span className="inline-flex items-center gap-1.5">
-                <CheckCircle2
-                  className="w-3.5 h-3.5 text-emerald-500"
-                  strokeWidth={1.5}
-                />
-                Nada urgente hoy
+            </div>
+
+            <div className="relative overflow-hidden p-5 rounded-2xl border border-black/[0.06] bg-white/60 backdrop-blur-sm shadow-soft flex items-center justify-between gap-4">
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-1.5 mb-1">
+                  <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+                    Maestría Promedio
+                  </p>
+                  <InfoIcon
+                    hint="Maestría es el promedio ponderado de tus puntajes por sesión en cada tema. SM-2 decide cuándo te toca repasar para que el conocimiento no se enfríe."
+                    size="sm"
+                  />
+                </div>
+                <h3 className="text-2xl font-bold tracking-tight text-foreground tabular-nums">
+                  {avgMastery !== null ? `${avgMastery}%` : "—"}
+                </h3>
+                {avgMastery !== null && (
+                  <div className="w-full bg-black/[0.04] h-1.5 rounded-full overflow-hidden mt-2.5">
+                    <div
+                      className="h-full bg-gradient-to-r from-spark/80 to-spark rounded-full"
+                      style={{ width: `${avgMastery}%` }}
+                    />
+                  </div>
+                )}
+              </div>
+              <span className="inline-flex items-center justify-center w-11 h-11 rounded-xl border border-purple-200/50 bg-purple-50 text-purple-600 shrink-0">
+                <Activity className="w-5 h-5" strokeWidth={1.5} />
               </span>
-            )}
-            {avgMastery !== null && (
-              <span className="inline-flex items-center gap-1.5">
-                <Activity className="w-3.5 h-3.5" strokeWidth={1.5} />
-                Promedio{" "}
-                <span className="text-foreground/80 font-medium tabular-nums">
-                  {avgMastery}%
-                </span>
-                <InfoIcon
-                  hint="Maestría es el promedio ponderado de tus puntajes por sesión en cada tema. SM-2 decide cuándo te toca repasar para que el conocimiento no se enfríe."
-                  size="sm"
-                />
-              </span>
-            )}
+            </div>
           </div>
 
           {/* Bucket primarios */}
@@ -330,7 +354,7 @@ function TopicRow({
             ? `/sessions/new?topic_ids=${topic.id}`
             : `/topics/${topic.id}`
         }
-        className="group flex items-center gap-4 p-4 rounded-2xl border border-black/[0.05] bg-white shadow-soft hover:shadow-lift hover:border-black/[0.10] transition-all duration-200"
+        className="group flex items-center gap-4 p-4 rounded-2xl border border-white/40 bg-white/45 backdrop-blur-xl shadow-soft hover:shadow-lift hover:border-black/[0.10] hover:scale-[1.01] active:scale-[0.995] transition-all duration-300 ease-spring"
       >
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-3 mb-1.5 flex-wrap">

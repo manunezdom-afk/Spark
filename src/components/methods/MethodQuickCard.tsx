@@ -66,12 +66,13 @@ export function MethodQuickCard(props: MethodQuickCardProps) {
       href={href}
       className={`method-quick-card group relative flex flex-col gap-3 ${
         isRecommendation ? "p-5" : "p-4"
-      } rounded-2xl border transition-all duration-200`}
+      } rounded-2xl border hover:scale-[1.03] hover:-translate-y-0.5 active:scale-[0.985] transition-all duration-300 ease-spring`}
       style={{
         "--mqc-bg": hexToRgba(theme.accent, 0.045),
-        "--mqc-bg-hover": hexToRgba(theme.accent, 0.09),
-        "--mqc-border": hexToRgba(theme.accent, 0.18),
-        "--mqc-border-hover": hexToRgba(theme.accent, 0.32),
+        "--mqc-bg-hover": hexToRgba(theme.accent, 0.08),
+        "--mqc-border": hexToRgba(theme.accent, 0.14),
+        "--mqc-border-hover": hexToRgba(theme.accent, 0.35),
+        "--mqc-shadow-hover": `0 12px 30px -6px ${hexToRgba(theme.accent, 0.22)}`,
         animation: `fade-up 320ms ${animationIndex * 40}ms ease-out both`,
       } as CSSProperties}
     >

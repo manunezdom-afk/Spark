@@ -16,9 +16,19 @@ export function encodeSSE(event: SSEEvent): string {
 }
 
 export function sseStream(
-  generator: (push: (event: SSEEvent) => void, close: () => void) => Promise<void>
+  generator: (
+    push: (event: SSEEvent) => void,
+    close: () => void,
+    signal: AbortSignal,
+  ) => Promise<void>,
 ): Response {
   const encoder = new TextEncoder();
+  // The AbortController fires when the client disconnects (navigates away,
+  // closes the tab, etc.). Generators that own an upstream call — Anthropic
+  // streams especially — must pass this signal through so the upstream is
+  // cancelled too. Without it, Anthropic keeps generating tokens that nobody
+  // will ever read.
+  const abortController = new AbortController();
   let closed = false;
 
   const stream = new ReadableStream({
@@ -42,18 +52,21 @@ export function sseStream(
       };
 
       try {
-        await generator(push, close);
+        await generator(push, close, abortController.signal);
       } catch (err) {
-        push({
-          event: "error",
-          data: { message: err instanceof Error ? err.message : "stream error" },
-        });
+        if (!abortController.signal.aborted) {
+          push({
+            event: "error",
+            data: { message: err instanceof Error ? err.message : "stream error" },
+          });
+        }
       } finally {
         close();
       }
     },
     cancel() {
       closed = true;
+      abortController.abort();
     },
   });
 
@@ -68,13 +81,19 @@ export function sseStream(
 }
 
 export function extractJsonPayload<T>(text: string): T | null {
-  const match = text.match(/```json\s*\n?([\s\S]*?)\n?```/);
-  if (!match) return null;
-  try {
-    return JSON.parse(match[1]) as T;
-  } catch {
-    return null;
+  // Walk every ```json ... ``` block and return the LAST one that parses.
+  // Nova frequently writes prose with backticks before the real payload, and
+  // the legacy "first match" behavior swallowed the intended JSON when the
+  // earlier block was prose-only or malformed.
+  const blocks = [...text.matchAll(/```json\s*\n?([\s\S]*?)\n?```/g)];
+  for (let i = blocks.length - 1; i >= 0; i--) {
+    try {
+      return JSON.parse(blocks[i][1]) as T;
+    } catch {
+      // try the previous block
+    }
   }
+  return null;
 }
 
 export function stripJsonBlock(text: string): string {

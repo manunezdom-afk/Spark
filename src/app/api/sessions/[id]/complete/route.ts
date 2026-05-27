@@ -11,8 +11,10 @@ import {
   upsertMasteryState,
   completeSession,
   insertFlashcards,
-  checkAndIncrementRateLimit,
+  checkRateLimit,
+  incrementRateLimit,
   appendTurn,
+  getNextTurnIndex,
 } from "@/lib/spark/queries";
 import { buildEvaluatorPrompt } from "@/modules/spark/prompts/evaluator";
 import { sm2, scoreToQuality } from "@/modules/spark/scheduler/sm2";
@@ -47,7 +49,9 @@ export async function POST(_request: NextRequest, { params }: RouteContext) {
   const { data: { user } } = await db.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const rate = await checkAndIncrementRateLimit(db, user.id);
+  // Rate limit: check only — we charge after the evaluator actually
+  // succeeded. If the evaluator throws, the user doesn't burn quota.
+  const rate = await checkRateLimit(db, user.id);
   if (!rate.allowed) {
     return NextResponse.json({ error: "Límite diario de sesiones alcanzado." }, { status: 429 });
   }
@@ -107,18 +111,49 @@ export async function POST(_request: NextRequest, { params }: RouteContext) {
     }
     scorePayload = parsed;
   } catch (err) {
+    console.error("[complete] evaluator failed", { sessionId, userId: user.id, err });
     return NextResponse.json(
       { error: err instanceof Error ? err.message : "Error del evaluador" },
       { status: 502 }
     );
   }
 
+  // Evaluator succeeded — now charge the user's quota.
+  await incrementRateLimit(db, user.id);
+
   const score = Math.max(0, Math.min(100, scorePayload.score));
   const quality = scoreToQuality(score);
 
-  // Update mastery for each topic
+  // Persist the score-turn FIRST. The summary page reads this turn to
+  // render the breakdown — without it the user lands on a score with no
+  // detail. If this fails, surface the error: a "complete" with no
+  // evaluator output is worse than asking the user to retry.
+  const scoreTurnIndex = await getNextTurnIndex(db, sessionId);
+  try {
+    await appendTurn(db, {
+      session_id: sessionId,
+      role: "assistant",
+      content: scorePayload.feedback,
+      payload: scorePayload,
+      turn_index: scoreTurnIndex,
+    });
+  } catch (turnErr) {
+    console.error("[complete] persist score-turn failed", {
+      sessionId,
+      userId: user.id,
+      turnErr,
+    });
+    return NextResponse.json(
+      { error: "No se pudo guardar la evaluación. Intenta finalizar de nuevo." },
+      { status: 500 },
+    );
+  }
+
+  // Update mastery per topic. Use allSettled so a failure on one topic
+  // doesn't drop SM-2 updates for the others — partial mastery is better
+  // than zero mastery, and we log what didn't make it.
   const masteryByTopic = new Map(mastery.map((m) => [m.topic_id, m]));
-  await Promise.all(
+  const masteryResults = await Promise.allSettled(
     session.topic_ids.map(async (topicId) => {
       const existing = masteryByTopic.get(topicId);
       const sm = sm2({
@@ -148,6 +183,15 @@ export async function POST(_request: NextRequest, { params }: RouteContext) {
       });
     })
   );
+  for (const r of masteryResults) {
+    if (r.status === "rejected") {
+      console.error("[complete] mastery upsert failed", {
+        sessionId,
+        userId: user.id,
+        reason: r.reason,
+      });
+    }
+  }
 
   // Persist any flashcards generated during the session
   const flashcardTurns = turns.filter(
@@ -155,38 +199,25 @@ export async function POST(_request: NextRequest, { params }: RouteContext) {
   );
   for (const t of flashcardTurns) {
     const fp = t.payload as FlashcardPayload;
-    await insertFlashcards(
-      db,
-      user.id,
-      fp.cards.map((c) => ({
-        topic_id: session.topic_ids[0] ?? null,
-        session_id: session.id,
-        front: c.front,
-        back: c.back,
-        hint: c.hint ?? null,
-      }))
-    );
-  }
-
-  // Persistir el ScorePayload como turn assistant final. La summary
-  // page lo necesita para mostrar el breakdown sin tener que volver a
-  // llamar al evaluator. Se guarda como turn (no en otra tabla) para
-  // mantener el shape uniforme de SparkSessionTurn.
-  const lastTurnIndex = turns.reduce(
-    (max, t) => (t.turn_index > max ? t.turn_index : max),
-    -1
-  );
-  try {
-    await appendTurn(db, {
-      session_id: sessionId,
-      role: "assistant",
-      content: scorePayload.feedback,
-      payload: scorePayload,
-      turn_index: lastTurnIndex + 1,
-    });
-  } catch {
-    // Si falla persistir el score-turn, seguimos: el score y feedback ya
-    // están en la sesión. La summary cae al fallback sin breakdown.
+    try {
+      await insertFlashcards(
+        db,
+        user.id,
+        fp.cards.map((c) => ({
+          topic_id: session.topic_ids[0] ?? null,
+          session_id: session.id,
+          front: c.front,
+          back: c.back,
+          hint: c.hint ?? null,
+        }))
+      );
+    } catch (cardsErr) {
+      console.error("[complete] flashcards insert failed", {
+        sessionId,
+        userId: user.id,
+        cardsErr,
+      });
+    }
   }
 
   await completeSession(db, sessionId, score, scorePayload.feedback);

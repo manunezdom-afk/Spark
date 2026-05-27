@@ -43,20 +43,36 @@ export async function postSSE(
   const reader = response.body.getReader();
   const decoder = new TextDecoder();
   let buffer = "";
+  // If the user aborts (component unmount), the read throws AbortError —
+  // that's expected, not a failure to surface. Same goes for navigation.
+  const userAborted = () => signal?.aborted === true;
 
-  while (true) {
-    const { value, done } = await reader.read();
-    if (done) break;
-    buffer += decoder.decode(value, { stream: true });
+  try {
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
 
-    let idx: number;
-    while ((idx = buffer.indexOf("\n\n")) !== -1) {
-      const rawEvent = buffer.slice(0, idx);
-      buffer = buffer.slice(idx + 2);
-      dispatchEvent(rawEvent, handlers);
+      let idx: number;
+      while ((idx = buffer.indexOf("\n\n")) !== -1) {
+        const rawEvent = buffer.slice(0, idx);
+        buffer = buffer.slice(idx + 2);
+        dispatchEvent(rawEvent, handlers);
+      }
     }
+    // Tail flush: only dispatch the remaining buffer if it actually
+    // contains an event header. A bare data fragment without `event:` is
+    // an interrupted event — pretend it never happened.
+    if (buffer.includes("event:")) dispatchEvent(buffer, handlers);
+  } catch (err) {
+    if (userAborted()) return;
+    handlers.error?.({
+      message:
+        err instanceof Error
+          ? `Conexión interrumpida: ${err.message}`
+          : "Conexión interrumpida",
+    });
   }
-  if (buffer.trim()) dispatchEvent(buffer, handlers);
 }
 
 function dispatchEvent(raw: string, handlers: SSEHandlers) {

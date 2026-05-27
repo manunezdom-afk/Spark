@@ -141,6 +141,9 @@ export function RealCaseExperience({
       status={engine.isCompleted ? "completed" : "active"}
       onComplete={engine.complete}
       canComplete={userCount > 0}
+      errorMessage={engine.errorMessage}
+      canRetry={engine.canRetry}
+      onRetry={engine.retry}
       hudSlot={
         <PhaseHUD
           engine={session.engine}
@@ -654,7 +657,7 @@ function buildActs(turns: SparkSessionTurn[]): Act[] {
           ? (t.payload as RoleplayScenePayload)
           : null;
       if (pending !== null) {
-        const isDebrief = detectDebrief(pending.rawText) || pending.payload?.act === 4;
+        const isDebrief = isDebriefFromPayload(pending.payload, pending.rawText);
         out.push({
           index: idx,
           payload: pending.payload,
@@ -668,7 +671,7 @@ function buildActs(turns: SparkSessionTurn[]): Act[] {
       const userMove = t.content;
       const posture = inferPosture(userMove);
       const isDebrief =
-        pending && (detectDebrief(pending.rawText) || pending.payload?.act === 4);
+        pending && isDebriefFromPayload(pending.payload, pending.rawText);
       out.push({
         index: idx,
         payload: pending?.payload ?? null,
@@ -687,7 +690,7 @@ function buildActs(turns: SparkSessionTurn[]): Act[] {
       index: idx,
       payload: pending.payload,
       rawText: pending.rawText,
-      isDebrief: detectDebrief(pending.rawText) || pending.payload?.act === 4,
+      isDebrief: isDebriefFromPayload(pending.payload, pending.rawText),
     });
   }
   return out;
@@ -704,8 +707,20 @@ function inferPosture(text: string): DecisionPosture | undefined {
   return undefined;
 }
 
-function detectDebrief(content: string) {
-  return /saliendo de personaje|fuera de personaje|debrief/i.test(content);
+// Debrief detection prefers the explicit payload flags. The regex on the
+// raw text is kept as a last-resort fallback for sessions persisted before
+// the schema carried `is_debrief` / before Nova consistently emitted
+// `act: 4` — it should not be needed for new sessions.
+function isDebriefFromPayload(
+  payload: RoleplayScenePayload | null,
+  rawText: string | undefined,
+): boolean {
+  if (payload?.is_debrief === true) return true;
+  if (payload?.act === 4) return true;
+  if (rawText && /saliendo de personaje|fuera de personaje|debrief/i.test(rawText)) {
+    return true;
+  }
+  return false;
 }
 
 function extractMoveBody(text: string) {

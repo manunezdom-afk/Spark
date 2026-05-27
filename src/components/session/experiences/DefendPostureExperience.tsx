@@ -156,7 +156,16 @@ export function DefendPostureExperience({
     await engine.send(text);
   }
 
-  const meterLabel = avgSolidity !== null ? "Solidez" : "Solidez (calc…)";
+  // Honest meter labels. Before this, the badge showed "Solidez (calc…)"
+  // from turn 0 forever — it looked like the meter was permanently
+  // computing. Now we say what's actually happening: no defense yet, or
+  // Nova didn't score the last round.
+  const meterLabel =
+    avgSolidity !== null
+      ? "Solidez"
+      : userCount === 0
+        ? "Solidez · sin defensa aún"
+        : "Solidez · esperando score";
 
   return (
     <SessionShell
@@ -165,6 +174,9 @@ export function DefendPostureExperience({
       status={engine.isCompleted ? "completed" : "active"}
       onComplete={engine.complete}
       canComplete={userCount > 0}
+      errorMessage={engine.errorMessage}
+      canRetry={engine.canRetry}
+      onRetry={engine.retry}
       hudSlot={
         <PhaseHUD
           engine={session.engine}
@@ -172,7 +184,7 @@ export function DefendPostureExperience({
           phaseLabels={[...PHASES]}
           currentPhase={phaseIdx}
           meterLabel={meterLabel}
-          meterValue={engine.isCompleted ? Math.max(meterValue, 0.85) : meterValue}
+          meterValue={meterValue}
           badge={
             avgSolidity !== null
               ? `${Math.round(avgSolidity)}/100 · Ronda ${userCount}`

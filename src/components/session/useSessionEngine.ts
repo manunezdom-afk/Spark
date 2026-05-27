@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { postSSE } from "@/lib/streaming/client";
+import { validatePayloadForEngine } from "@/modules/spark/types/payload-guards";
 import type {
   ScorePayload,
   SparkLearningSession,
@@ -37,8 +38,15 @@ export function useSessionEngine({
   const [streamingText, setStreamingText] = useState("");
   const [status, setStatus] = useState<EngineStatus>("idle");
   const [warning, setWarning] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [completionScore, setCompletionScore] = useState<ScorePayload | null>(null);
   const kickedOffRef = useRef(false);
+  // Remember the last message + opts so the user can retry without us
+  // re-persisting a duplicate user turn or losing the synthetic flag.
+  const lastSendRef = useRef<{
+    content: string;
+    opts: { synthetic?: boolean };
+  } | null>(null);
 
   // Reset when session id changes (route navigation)
   useEffect(() => {
@@ -56,9 +64,11 @@ export function useSessionEngine({
       const trimmed = content.trim();
       if (!trimmed) return { payload: null, turn: null };
 
+      lastSendRef.current = { content: trimmed, opts };
       setStatus("streaming");
       setStreamingText("");
       setWarning(null);
+      setErrorMessage(null);
 
       let lastPayload: TurnPayload | null = null;
       let assistantTurn: SparkSessionTurn | null = null;
@@ -75,7 +85,20 @@ export function useSessionEngine({
             setStreamingText((prev) => prev + data.chunk);
           },
           payload: (data) => {
-            lastPayload = data as TurnPayload;
+            // Validate the payload against the engine's expected shape
+            // before letting it reach the experience. If the model emits
+            // something missing required fields, surface a warning the
+            // experience renders instead of silently rendering broken UI.
+            const validated = validatePayloadForEngine(session.engine, data);
+            if (validated) {
+              lastPayload = validated;
+            } else {
+              lastPayload = null;
+              const msg =
+                "Nova devolvió una respuesta sin el formato esperado. Reintenta en un momento.";
+              setWarning(msg);
+              toast.warning(msg, { duration: 6000 });
+            }
           },
           warning: (data) => {
             setWarning(data.message);
@@ -100,7 +123,11 @@ export function useSessionEngine({
             setStatus("idle");
           },
           error: (data) => {
+            // Surface the message in the UI (banner inside the experience)
+            // instead of relying on the toast alone — toasts auto-dismiss
+            // and the user lost the trail of what happened.
             toast.error(data.message);
+            setErrorMessage(data.message);
             setStatus("error");
             setStreamingText("");
           },
@@ -109,7 +136,7 @@ export function useSessionEngine({
 
       return { payload: lastPayload, turn: assistantTurn };
     },
-    [session.id, status],
+    [session.id, session.engine, status],
   );
 
   // Auto-fire the first assistant turn when the conversation is empty.
@@ -123,6 +150,17 @@ export function useSessionEngine({
       synthetic: true,
     });
   }, [autoKickoff, initialTurns.length, session.status, send]);
+
+  const retry = useCallback(async () => {
+    const last = lastSendRef.current;
+    if (!last) return;
+    if (status === "streaming" || status === "completing") return;
+    // We deliberately reuse send() so the server picks up the next
+    // turn_index from the live DB state. The user turn may have been
+    // persisted on the failed attempt — that's accepted; the alternative
+    // (a dedicated retry endpoint) is more code for a rare edge case.
+    await send(last.content, last.opts);
+  }, [send, status]);
 
   const complete = useCallback(async () => {
     if (status === "streaming" || status === "completing") return;
@@ -154,8 +192,11 @@ export function useSessionEngine({
     streamingText,
     status,
     warning,
+    errorMessage,
+    canRetry: status === "error" && lastSendRef.current !== null,
     completionScore,
     send,
+    retry,
     complete,
     exit,
     lastAssistantTurn,

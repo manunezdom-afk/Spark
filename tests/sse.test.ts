@@ -22,6 +22,20 @@ describe("extractJsonPayload", () => {
     const out = extractJsonPayload<{ a: number }>(text);
     expect(out).toEqual({ a: 1 });
   });
+
+  it("returns the last block when multiple are present", () => {
+    const text =
+      "Ejemplo de formato:\n```json\n{\"a\":1}\n```\n\nPayload real:\n```json\n{\"a\":2}\n```";
+    const out = extractJsonPayload<{ a: number }>(text);
+    expect(out).toEqual({ a: 2 });
+  });
+
+  it("falls back to earlier blocks when the last one is malformed", () => {
+    const text =
+      "```json\n{\"a\":1}\n```\nluego:\n```json\n{broken\n```";
+    const out = extractJsonPayload<{ a: number }>(text);
+    expect(out).toEqual({ a: 1 });
+  });
 });
 
 describe("stripJsonBlock", () => {

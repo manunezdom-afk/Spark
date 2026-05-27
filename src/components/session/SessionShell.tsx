@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronLeft } from "lucide-react";
+import { AlertTriangle, ChevronLeft, RotateCcw } from "lucide-react";
 import type { CSSProperties, ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { ENGINE_LABELS } from "@/modules/spark/engines";
@@ -26,6 +26,9 @@ export function SessionShell({
   onComplete,
   canComplete,
   hudSlot,
+  errorMessage,
+  canRetry,
+  onRetry,
   children,
 }: {
   engine: LearningEngine;
@@ -36,6 +39,12 @@ export function SessionShell({
   canComplete?: boolean;
   /** Optional method-specific HUD rendered below the header (capas, rondas, etc). */
   hudSlot?: ReactNode;
+  /** Banner shown when the last AI call failed; null/undefined hides it. */
+  errorMessage?: string | null;
+  /** Whether the retry button is enabled (we have a last message to resend). */
+  canRetry?: boolean;
+  /** Resend the last user message — wired to useSessionEngine.retry. */
+  onRetry?: () => void;
   children: ReactNode;
 }) {
   const theme = getEngineTheme(engine);
@@ -125,6 +134,36 @@ export function SessionShell({
           <div className="relative px-5 md:px-8 pb-3 pt-1">{hudSlot}</div>
         )}
       </header>
+
+      {errorMessage && (
+        <div
+          role="alert"
+          aria-live="polite"
+          className="relative border-b border-amber-500/25 bg-amber-50/85 backdrop-blur-sm"
+        >
+          <div className="px-5 md:px-8 py-2.5 flex items-center gap-3 max-w-5xl mx-auto">
+            <AlertTriangle
+              className="w-4 h-4 text-amber-700 shrink-0"
+              strokeWidth={1.5}
+            />
+            <p className="text-[13px] text-amber-900 leading-snug flex-1">
+              {errorMessage}
+            </p>
+            {onRetry && (
+              <Button
+                size="sm"
+                variant="outline"
+                disabled={!canRetry}
+                onClick={onRetry}
+                className="shrink-0"
+              >
+                <RotateCcw className="w-3.5 h-3.5 mr-1" strokeWidth={1.5} />
+                Reintentar
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className="flex-1 relative">
         <div

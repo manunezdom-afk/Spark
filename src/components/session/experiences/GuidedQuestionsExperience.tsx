@@ -153,6 +153,9 @@ export function GuidedQuestionsExperience({
       status={engine.isCompleted ? "completed" : "active"}
       onComplete={engine.complete}
       canComplete={engine.userTurnsCount > 0}
+      errorMessage={engine.errorMessage}
+      canRetry={engine.canRetry}
+      onRetry={engine.retry}
       hudSlot={
         <PhaseHUD
           engine={session.engine}

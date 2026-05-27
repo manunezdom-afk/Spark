@@ -84,22 +84,45 @@ export function HuntErrorsExperience({
   const hasReport = engine.userTurnsCount > 0;
 
   // ── Verdict matching ─────────────────────────────────────────
-  // For every sentence, determine its post-report verdict by matching
-  // marked sentences against the planted errors' position hints. The
-  // matching is fuzzy: an error matches a sentence if a meaningful
-  // chunk of the position_hint appears in (or matches) the sentence.
+  // For every sentence, determine its post-report verdict. New sessions
+  // ship `sentence_index` on each planted error — when present we use it
+  // as ground truth (deterministic). Old sessions only have
+  // `position_hint`, so we fall back to fuzzy matching by chunk overlap.
   const verdicts = useMemo<SentenceVerdict[]>(() => {
     if (!hasReport || !briefingPayload) {
       return sentences.map(() => ({ kind: "idle" } as SentenceVerdict));
     }
     const errors = briefingPayload.errors;
     const usedErrors = new Set<number>();
+
+    function locateError(
+      err: DebuggerError,
+      filter: (i: number) => boolean,
+    ): number {
+      // Prefer the deterministic index when Nova emits it.
+      if (
+        typeof err.sentence_index === "number" &&
+        err.sentence_index >= 0 &&
+        err.sentence_index < sentences.length &&
+        filter(err.sentence_index)
+      ) {
+        return err.sentence_index;
+      }
+      return sentences.findIndex(
+        (s, i) => filter(i) && sentenceMatchesError(s, err),
+      );
+    }
+
     const result: SentenceVerdict[] = sentences.map((sentence, i) => {
       if (marked.has(i)) {
-        // Find a planted error that matches this sentence
-        const matchedErr = errors.find(
-          (e) => !usedErrors.has(e.id) && sentenceMatchesError(sentence, e),
-        );
+        // Find a planted error that lands on this sentence.
+        const matchedErr = errors.find((e) => {
+          if (usedErrors.has(e.id)) return false;
+          if (typeof e.sentence_index === "number") {
+            return e.sentence_index === i;
+          }
+          return sentenceMatchesError(sentence, e);
+        });
         if (matchedErr) {
           usedErrors.add(matchedErr.id);
           return { kind: "caught", error: matchedErr };
@@ -114,9 +137,7 @@ export function HuntErrorsExperience({
     // the original text with a callout.
     for (const err of errors) {
       if (usedErrors.has(err.id)) continue;
-      const sIdx = sentences.findIndex(
-        (s, i) => result[i].kind === "untouched" && sentenceMatchesError(s, err),
-      );
+      const sIdx = locateError(err, (i) => result[i].kind === "untouched");
       if (sIdx >= 0) {
         result[sIdx] = { kind: "missed", error: err };
         usedErrors.add(err.id);
@@ -185,6 +206,9 @@ export function HuntErrorsExperience({
       status={engine.isCompleted ? "completed" : "active"}
       onComplete={engine.complete}
       canComplete={hasReport}
+      errorMessage={engine.errorMessage}
+      canRetry={engine.canRetry}
+      onRetry={engine.retry}
       hudSlot={
         <PhaseHUD
           engine={session.engine}

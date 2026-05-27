@@ -5,11 +5,13 @@ import {
   getSession,
   getSessionTurns,
   appendTurn,
+  getNextTurnIndex,
   getUserContext,
   getTopicsByIds,
   getMasteryStates,
   getErrorPatterns,
-  checkAndIncrementRateLimit,
+  checkRateLimit,
+  incrementRateLimit,
 } from "@/lib/spark/queries";
 import { buildMasterSystemPrompt } from "@/modules/spark/prompts/master-system";
 import { buildKairosContext } from "@/lib/spark/kairos-bridge";
@@ -58,19 +60,18 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
     return NextResponse.json({ error: "La sesión ya finalizó" }, { status: 409 });
   }
 
-  // Rate limit (default 100/day per user)
+  // Rate limit: check first (read-only), increment only after Anthropic
+  // actually produced a token. If the AI call fails, the user's quota
+  // is not burned.
   const RATE_LIMIT_DAILY = 100;
   const RATE_LIMIT_WARN_AT = 80;
-  const rate = await checkAndIncrementRateLimit(db, user.id, RATE_LIMIT_DAILY);
+  const rate = await checkRateLimit(db, user.id, RATE_LIMIT_DAILY);
   if (!rate.allowed) {
     return NextResponse.json(
       { error: "Límite diario de IA alcanzado. Vuelve mañana." },
       { status: 429 }
     );
   }
-  const remaining = RATE_LIMIT_DAILY - rate.current;
-  const shouldWarnRateLimit =
-    rate.current >= RATE_LIMIT_WARN_AT && rate.current < RATE_LIMIT_DAILY;
 
   // Hydrate context
   const [priorTurns, userCtx, topics, mastery, errors] = await Promise.all([
@@ -102,9 +103,21 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
   const noteIdsForContext = usingSubset
     ? session.selected_note_ids
     : allSourceIds;
-  const kairosContext = noteIdsForContext.length
-    ? await buildKairosContext(db, user.id, noteIdsForContext)
-    : null;
+  let kairosContext: string | null = null;
+  let kairosFailed = false;
+  if (noteIdsForContext.length) {
+    try {
+      kairosContext = await buildKairosContext(db, user.id, noteIdsForContext);
+    } catch (kairosErr) {
+      console.error("[message] buildKairosContext failed", {
+        sessionId,
+        userId: user.id,
+        noteCount: noteIdsForContext.length,
+        kairosErr,
+      });
+      kairosFailed = true;
+    }
+  }
 
   // When the user pinned specific apuntes, tell Nova explicitly: stay
   // inside this scope and avoid spilling into the rest of the subject.
@@ -129,12 +142,17 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
 
   let userTurn: SparkSessionTurn | null = null;
   if (!isKickoff) {
+    // Recompute the next index from the DB rather than using the snapshot
+    // we hydrated earlier — a previous turn could have been written by a
+    // racing request (rare with the client-side guard, but real with
+    // multiple tabs or fast retries) and reusing a stale index collides.
+    const userTurnIndex = await getNextTurnIndex(db, sessionId);
     userTurn = await appendTurn(db, {
       session_id: sessionId,
       role: "user",
       content: body.content,
       payload: null,
-      turn_index: priorTurns.length,
+      turn_index: userTurnIndex,
     });
   }
 
@@ -145,16 +163,15 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
         { role: "user" as const, content: body.content },
       ];
 
-  const assistantTurnIndex = isKickoff ? 0 : priorTurns.length + 1;
-
-  return sseStream(async (push, close) => {
+  return sseStream(async (push, close, signal) => {
     if (userTurn) push({ event: "user-turn", data: userTurn });
 
-    if (shouldWarnRateLimit) {
+    if (kairosFailed) {
       push({
         event: "warning",
         data: {
-          message: `Llevas ${rate.current} de ${RATE_LIMIT_DAILY} mensajes hoy. Te quedan ${remaining}.`,
+          message:
+            "Nova no pudo leer tus apuntes de Kairos esta vez. La sesión continúa, pero sin ese contexto.",
         },
       });
     }
@@ -162,20 +179,39 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
     const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! });
 
     let accumulated = "";
+    let quotaCharged = false;
 
     try {
-      const stream = client.messages.stream({
-        model: "claude-sonnet-4-6",
-        max_tokens: 2048,
-        system: systemPrompt,
-        messages,
-      });
+      const stream = client.messages.stream(
+        {
+          model: "claude-sonnet-4-6",
+          max_tokens: 2048,
+          system: systemPrompt,
+          messages,
+        },
+        { signal },
+      );
 
       for await (const event of stream) {
         if (
           event.type === "content_block_delta" &&
           event.delta.type === "text_delta"
         ) {
+          // First token confirms Anthropic accepted the call → charge quota
+          // exactly once. If the stream errors before this point, the user's
+          // daily limit is not affected.
+          if (!quotaCharged) {
+            quotaCharged = true;
+            const { current } = await incrementRateLimit(db, user.id);
+            if (current >= RATE_LIMIT_WARN_AT && current < RATE_LIMIT_DAILY) {
+              push({
+                event: "warning",
+                data: {
+                  message: `Llevas ${current} de ${RATE_LIMIT_DAILY} mensajes hoy. Te quedan ${RATE_LIMIT_DAILY - current}.`,
+                },
+              });
+            }
+          }
           accumulated += event.delta.text;
           push({ event: "text-delta", data: { chunk: event.delta.text } });
         }
@@ -184,6 +220,9 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
       const payload = extractJsonPayload<TurnPayload>(accumulated);
       const displayText = payload ? stripJsonBlock(accumulated) : accumulated;
 
+      // Compute the assistant index from the live DB state, not from the
+      // priorTurns snapshot — same reason as the userTurn above.
+      const assistantTurnIndex = await getNextTurnIndex(db, sessionId);
       const assistantTurn = await appendTurn(db, {
         session_id: sessionId,
         role: "assistant",
@@ -204,16 +243,47 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
       push({ event: "done", data: { turn: assistantTurn } });
       close();
     } catch (err) {
-      // Persist whatever we got so the conversation isn't lost
-      if (accumulated) {
-        await appendTurn(db, {
-          session_id: sessionId,
-          role: "assistant",
-          content: accumulated,
-          payload: null,
-          turn_index: assistantTurnIndex,
-        }).catch(() => {});
+      // If the client disconnected (navigated away, closed tab, etc.) we
+      // got here via the AbortController — don't persist a partial turn
+      // and don't surface an "error" event to a client that's already gone.
+      if (signal.aborted) {
+        close();
+        return;
       }
+
+      // Real failure (Anthropic API error, network, etc.). Persist whatever
+      // we accumulated so the conversation isn't a black hole, but log it —
+      // silent .catch() was hiding real DB issues from us.
+      if (accumulated) {
+        try {
+          const recoveryIndex = await getNextTurnIndex(db, sessionId);
+          await appendTurn(db, {
+            session_id: sessionId,
+            role: "assistant",
+            content: accumulated,
+            payload: null,
+            turn_index: recoveryIndex,
+          });
+        } catch (persistErr) {
+          console.error("[message] persist-on-error failed", {
+            sessionId,
+            userId: user.id,
+            persistErr,
+          });
+          push({
+            event: "warning",
+            data: {
+              message:
+                "No se pudo guardar la respuesta parcial. Recarga la sesión.",
+            },
+          });
+        }
+      }
+      console.error("[message] stream failed", {
+        sessionId,
+        userId: user.id,
+        err,
+      });
       push({
         event: "error",
         data: { message: err instanceof Error ? err.message : "AI stream error" },

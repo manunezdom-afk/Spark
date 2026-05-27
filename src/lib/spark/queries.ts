@@ -299,6 +299,26 @@ export async function appendTurn(
   return data as SparkSessionTurn;
 }
 
+// Returns the turn_index the next inserted turn should use, computed
+// from the current MAX in the DB rather than a snapshot taken at the
+// start of the request. Routes that hold a long-running stream (Anthropic
+// can take 10–30s) should call this RIGHT BEFORE each appendTurn to
+// avoid colliding with concurrent inserts.
+export async function getNextTurnIndex(
+  db: Client,
+  sessionId: string,
+): Promise<number> {
+  const { data } = await db
+    .from('spark_session_turns')
+    .select('turn_index')
+    .eq('session_id', sessionId)
+    .order('turn_index', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  const max = (data as { turn_index: number } | null)?.turn_index ?? -1;
+  return max + 1;
+}
+
 // ── Error Patterns ───────────────────────────────────────────
 
 export async function getErrorPatterns(
@@ -579,10 +599,13 @@ export async function getTurnCountsByCompletedSessions(
 
 // ── Rate limit ───────────────────────────────────────────────
 
-export async function checkAndIncrementRateLimit(
+// Read-only check. Use before kicking off an AI call so a failed call
+// doesn't burn the user's daily quota. Pair with `incrementRateLimit`
+// after the call confirms success (first token received).
+export async function checkRateLimit(
   db: Client,
   userId: string,
-  limit = 100
+  limit = 100,
 ): Promise<{ allowed: boolean; current: number }> {
   const today = new Date().toISOString().slice(0, 10);
   const { data: existing } = await db
@@ -592,12 +615,41 @@ export async function checkAndIncrementRateLimit(
     .eq('day', today)
     .maybeSingle();
   const current = (existing as { count: number } | null)?.count ?? 0;
-  if (current >= limit) return { allowed: false, current };
+  return { allowed: current < limit, current };
+}
+
+export async function incrementRateLimit(
+  db: Client,
+  userId: string,
+): Promise<{ current: number }> {
+  const today = new Date().toISOString().slice(0, 10);
+  const { data: existing } = await db
+    .from('spark_rate_limits')
+    .select('count')
+    .eq('user_id', userId)
+    .eq('day', today)
+    .maybeSingle();
+  const current = (existing as { count: number } | null)?.count ?? 0;
+  const next = current + 1;
   await db
     .from('spark_rate_limits')
     .upsert(
-      { user_id: userId, day: today, count: current + 1 },
-      { onConflict: 'user_id,day' }
+      { user_id: userId, day: today, count: next },
+      { onConflict: 'user_id,day' },
     );
-  return { allowed: true, current: current + 1 };
+  return { current: next };
+}
+
+// Legacy: kept for callers that haven't been migrated to the split
+// check + increment pattern (nova/* and tests/*). New code should use
+// checkRateLimit + incrementRateLimit so a failed AI call doesn't burn quota.
+export async function checkAndIncrementRateLimit(
+  db: Client,
+  userId: string,
+  limit = 100,
+): Promise<{ allowed: boolean; current: number }> {
+  const check = await checkRateLimit(db, userId, limit);
+  if (!check.allowed) return check;
+  const { current } = await incrementRateLimit(db, userId);
+  return { allowed: true, current };
 }
