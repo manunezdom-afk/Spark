@@ -2,7 +2,6 @@ import Link from "next/link";
 import { ArrowRight, TrendingDown } from "lucide-react";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import { getAllMastery } from "@/lib/spark/queries";
-import { MasteryBar } from "@/components/mastery/MasteryBar";
 import type { SparkTopic } from "@/modules/spark/types";
 
 interface WeakTopicsWidgetProps {
@@ -37,7 +36,7 @@ export async function WeakTopicsWidget({ userId, topics }: WeakTopicsWidgetProps
       <div className="rounded-2xl border border-black/[0.05] bg-white shadow-soft p-5 text-[13px] text-ink-secondary leading-relaxed">
         {trained.length === 0
           ? "Todavía no entrenaste ningún tema. Cuando completes tu primera sesión, aquí verás cuáles necesitas reforzar."
-          : "Vas bien — ningún tema entrenado está por debajo del 70% de maestría."}
+          : "¡Vas bien! Todos tus temas entrenados tienen un buen nivel de maestría."}
       </div>
     );
   }
@@ -56,9 +55,6 @@ export async function WeakTopicsWidget({ userId, topics }: WeakTopicsWidgetProps
             <div className="min-w-0 flex-1">
               <div className="text-[13.5px] font-medium tracking-tight text-ink truncate">
                 {topic.title}
-              </div>
-              <div className="mt-1.5">
-                <MasteryBar score={state.mastery_score} size="sm" />
               </div>
             </div>
             <span className="font-medium text-[11.5px] text-ink-secondary inline-flex items-center gap-1 shrink-0">

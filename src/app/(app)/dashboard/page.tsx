@@ -10,7 +10,6 @@ import {
 } from "@/lib/spark/queries";
 import { ENGINE_LABELS } from "@/modules/spark/engines";
 import { getEngineTheme } from "@/modules/spark/engines/themes";
-import { IntentActions } from "@/components/dashboard/IntentActions";
 import { EmptySessionsState } from "@/components/dashboard/EmptySessionsState";
 import { WeakTopicsWidget } from "@/components/dashboard/WeakTopicsWidget";
 import { MethodQuickCard } from "@/components/methods/MethodQuickCard";
@@ -134,60 +133,18 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {/* Racha, analítica y heatmap semanal */}
-      <section className="mb-12">
-        <WeeklyOverview userId={user.id} />
-      </section>
-
-      {/* Intent-first: el alumno elige qué necesita, Spark elige el método */}
-      <section className="mb-12">
-        <IntentActions canCreateSession={hasTopics} />
-      </section>
-
-      {activeSessions.length > 0 && (
-        <section className="mb-10">
-          <div className="flex items-center justify-between gap-3 mb-3">
-            <h2 className="text-[13px] font-medium text-ink-secondary tracking-tight">
-              Continuar donde lo dejaste
-              <span className="ml-2 text-ink-tertiary font-normal">
-                ({activeSessions.length})
-              </span>
-            </h2>
-            {activeSessions.length > 5 && (
-              <Link
-                href="/sessions"
-                className="text-[12px] font-medium text-ink-tertiary hover:text-ink transition-colors inline-flex items-center gap-1"
-              >
-                Ver todas
-                <ArrowRight className="w-3 h-3" strokeWidth={1.5} />
-              </Link>
-            )}
-          </div>
-          <ul className="flex flex-col gap-2">
-            {activeSessions.slice(0, 5).map((s) => (
-              <ActiveSessionRow key={s.id} session={s} topics={topics} />
-            ))}
-          </ul>
-        </section>
-      )}
-
-      {!hasTopics && activeSessions.length === 0 && (
-        <section className="mb-10">
-          <EmptySessionsState hasTopics={hasTopics} />
-        </section>
-      )}
-
+      {/* 1. Métodos de Aprendizaje Activo (Siempre accesibles al inicio) */}
       <section className="mb-10">
         <div className="flex items-baseline justify-between gap-3 mb-1">
-          <h2 className="text-[13px] font-medium text-ink-secondary tracking-tight">
-            Otras formas de entrenar
+          <h2 className="text-[16px] font-bold text-ink tracking-tight">
+            Métodos de Aprendizaje Activo
           </h2>
-          <span className="text-[11.5px] text-ink-tertiary">5 métodos</span>
+          <span className="text-[11.5px] text-ink-tertiary font-mono">5 métodos de estudio</span>
         </div>
-        <p className="text-[12.5px] text-ink-tertiary mb-4 max-w-2xl leading-relaxed">
-          Si ya sabes cómo quieres trabajar, elige el método directamente.
+        <p className="text-[13px] text-ink-secondary mb-4 max-w-2xl leading-relaxed">
+          Elige el enfoque cognitivo que prefieras para entrenar tu mente hoy:
         </p>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
           {METHODS.map((m, i) => (
             <MethodQuickCard
               key={m.key}
@@ -200,10 +157,53 @@ export default async function DashboardPage() {
         </div>
       </section>
 
+      {/* 2. Continuar donde lo dejaste (Sesiones en curso) */}
+      {activeSessions.length > 0 && (
+        <section className="mb-10">
+          <div className="flex items-center justify-between gap-3 mb-3">
+            <h2 className="text-[13px] font-medium text-ink-secondary tracking-tight">
+              Continuar donde lo dejaste
+              <span className="ml-2 text-ink-tertiary font-normal">
+                ({activeSessions.length} activas)
+              </span>
+            </h2>
+            {activeSessions.length > 3 && (
+              <Link
+                href="/sessions"
+                className="text-[12px] font-medium text-ink-tertiary hover:text-ink transition-colors inline-flex items-center gap-1"
+              >
+                Ver todas
+                <ArrowRight className="w-3 h-3" strokeWidth={1.5} />
+              </Link>
+            )}
+          </div>
+          <ul className="flex flex-col gap-2">
+            {activeSessions.slice(0, 3).map((s) => (
+              <ActiveSessionRow key={s.id} session={s} topics={topics} />
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {!hasTopics && activeSessions.length === 0 && (
+        <section className="mb-10">
+          <EmptySessionsState hasTopics={hasTopics} />
+        </section>
+      )}
+
+      {/* 3. Tu Progreso y Racha */}
+      <section className="mb-10">
+        <h2 className="text-[13px] font-medium text-ink-secondary tracking-tight mb-3">
+          Resumen de actividad
+        </h2>
+        <WeeklyOverview userId={user.id} />
+      </section>
+
+      {/* 4. Temas sugeridos para repasar */}
       {hasTopics && (
         <section>
           <h2 className="text-[13px] font-medium text-ink-secondary tracking-tight mb-3">
-            Tus temas a fortalecer
+            Temas sugeridos para repasar
           </h2>
           <WeakTopicsWidget userId={user.id} topics={topics} />
         </section>

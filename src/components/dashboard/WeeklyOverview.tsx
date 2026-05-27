@@ -1,4 +1,4 @@
-import { Activity, Calendar, Clock, Flame } from "lucide-react";
+import { Calendar, Clock, Flame } from "lucide-react";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import { computeWeeklyStats } from "@/lib/spark/weekly-stats";
 import { ActivityHeatmap } from "@/components/dashboard/ActivityHeatmap";
@@ -21,7 +21,7 @@ export async function WeeklyOverview({ userId }: WeeklyOverviewProps) {
 
   return (
     <div className="rounded-2xl border border-black/[0.06] bg-white/65 backdrop-blur-sm p-5 md:p-6">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mb-6">
         <Metric
           icon={<Flame className="w-4 h-4" strokeWidth={1.5} />}
           label="Racha"
@@ -42,19 +42,6 @@ export async function WeeklyOverview({ userId }: WeeklyOverviewProps) {
           value={formatMinutes(stats.total_minutes_estimate)}
           tone="neutral"
           hint="Estimación basada en cantidad de turnos. Aproximación, no cronómetro."
-        />
-        <Metric
-          icon={<Activity className="w-4 h-4" strokeWidth={1.5} />}
-          label="Maestría promedio"
-          value={
-            stats.mastery_avg === null ? "—" : `${stats.mastery_avg}%`
-          }
-          tone={
-            stats.mastery_avg !== null && stats.mastery_avg >= 70
-              ? "spark"
-              : "neutral"
-          }
-          hint="Promedio de maestría a través de todos tus temas con al menos una sesión."
         />
       </div>
 
