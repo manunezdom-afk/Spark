@@ -159,7 +159,13 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
   const messages = isKickoff
     ? [{ role: "user" as const, content: "Inicia la sesión." }]
     : [
-        ...priorTurns.map((t) => ({ role: t.role, content: t.content })),
+        ...priorTurns.map((t) => {
+          let content = t.content;
+          if (t.role === "assistant" && t.payload) {
+            content += `\n\n\`\`\`json\n${JSON.stringify(t.payload, null, 2)}\n\`\`\``;
+          }
+          return { role: t.role, content };
+        }),
         { role: "user" as const, content: body.content },
       ];
 

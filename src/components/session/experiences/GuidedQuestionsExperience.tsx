@@ -640,14 +640,11 @@ function buildLayerEntries(turns: SparkSessionTurn[]): LayerEntry[] {
           ? (t.payload as SocraticLayerPayload)
           : null;
       // The grade in this payload refers to the PREVIOUS user answer
-      if (
-        payload &&
-        payload.prior_answer_grade !== null &&
-        out.length > 0 &&
-        out[out.length - 1].answer
-      ) {
-        out[out.length - 1].grade = payload.prior_answer_grade;
-        out[out.length - 1].gradeNote = payload.prior_answer_note;
+      if (out.length > 0 && out[out.length - 1].answer) {
+        if (payload && payload.prior_answer_grade !== null && payload.prior_answer_grade !== undefined) {
+          out[out.length - 1].grade = payload.prior_answer_grade;
+          out[out.length - 1].gradeNote = payload.prior_answer_note;
+        }
         out[out.length - 1].closed = true;
       }
       if (pendingQ !== null) {
