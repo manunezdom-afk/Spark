@@ -11,6 +11,10 @@ import {
   Quote,
   Sparkles,
   ArrowRight,
+  UserCheck,
+  CheckCircle2,
+  Activity,
+  FileText,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -252,263 +256,531 @@ function ScenePanel({
   const sceneLabel = payload?.scene_label ?? (isDebrief ? "Debrief" : "Escena");
   const actNum = payload?.act ?? act.index + 1;
 
+  // Real-time keyword matching for data integration
+  const integratedData = useMemo(() => {
+    const dataList = payload?.available_data ?? [];
+    return dataList.map((dataItem) => {
+      const words = dataItem
+        .toLowerCase()
+        .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "")
+        .split(/\s+/)
+        .filter(
+          (w) =>
+            w.length > 3 &&
+            ![
+              "este",
+              "esta",
+              "para",
+              "como",
+              "tiene",
+              "hace",
+              "todo",
+              "pero",
+              "sino",
+              "sobre",
+              "entre",
+              "bajo",
+              "cabe",
+              "desde",
+              "hacia",
+              "hasta",
+              "para",
+              "por",
+              "segun",
+              "sin",
+              "tras",
+              "cuyo",
+              "cuya",
+              "unos",
+              "unas",
+              "ellos",
+              "ellas",
+              "hayan",
+              "habia",
+            ].includes(w),
+        );
+
+      if (words.length === 0) return false;
+      const draftLower = draft.toLowerCase();
+      return words.some((word) => draftLower.includes(word));
+    });
+  }, [payload?.available_data, draft]);
+
+  const baseConfidence = useMemo(() => {
+    if (isDebrief) return 95;
+    if (actNum === 1) return 45;
+    if (actNum === 2) return 60;
+    if (actNum === 3) return 75;
+    return 50;
+  }, [actNum, isDebrief]);
+
+  const confidenceBonus = useMemo(() => {
+    const integratedCount = integratedData.filter(Boolean).length;
+    const wordBonus = Math.min(10, Math.floor(draft.trim().length / 20));
+    return integratedCount * 10 + wordBonus;
+  }, [integratedData, draft]);
+
+  const confidenceScore = Math.min(100, baseConfidence + confidenceBonus);
+
+  const { moodLabel, moodColor } = useMemo(() => {
+    if (isDebrief) {
+      return {
+        moodLabel: "Analítico / Colaborativo",
+        moodColor: {
+          bg: "rgba(99, 102, 241, 0.06)",
+          border: "rgba(99, 102, 241, 0.25)",
+          text: "rgb(79, 70, 229)",
+          shadow: "rgba(99, 102, 241, 0.05)",
+        },
+      };
+    }
+    if (confidenceScore < 50) {
+      return {
+        moodLabel: "Distante / Escéptico",
+        moodColor: {
+          bg: "rgba(245, 158, 11, 0.05)",
+          border: "rgba(245, 158, 11, 0.22)",
+          text: "rgb(217, 119, 6)",
+          shadow: "rgba(245, 158, 11, 0.05)",
+        },
+      };
+    }
+    if (confidenceScore < 70) {
+      return {
+        moodLabel: "Interesado / Evaluando",
+        moodColor: {
+          bg: "rgba(6, 182, 212, 0.05)",
+          border: "rgba(6, 182, 212, 0.22)",
+          text: "rgb(8, 145, 178)",
+          shadow: "rgba(6, 182, 212, 0.05)",
+        },
+      };
+    }
+    if (confidenceScore < 85) {
+      return {
+        moodLabel: "Convencido / Receptivo",
+        moodColor: {
+          bg: "rgba(16, 185, 129, 0.05)",
+          border: "rgba(16, 185, 129, 0.22)",
+          text: "rgb(5, 150, 105)",
+          shadow: "rgba(16, 185, 129, 0.05)",
+        },
+      };
+    }
+    return {
+      moodLabel: "Altamente Favorable",
+      moodColor: {
+        bg: "rgba(139, 92, 246, 0.06)",
+        border: "rgba(139, 92, 246, 0.25)",
+        text: "rgb(109, 40, 217)",
+        shadow: "rgba(139, 92, 246, 0.08)",
+      },
+    };
+  }, [confidenceScore, isDebrief]);
+
   return (
     <article
       key={act.index}
-      className="rounded-3xl border bg-white/90 p-7 md:p-8 engine-card-rise shadow-soft"
+      className="rounded-3xl border bg-white/90 p-7 md:p-8 engine-card-rise shadow-soft animate-fade-in"
       style={{
         borderColor: hexToRgba(accent, 0.22),
-        boxShadow: `0 12px 36px ${hexToRgba(accent, 0.10)}`,
+        boxShadow: `0 12px 36px ${hexToRgba(accent, 0.1)}`,
       }}
     >
-      <header className="flex items-center justify-between gap-3 mb-5 flex-wrap">
-        <div className="flex items-center gap-2">
-          <span
-            className="inline-flex items-center justify-center w-9 h-9 rounded-xl"
+      <div className="grid md:grid-cols-[280px_1fr] gap-8">
+        {/* Left Column: La Cabina de Negociación */}
+        <div className="flex flex-col items-center border-b md:border-b-0 md:border-r border-black/[0.06] pb-6 md:pb-0 md:pr-6">
+          <div className="flex items-center gap-2 mb-4 self-start">
+            <span
+              className="inline-flex items-center justify-center w-7 h-7 rounded-lg"
+              style={{
+                background: hexToRgba(accent, 0.12),
+                color: accent,
+                border: `1px solid ${hexToRgba(accent, 0.28)}`,
+              }}
+            >
+              <Drama className="w-3.5 h-3.5" strokeWidth={1.5} />
+            </span>
+            <span className="font-semibold text-[11px]" style={{ color: accent }}>
+              Cabina de Negociación
+            </span>
+          </div>
+
+          {/* Avatar sphere */}
+          <div className="relative w-28 h-28 mx-auto flex items-center justify-center mb-4 mt-2">
+            {/* Outer dashed spinning active ring */}
+            <div
+              className="absolute inset-0 rounded-full border-2 border-dashed opacity-40 animate-[spin_30s_linear_infinite]"
+              style={{ borderColor: accent }}
+            />
+            {/* Middle pulse ring */}
+            <div
+              className="absolute inset-2 rounded-full border opacity-30 animate-ping"
+              style={{ borderColor: accent, animationDuration: "3s" }}
+            />
+            {/* Inner glowing sphere */}
+            <div
+              className="absolute inset-2 rounded-full border flex items-center justify-center shadow-inner transition-all duration-500"
+              style={{
+                borderColor: moodColor.border,
+                background: `radial-gradient(circle at center, ${moodColor.bg} 0%, rgba(255,255,255,0.7) 100%)`,
+                boxShadow: `0 0 20px ${moodColor.shadow}`,
+              }}
+            >
+              {isDebrief ? (
+                <CheckCircle2
+                  className="w-12 h-12 transition-all duration-300"
+                  strokeWidth={1.5}
+                  style={{ color: moodColor.text }}
+                />
+              ) : (
+                <UserCheck
+                  className="w-12 h-12 transition-all duration-300"
+                  strokeWidth={1.5}
+                  style={{ color: moodColor.text }}
+                />
+              )}
+            </div>
+          </div>
+
+          {/* Role Name */}
+          <div className="text-center mb-1">
+            <h4 className="font-bold text-[14px] text-ink line-clamp-1">
+              {isDebrief ? "Análisis de Nova" : persona ?? "Negociador"}
+            </h4>
+            <span className="text-[11px] text-muted-foreground uppercase tracking-widest font-mono">
+              {isDebrief ? "Sesión Completada" : `Acto ${actNum} / 3`}
+            </span>
+          </div>
+
+          {/* Mood Badge */}
+          <div className="mt-2 flex justify-center w-full">
+            <span
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold border transition-all duration-300 uppercase tracking-wider shadow-sm"
+              style={{
+                backgroundColor: moodColor.bg,
+                borderColor: moodColor.border,
+                color: moodColor.text,
+                boxShadow: `0 2px 10px ${moodColor.shadow}`,
+              }}
+            >
+              <span
+                className="w-1.5 h-1.5 rounded-full animate-pulse"
+                style={{ backgroundColor: moodColor.text }}
+              />
+              {moodLabel}
+            </span>
+          </div>
+
+          {/* Confianza Gauge */}
+          <div className="mt-5 w-full">
+            <div className="flex justify-between items-center mb-1 text-[10px] font-bold text-muted-foreground tracking-wider">
+              <span className="flex items-center gap-1">
+                <Activity className="w-3.5 h-3.5 animate-pulse" strokeWidth={1.5} style={{ color: moodColor.text }} />
+                CONFIANZA / CONVICCIÓN
+              </span>
+              <span style={{ color: moodColor.text }} className="font-mono">
+                {confidenceScore}%
+              </span>
+            </div>
+            <div className="h-2 w-full bg-black/[0.04] rounded-full overflow-hidden border border-black/[0.02] relative">
+              <div
+                className="h-full rounded-full transition-all duration-500 ease-out"
+                style={{
+                  width: `${confidenceScore}%`,
+                  background: `linear-gradient(to right, ${hexToRgba(accent, 0.6)}, ${accent})`,
+                  boxShadow: `0 0 8px ${accent}`,
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Dynamic leverage tokens */}
+          {availableData.length > 0 && !isDebrief && (
+            <div className="mt-6 pt-5 border-t border-black/[0.06] w-full">
+              <span
+                className="font-semibold text-[10px] block mb-2.5 tracking-wider uppercase text-muted-foreground"
+              >
+                Fichas de Negociación ({availableData.length})
+              </span>
+              <div className="flex flex-col gap-2.5">
+                {availableData.map((d, i) => {
+                  const isIntegrated = integratedData[i];
+                  return (
+                    <div
+                      key={i}
+                      className="rounded-xl border p-2.5 text-[11.5px] leading-snug transition-all duration-300 relative overflow-hidden"
+                      style={
+                        isIntegrated
+                          ? {
+                              borderColor: "rgba(16, 185, 129, 0.4)",
+                              backgroundColor: "rgba(209, 250, 229, 0.45)",
+                              boxShadow: "0 0 10px rgba(16, 185, 129, 0.15)",
+                              color: "rgb(6, 95, 70)",
+                            }
+                          : {
+                              borderColor: hexToRgba(accent, 0.18),
+                              backgroundColor: "rgba(255, 255, 255, 0.6)",
+                              color: "rgb(75, 85, 99)",
+                            }
+                      }
+                    >
+                      <div
+                        className="absolute left-0 top-0 bottom-0 w-1 rounded-l-full"
+                        style={{
+                          backgroundColor: isIntegrated
+                            ? "rgb(16, 185, 129)"
+                            : hexToRgba(accent, 0.4),
+                        }}
+                      />
+                      <div className="pl-2 flex items-start gap-1.5">
+                        <span
+                          className="shrink-0 font-bold font-mono"
+                          style={{
+                            color: isIntegrated ? "rgb(16, 185, 129)" : accent,
+                          }}
+                        >
+                          {isIntegrated ? "✓" : "•"}
+                        </span>
+                        <div>
+                          <p className={isIntegrated ? "font-semibold" : ""}>{d}</p>
+                          {isIntegrated && (
+                            <span className="inline-block mt-1 text-[8.5px] font-bold uppercase tracking-widest text-emerald-600 bg-emerald-100/60 px-1.5 py-0.5 rounded">
+                              ¡Integrado en borrador!
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Lecciones del caso (Debrief) */}
+          {availableData.length > 0 && isDebrief && (
+            <div className="mt-6 pt-5 border-t border-black/[0.06] w-full">
+              <span
+                className="font-semibold text-[10px] block mb-2.5 tracking-wider uppercase text-slate-500"
+              >
+                Lecciones del Caso
+              </span>
+              <ul className="flex flex-col gap-2.5">
+                {availableData.map((d, i) => (
+                  <li
+                    key={i}
+                    className="text-[12px] text-foreground/80 leading-relaxed border-l-2 pl-3 py-1.5 border-indigo-500/50 bg-indigo-50/20 rounded-r-xl p-2.5"
+                  >
+                    {d}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+
+        {/* Right Column: Dialogue and Proposal Draft Editor */}
+        <div className="flex flex-col gap-5 min-w-0">
+          <header className="flex items-center justify-between gap-3 border-b border-black/[0.04] pb-3">
+            <h3 className="font-bold text-[15px] text-ink">
+              {isDebrief ? "Análisis de Cierre del Caso" : `Acto ${actNum} · ${sceneLabel}`}
+            </h3>
+            <NovaCoachRibbon
+              engine="roleplay"
+              label={isDebrief ? "Saliendo del rol" : "Nova en escena"}
+            />
+          </header>
+
+          {/* Consequence of prior action */}
+          {priorConsequence && !isDebrief && (
+            <div
+              className="rounded-2xl border p-4 text-[13px] flex gap-3 shadow-sm bg-amber-50/40 animate-fade-in"
+              style={{
+                borderColor: "rgba(245, 158, 11, 0.28)",
+                boxShadow: "0 2px 8px rgba(245, 158, 11, 0.04)",
+              }}
+            >
+              <Sparkles
+                className="w-4 h-4 mt-0.5 shrink-0 text-amber-700 animate-pulse"
+                strokeWidth={1.5}
+              />
+              <div>
+                <span className="font-semibold text-amber-800 text-[10px] block uppercase tracking-wider mb-0.5">
+                  Efecto de tu Acción Anterior
+                </span>
+                <p className="text-foreground/80 italic leading-relaxed">
+                  {priorConsequence}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Dialogue bubble */}
+          <div
+            className="relative rounded-2xl border p-6 bg-white/70 shadow-sm"
             style={{
-              background: hexToRgba(accent, 0.12),
-              color: accent,
-              border: `1px solid ${hexToRgba(accent, 0.28)}`,
+              borderColor: hexToRgba(accent, 0.16),
+              boxShadow: `0 4px 20px ${hexToRgba(accent, 0.02)}`,
             }}
           >
-            <Drama className="w-4 h-4" strokeWidth={1.5} />
-          </span>
-          <div className="flex flex-col leading-tight">
-            <span
-              className="font-medium text-[11px]"
+            <Quote
+              className="absolute top-4 left-4 w-4 h-4 opacity-35"
+              strokeWidth={1.5}
               style={{ color: accent }}
-            >
-              {isDebrief ? "Debrief · análisis del caso" : `Acto ${actNum} · ${sceneLabel}`}
-            </span>
-            <span className="text-[11.5px] text-muted-foreground italic">
-              {isDebrief
-                ? "Saliendo del rol"
-                : `Voz: ${persona ?? "el personaje"}`}
-            </span>
-          </div>
-        </div>
-        <NovaCoachRibbon
-          engine="roleplay"
-          label={isDebrief ? "Saliendo del rol" : "Nova en escena"}
-        />
-      </header>
-
-      {priorConsequence && !isDebrief && (
-        <div
-          className="mb-4 rounded-xl border p-3 text-[12.5px] italic flex gap-2"
-          style={{
-            background: "rgb(254 252 232 / 0.5)",
-            borderColor: "rgba(245, 158, 11, 0.25)",
-          }}
-        >
-          <Sparkles
-            className="w-3.5 h-3.5 mt-0.5 shrink-0 text-amber-700"
-            strokeWidth={1.5}
-          />
-          <span className="text-foreground/80">
-            <span className="font-medium not-italic text-amber-700">
-              Tras tu jugada anterior:{" "}
-            </span>
-            {priorConsequence}
-          </span>
-        </div>
-      )}
-
-      {/* The scene as dialogue, with quote marker */}
-      <div
-        className="relative rounded-2xl border p-5 bg-amber-50/40"
-        style={{ borderColor: hexToRgba(accent, 0.18) }}
-      >
-        <Quote
-          className="absolute top-3 left-3 w-3.5 h-3.5 opacity-40"
-          strokeWidth={1.5}
-          style={{ color: accent }}
-        />
-        <p className="text-[16px] leading-relaxed text-foreground/90 whitespace-pre-wrap pl-6 italic">
-          {sceneText}
-        </p>
-      </div>
-
-      {/* Available data chips */}
-      {availableData.length > 0 && !isDebrief && (
-        <div className="mt-4">
-          <span
-            className="font-medium text-[11px] block mb-2"
-            style={{ color: accent }}
-          >
-            Datos a la mano
-          </span>
-          <div className="flex flex-wrap gap-2">
-            {availableData.map((d, i) => (
-              <span
-                key={i}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border bg-white/85 text-[12px]"
-                style={{
-                  borderColor: hexToRgba(accent, 0.22),
-                  boxShadow: `0 0 0 3px ${hexToRgba(accent, 0.04)}`,
-                }}
-              >
-                <span
-                  className="inline-block w-1.5 h-1.5 rounded-full"
-                  style={{ background: accent }}
-                />
-                {d}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Debrief: render available_data as "lecciones clave" */}
-      {availableData.length > 0 && isDebrief && (
-        <div className="mt-4">
-          <span
-            className="font-medium text-[11px] block mb-2"
-            style={{ color: accent }}
-          >
-            Lecciones del caso
-          </span>
-          <ul className="flex flex-col gap-2">
-            {availableData.map((d, i) => (
-              <li
-                key={i}
-                className="text-[13.5px] text-foreground/85 leading-relaxed border-l-2 pl-3 py-0.5"
-                style={{ borderColor: hexToRgba(accent, 0.4) }}
-              >
-                {d}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {/* Debrief: prior_move_consequence is the verdict */}
-      {isDebrief && priorConsequence && (
-        <div
-          className="mt-4 rounded-2xl border p-4"
-          style={{
-            background: hexToRgba(accent, 0.05),
-            borderColor: hexToRgba(accent, 0.22),
-          }}
-        >
-          <span
-            className="font-medium text-[11px] block mb-2"
-            style={{ color: accent }}
-          >
-            Veredicto
-          </span>
-          <p className="text-[14px] text-foreground/85 leading-relaxed">
-            {priorConsequence}
-          </p>
-        </div>
-      )}
-
-      {/* Decision pressure question — only outside debrief */}
-      {decisionPressure && !isDebrief && (
-        <div
-          className="mt-5 rounded-2xl border-l-4 pl-4 py-2"
-          style={{ borderColor: accent }}
-        >
-          <span
-            className="font-medium text-[11px] block"
-            style={{ color: accent }}
-          >
-            Tu turno
-          </span>
-          <p className="text-[15px] font-medium text-foreground/90 mt-1">
-            {decisionPressure}
-          </p>
-        </div>
-      )}
-
-      {/* Posture + input — only outside debrief */}
-      {!isDebrief && (
-        <>
-          <div className="mt-6">
-            <span
-              className="font-medium text-[11px] block mb-2"
-              style={{ color: accent }}
-            >
-              Postura ante este momento
-            </span>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              {(Object.keys(POSTURE_LABELS) as DecisionPosture[]).map((k) => {
-                const active = posture === k;
-                return (
-                  <button
-                    key={k}
-                    onClick={() => setPosture(k)}
-                    className="rounded-xl border py-3 px-3 text-[12px] font-medium transition-all"
-                    style={
-                      active
-                        ? {
-                            borderColor: accent,
-                            background: hexToRgba(accent, 0.08),
-                            color: accent,
-                          }
-                        : {
-                            borderColor: "rgba(0,0,0,0.08)",
-                            background: "rgba(255,255,255,0.7)",
-                            color: "rgb(40 40 40 / 0.85)",
-                          }
-                    }
-                  >
-                    {POSTURE_LABELS[k].label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          <div className="mt-4 flex flex-col gap-2">
-            <span
-              className="font-medium text-[11px]"
-              style={{ color: accent }}
-            >
-              Tu jugada — {POSTURE_LABELS[posture].verb}
-            </span>
-            <Textarea
-              ref={textareaRef}
-              value={draft}
-              onChange={(e) => setDraft(e.target.value)}
-              placeholder={POSTURE_LABELS[posture].placeholder}
-              rows={3}
-              disabled={status !== "idle"}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
-                  e.preventDefault();
-                  onSubmit();
-                }
-              }}
-              className="bg-white/95 resize-none"
             />
-            <div className="flex items-center justify-between gap-2 mt-1">
-              <span className="text-[11px] text-muted-foreground">
-                Atajo: ⌘+Enter
-              </span>
-              <Button
-                size="sm"
-                onClick={onSubmit}
-                disabled={!draft.trim() || status !== "idle"}
-                className="text-white gap-1.5"
-                style={{ background: gradient }}
-              >
-                {status === "streaming" ? (
-                  <>
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" strokeWidth={1.5} />
-                    Personaje reacciona…
-                  </>
-                ) : (
-                  <>
-                    Ejecutar jugada
-                    <ChevronRight className="w-3.5 h-3.5" strokeWidth={1.5} />
-                  </>
-                )}
-              </Button>
-            </div>
+            <p className="text-[15.5px] leading-relaxed text-foreground/85 whitespace-pre-wrap pl-6 italic font-medium">
+              {sceneText}
+            </p>
           </div>
-        </>
-      )}
+
+          {/* Debrief feedback */}
+          {isDebrief && priorConsequence && (
+            <div
+              className="rounded-2xl border p-5 bg-indigo-50/30"
+              style={{
+                borderColor: "rgba(99, 102, 241, 0.25)",
+              }}
+            >
+              <span className="font-semibold text-indigo-800 text-[10px] block uppercase tracking-wider mb-1.5">
+                Veredicto y Retroalimentación Final
+              </span>
+              <p className="text-[14px] text-foreground/80 leading-relaxed italic">
+                {priorConsequence}
+              </p>
+            </div>
+          )}
+
+          {/* Decision pressure */}
+          {decisionPressure && !isDebrief && (
+            <div
+              className="rounded-2xl border-l-4 pl-4 py-3 bg-orange-50/15"
+              style={{ borderColor: accent }}
+            >
+              <span
+                className="font-semibold text-[10px] block uppercase tracking-wider"
+                style={{ color: accent }}
+              >
+                Dilema de Decisión
+              </span>
+              <p className="text-[14.5px] font-bold text-foreground/90 mt-1 leading-snug">
+                {decisionPressure}
+              </p>
+            </div>
+          )}
+
+          {/* Posture & Contract Draft */}
+          {!isDebrief && (
+            <div
+              className="rounded-2xl border bg-white/80 p-5 flex flex-col gap-4 mt-1"
+              style={{ borderColor: hexToRgba(accent, 0.18) }}
+            >
+              <div>
+                <span
+                  className="font-semibold text-[10px] block mb-2 tracking-wider uppercase"
+                  style={{ color: accent }}
+                >
+                  Postura ante este momento
+                </span>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  {(Object.keys(POSTURE_LABELS) as DecisionPosture[]).map((k) => {
+                    const active = posture === k;
+                    return (
+                      <button
+                        key={k}
+                        onClick={() => setPosture(k)}
+                        className="rounded-xl border py-2.5 px-3 text-[12px] font-bold transition-all duration-200"
+                        style={
+                          active
+                            ? {
+                                borderColor: accent,
+                                background: hexToRgba(accent, 0.08),
+                                color: accent,
+                                boxShadow: `0 0 10px ${hexToRgba(accent, 0.15)}`,
+                              }
+                            : {
+                                borderColor: "rgba(0,0,0,0.06)",
+                                background: "rgba(255,255,255,0.7)",
+                                color: "rgb(75, 85, 99)",
+                              }
+                        }
+                      >
+                        {POSTURE_LABELS[k].label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div
+                className="rounded-xl border p-4 bg-white/95 relative overflow-hidden"
+                style={{ borderColor: hexToRgba(accent, 0.12) }}
+              >
+                {/* Lined contract background aesthetic */}
+                <div className="absolute top-0 right-0 left-0 h-8 border-b border-black/[0.04] bg-black/[0.01] px-4 flex items-center justify-between">
+                  <span className="text-[9px] font-mono font-bold text-muted-foreground tracking-widest flex items-center gap-1.5">
+                    <FileText className="w-3.5 h-3.5" strokeWidth={1.5} />
+                    BORRADOR DE PROPUESTA LÓGICA
+                  </span>
+                  <span
+                    className="text-[9.5px] font-bold uppercase tracking-widest font-mono"
+                    style={{ color: accent }}
+                  >
+                    {POSTURE_LABELS[posture].label}
+                  </span>
+                </div>
+
+                <div className="mt-6 flex flex-col gap-2">
+                  <label
+                    className="font-semibold text-[10.5px] text-muted-foreground mt-1"
+                  >
+                    Redacta tu propuesta de acción — {POSTURE_LABELS[posture].verb}
+                  </label>
+                  <Textarea
+                    ref={textareaRef}
+                    value={draft}
+                    onChange={(e) => setDraft(e.target.value)}
+                    placeholder={POSTURE_LABELS[posture].placeholder}
+                    rows={4}
+                    disabled={status !== "idle"}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+                        e.preventDefault();
+                        onSubmit();
+                      }
+                    }}
+                    className="bg-white/60 resize-none font-sans text-[14px] leading-relaxed border-black/[0.06] focus:border-indigo-500/30 focus-visible:ring-1 focus-visible:ring-indigo-500/30"
+                  />
+                  <div className="flex items-center justify-between gap-2 mt-1">
+                    <span className="text-[10px] text-muted-foreground font-mono">
+                      Atajo: ⌘+Enter
+                    </span>
+                    <Button
+                      size="sm"
+                      onClick={onSubmit}
+                      disabled={!draft.trim() || status !== "idle"}
+                      className="text-white gap-1.5 font-bold transition-all duration-300"
+                      style={{ background: gradient }}
+                    >
+                      {status === "streaming" ? (
+                        <>
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" strokeWidth={1.5} />
+                          Personaje reacciona…
+                        </>
+                      ) : (
+                        <>
+                          Ejecutar jugada
+                          <ChevronRight className="w-3.5 h-3.5" strokeWidth={1.5} />
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
     </article>
   );
 }
