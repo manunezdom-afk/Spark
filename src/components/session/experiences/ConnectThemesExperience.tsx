@@ -526,92 +526,127 @@ function StructuredBridgeView({
   accent: string;
 }) {
   return (
-    <div className="flex flex-col gap-4">
-      <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] items-stretch gap-3">
-        <ConceptCard label="Concepto A" name={conceptA} accent={accent} />
-        <div className="hidden md:flex flex-col items-center justify-center px-2">
-          <ArrowRight
-            className="w-5 h-5"
-            strokeWidth={1.5}
-            style={{ color: accent }}
-          />
+    <div className="flex flex-col gap-6">
+      {/* Synaptic Light-Cable Canvas */}
+      <div className="relative rounded-3xl border border-violet-500/20 bg-violet-950/[0.02] p-6 overflow-hidden flex flex-col items-center justify-center min-h-[220px]">
+        {/* Constellation background grid */}
+        <div className="engine-grid-bg opacity-30 pointer-events-none absolute inset-0" />
+        
+        {/* Animated Synapse Line */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <svg className="w-full h-24 max-w-lg overflow-visible" fill="none" viewBox="0 0 400 100">
+            {/* Background glowing path */}
+            <path
+              d="M 60,50 Q 200,10 340,50"
+              stroke={hexToRgba(accent, 0.15)}
+              strokeWidth="4"
+              strokeLinecap="round"
+            />
+            {/* Active flowing light cable */}
+            <path
+              d="M 60,50 Q 200,10 340,50"
+              stroke={accent}
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeDasharray="8,10"
+              className="animate-pulse"
+              style={{
+                filter: `drop-shadow(0 0 4px ${accent})`,
+              }}
+            />
+          </svg>
         </div>
-        <div className="md:hidden flex justify-center">
-          <ArrowRight
-            className="w-5 h-5 rotate-90"
-            strokeWidth={1.5}
-            style={{ color: accent }}
-          />
-        </div>
-        <ConceptCard label="Concepto B" name={conceptB} accent={accent} />
-      </div>
-      <div
-        className="rounded-2xl border p-4"
-        style={{
-          background: hexToRgba(accent, 0.05),
-          borderColor: hexToRgba(accent, 0.22),
-        }}
-      >
-        <span
-          className="font-medium text-[11px] block mb-1.5"
-          style={{ color: accent }}
-        >
-          Mecanismo
-        </span>
-        <p className="text-[14.5px] leading-relaxed text-foreground/90">{mechanism}</p>
-      </div>
-      {prediction && (
-        <div
-          className="rounded-2xl border p-4 flex gap-3"
-          style={{
-            background: "rgb(254 252 232 / 0.5)",
-            borderColor: "rgba(245, 158, 11, 0.25)",
-          }}
-        >
-          <FlaskConical
-            className="w-4 h-4 shrink-0 mt-0.5 text-amber-700"
-            strokeWidth={1.5}
-          />
-          <div>
-            <span className="font-medium text-[11px] block mb-1 text-amber-700">
-              Prueba esto
+
+        {/* Concept Cards in split side-by-side rows */}
+        <div className="relative z-10 w-full flex flex-col sm:flex-row justify-between items-center gap-8 max-w-lg">
+          {/* Node A */}
+          <div
+            className="w-40 rounded-2xl border p-4 bg-white shadow-soft flex flex-col items-center text-center transition-all duration-300 hover:scale-105"
+            style={{
+              borderColor: hexToRgba(accent, 0.35),
+              boxShadow: `0 0 16px ${hexToRgba(accent, 0.08)}`,
+            }}
+          >
+            <span className="font-semibold text-[10px] text-muted-foreground uppercase tracking-wider mb-1">
+              Origen
             </span>
-            <p className="text-[13.5px] leading-relaxed text-foreground/85">
-              {prediction}
-            </p>
+            <span className="text-[13.5px] font-bold text-ink leading-tight">
+              {conceptA}
+            </span>
+          </div>
+
+          {/* Glowing Neural Synapse Block (Middle mechanism trigger) */}
+          <div
+            className="flex items-center justify-center w-12 h-12 rounded-full border bg-white shadow-soft text-white relative group animate-pulse"
+            style={{
+              borderColor: accent,
+              background: `radial-gradient(circle, ${accent} 0%, ${hexToRgba(accent, 0.8)} 100%)`,
+              boxShadow: `0 0 15px ${hexToRgba(accent, 0.4)}`,
+            }}
+            title="Puente Causal"
+          >
+            <Network className="w-5 h-5 text-white" strokeWidth={1.5} />
+            <span className="absolute -bottom-6 whitespace-nowrap text-[9px] font-mono font-bold uppercase tracking-widest" style={{ color: accent }}>
+              Sinapsis
+            </span>
+          </div>
+
+          {/* Node B */}
+          <div
+            className="w-40 rounded-2xl border p-4 bg-white shadow-soft flex flex-col items-center text-center transition-all duration-300 hover:scale-105"
+            style={{
+              borderColor: hexToRgba(accent, 0.35),
+              boxShadow: `0 0 16px ${hexToRgba(accent, 0.08)}`,
+            }}
+          >
+            <span className="font-semibold text-[10px] text-muted-foreground uppercase tracking-wider mb-1">
+              Destino
+            </span>
+            <span className="text-[13.5px] font-bold text-ink leading-tight">
+              {conceptB}
+            </span>
           </div>
         </div>
-      )}
-    </div>
-  );
-}
+      </div>
 
-function ConceptCard({
-  label,
-  name,
-  accent,
-}: {
-  label: string;
-  name: string;
-  accent: string;
-}) {
-  return (
-    <div
-      className="rounded-2xl border p-4 bg-white/95 flex flex-col items-center justify-center text-center min-h-[88px]"
-      style={{
-        borderColor: hexToRgba(accent, 0.32),
-        boxShadow: `0 0 0 4px ${hexToRgba(accent, 0.05)}`,
-      }}
-    >
-      <span
-        className="font-medium text-[11px] mb-1"
-        style={{ color: accent, opacity: 0.75 }}
-      >
-        {label}
-      </span>
-      <span className="text-[15px] font-semibold tracking-tight text-foreground leading-tight">
-        {name}
-      </span>
+      {/* Mechanism and Prediction Panel */}
+      <div className="flex flex-col gap-4">
+        <div
+          className="rounded-2xl border p-5 bg-white/95"
+          style={{
+            borderColor: hexToRgba(accent, 0.16),
+            boxShadow: `0 4px 20px ${hexToRgba(accent, 0.04)}`,
+          }}
+        >
+          <span
+            className="font-semibold text-[11px] block mb-2 uppercase tracking-wider"
+            style={{ color: accent }}
+          >
+            Mecanismo Puente
+          </span>
+          <p className="text-[14.5px] leading-relaxed text-foreground/90">{mechanism}</p>
+        </div>
+
+        {prediction && (
+          <div
+            className="rounded-2xl border p-4 flex gap-3 bg-amber-50/50"
+            style={{ borderColor: "rgba(245, 158, 11, 0.25)" }}
+          >
+            <FlaskConical
+              className="w-4 h-4 shrink-0 mt-0.5 text-amber-700"
+              strokeWidth={1.5}
+            />
+            <div>
+              <span className="font-semibold text-[11px] block mb-1 text-amber-800 uppercase tracking-wider">
+                Hipótesis Experimental
+              </span>
+              <p className="text-[13.5px] leading-relaxed text-foreground/85">
+                {prediction}
+              </p>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
