@@ -277,19 +277,28 @@ export function HuntErrorsExperience({
               </header>
 
               <div
-                className="rounded-2xl border p-5 md:p-6 leading-relaxed text-[15px] text-foreground/90 select-text bg-white"
-                style={{ borderColor: hexToRgba(theme.accent, 0.16) }}
+                className="relative rounded-2xl border p-5 md:p-6 leading-relaxed text-[15px] select-text bg-cyan-950/[0.02] overflow-hidden"
+                style={{ borderColor: hexToRgba(theme.accent, 0.22) }}
               >
-                {sentences.map((s, i) => (
-                  <SentenceSpan
-                    key={i}
-                    text={s}
-                    marked={marked.has(i)}
-                    verdict={verdicts[i]}
-                    locked={hasReport}
-                    onToggle={() => toggle(i)}
-                  />
-                ))}
+                {/* Cyber Scan Grid Background */}
+                <div className="engine-grid-bg opacity-30 pointer-events-none absolute inset-0" />
+                
+                {/* Cyber Vertical Scanline Bar */}
+                <div className="engine-scanline" style={{ "--engine-accent": theme.accent } as React.CSSProperties} />
+
+                {/* Sentences */}
+                <div className="relative z-10 leading-loose">
+                  {sentences.map((s, i) => (
+                    <SentenceSpan
+                      key={i}
+                      text={s}
+                      marked={marked.has(i)}
+                      verdict={verdicts[i]}
+                      locked={hasReport}
+                      onToggle={() => toggle(i)}
+                    />
+                  ))}
+                </div>
               </div>
 
               {!hasReport && (
@@ -420,6 +429,13 @@ export function HuntErrorsExperience({
               {hasReport ? "Tu reporte" : "Tu cuaderno de inspección"}
             </span>
           </header>
+
+          {/* Cyan Anomaly Radar Widget */}
+          <AnomalyRadar
+            markedCount={marked.size}
+            markedIndexes={Array.from(marked)}
+          />
+
           {marked.size === 0 ? (
             <p className="text-[12.5px] text-muted-foreground italic">
               Marca oraciones del texto. Aparecen aquí para anotar el por qué antes de enviar.
@@ -525,8 +541,8 @@ function SentenceSpan({
     if (verdict.kind === "caught") {
       return (
         <span
-          className="rounded-sm px-0.5 bg-emerald-100/80 underline decoration-emerald-600 decoration-2 underline-offset-4"
-          title={`✓ Cazaste: ${verdict.error.correct_version}`}
+          className="inline rounded-md px-1.5 py-0.5 mx-0.5 bg-emerald-500/10 text-emerald-800 border border-emerald-500/20 font-medium cursor-default shadow-[0_0_6px_rgba(16,185,129,0.06)]"
+          title={`✓ Cazado: ${verdict.error.correct_version}`}
         >
           {text}{" "}
         </span>
@@ -535,7 +551,7 @@ function SentenceSpan({
     if (verdict.kind === "false_alarm") {
       return (
         <span
-          className="rounded-sm px-0.5 bg-orange-100/70 line-through decoration-orange-500"
+          className="inline rounded-md px-1.5 py-0.5 mx-0.5 bg-rose-500/10 text-rose-800 border border-rose-500/20 line-through decoration-rose-500 cursor-default"
           title="✗ Falsa alarma"
         >
           {text}{" "}
@@ -545,25 +561,25 @@ function SentenceSpan({
     if (verdict.kind === "missed") {
       return (
         <span
-          className="rounded-sm px-0.5 bg-blue-100/70 underline decoration-blue-500 decoration-dotted decoration-2 underline-offset-4"
-          title={`⚠ Se te escapó: ${verdict.error.correct_version}`}
+          className="inline rounded-md px-1.5 py-0.5 mx-0.5 bg-cyan-500/10 text-cyan-800 border border-cyan-500/20 border-dashed cursor-default underline decoration-cyan-500 decoration-dotted underline-offset-4"
+          title={`⚠ Faltó cazar: ${verdict.error.correct_version}`}
         >
           {text}{" "}
         </span>
       );
     }
-    return <span>{text} </span>;
+    return <span className="inline px-0.5">{text} </span>;
   }
   // Pre-report: marking mode
   return (
     <span
       onClick={onToggle}
-      className={`cursor-pointer rounded-sm px-0.5 transition-colors ${
+      className={`inline cursor-pointer rounded-lg px-1.5 py-0.5 mx-0.5 transition-all duration-200 select-none ${
         marked
-          ? "bg-orange-200/80 underline decoration-orange-500 decoration-2 underline-offset-4"
-          : "hover:bg-orange-100/60"
+          ? "bg-cyan-500/10 text-cyan-900 border border-cyan-500/30 shadow-[0_0_10px_rgba(6,182,212,0.15)] font-semibold"
+          : "hover:bg-cyan-500/5 text-foreground/80 hover:text-foreground border border-transparent"
       }`}
-      title={marked ? "Quitar marca" : "Marcar como sospechosa"}
+      title={marked ? "Quitar marca" : "Marcar como anomalía"}
     >
       {text}{" "}
     </span>
@@ -763,4 +779,68 @@ function hexToRgba(hex: string, alpha: number) {
   const g = parseInt(value.slice(2, 4), 16);
   const b = parseInt(value.slice(4, 6), 16);
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+// ─────────────────────────────────────────────────────────────
+// Cybernetic cyan anomaly radar widget
+
+function AnomalyRadar({
+  markedCount,
+  markedIndexes,
+}: {
+  markedCount: number;
+  markedIndexes: number[];
+}) {
+  // Map index of sentence to unique polar coordinates
+  const blips = markedIndexes.map((idx) => {
+    const angle = (idx * 67) % 360;
+    const radius = 25 + ((idx * 13) % 40); // radius in % from center
+    const x = 50 + radius * Math.cos((angle * Math.PI) / 180);
+    const y = 50 + radius * Math.sin((angle * Math.PI) / 180);
+    return { id: idx, x, y };
+  });
+
+  return (
+    <div className="flex flex-col items-center justify-center p-4 bg-white/40 backdrop-blur-md rounded-2xl border border-white/50 shadow-inner w-full max-w-[280px] mx-auto mb-4">
+      {/* Radar screen circle */}
+      <div className="relative w-36 h-36 rounded-full border border-cyan-500/25 bg-cyan-950/5 overflow-hidden flex items-center justify-center select-none shadow-[inset_0_0_12px_rgba(6,182,212,0.1)]">
+        {/* Radar concentric circular grid rings */}
+        <div className="absolute w-28 h-28 rounded-full border border-cyan-500/10 border-dashed" />
+        <div className="absolute w-18 h-18 rounded-full border border-cyan-500/10 border-dashed" />
+        <div className="absolute w-8 h-8 rounded-full border border-cyan-500/15 border-dashed" />
+        
+        {/* Radar crosshairs lines */}
+        <div className="absolute left-0 right-0 h-[1px] bg-cyan-500/10" />
+        <div className="absolute top-0 bottom-0 w-[1px] bg-cyan-500/10" />
+
+        {/* Sweep arm spinning */}
+        <div className="absolute inset-0 rounded-full bg-[conic-gradient(from_0deg,rgba(6,182,212,0.15)_0deg,transparent_120deg)] animate-[spin_3s_linear_infinite] origin-center" />
+
+        {/* Center blinking active target core */}
+        <div className="relative z-10 w-2.5 h-2.5 rounded-full bg-cyan-500 border border-white/50 shadow-[0_0_8px_rgba(6,182,212,0.8)] animate-pulse" />
+
+        {/* Blips/Anomalies dots mapped polar */}
+        {blips.map((b) => (
+          <div
+            key={b.id}
+            className="absolute w-2 h-2 -ml-1 -mt-1 transition-all duration-500"
+            style={{ left: `${b.x}%`, top: `${b.y}%` }}
+          >
+            <span className="absolute inset-0 bg-cyan-400 rounded-full animate-ping opacity-75" />
+            <span className="relative block w-2 h-2 bg-cyan-500 rounded-full shadow-[0_0_6px_rgba(6,182,212,0.9)]" />
+          </div>
+        ))}
+      </div>
+
+      {/* Dynamic status display below radar */}
+      <div className="mt-3 text-center">
+        <div className="text-[10px] font-mono font-bold tracking-wider text-cyan-600 uppercase">
+          {markedCount === 0 ? "Radar: Escaneo Activo" : `Anomalías: ${markedCount} Detectadas`}
+        </div>
+        <div className="text-[9px] text-muted-foreground/80 mt-0.5">
+          {markedCount === 0 ? "Buscando incoherencias lógicas..." : "Ubicación calibrada en mapa binario"}
+        </div>
+      </div>
+    </div>
+  );
 }
